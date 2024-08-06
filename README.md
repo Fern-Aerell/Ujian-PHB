@@ -2,10 +2,10 @@
 
 <p align="center">
     <a href="https://smkpgripekanbaru.sch.id/" target="_blank">
-        <img src="https://raw.githubusercontent.com/Fern-Aerell/Ujian-PHB/main/rancangan/assets/logo/logo_pgri.png" width="140" alt="Laravel Logo">
+        <img src="https://raw.githubusercontent.com/Fern-Aerell/Ujian-PHB/main/rancangan/assets/logo/logo_pgri.png" width="160" alt="Laravel Logo">
     </a>
     <a href="https://garudacyberinstitute.id/" target="_blank">
-        <img src="https://raw.githubusercontent.com/Fern-Aerell/Ujian-PHB/main/rancangan/assets/logo/logo_gci.png" width="130" alt="Laravel Logo">
+        <img src="https://raw.githubusercontent.com/Fern-Aerell/Ujian-PHB/main/rancangan/assets/logo/logo_gci.png" width="150" alt="Laravel Logo">
     </a>
 </p>
 
