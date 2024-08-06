@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "aaron-bond.better-comments",
+        "usernamehw.errorlens",
+        "kisstkondoros.vscode-gutter-preview",
+        "christian-kohler.path-intellisense",
+        "dotenv.dotenv-vscode",
+        "bmewburn.vscode-intelephense-client",
+        "bradlc.vscode-tailwindcss",
+        "vue.volar",
+        "dineug.vuerd-vscode",
+        "hediet.vscode-drawio"
+    ]
+}
