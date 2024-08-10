@@ -2,4 +2,4 @@
 
 1. Buat usecase (Sudah meskipun belum final)
 2. Buat sistem authentikasi manual (Jadi nya pake breeze tapi di customize lagi agar sesuai dengan sistem login yang diinginkan)
-3. Buat hash password sendiri
+3. Buat hash password sendiri (Sudah, merubah sistem hash password menjadi sistem enkripsi password)
