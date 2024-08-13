@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
     {
         $userData = [
             [
+                'type' => 'admin',
                 'name' => 'Admin',
                 'username' => 'admin',
                 'password' => Crypt::encryptString('admin#1234'),
@@ -26,6 +27,7 @@ class UserSeeder extends Seeder
 
         foreach($userData as $user) {
             $userModel = new User;
+            $userModel->type = $user['type'];
             $userModel->name = $user['name'];
             $userModel->username = $user['username'];
             $userModel->password = $user['password'];
