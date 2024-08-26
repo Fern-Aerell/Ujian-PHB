@@ -13,33 +13,33 @@ const props = defineProps<{
 
 <template>
     <!-- GREEN BACKGROUND -->
-    <div class="flex justify-center items-center w-screen h-screen bg-[#7FF186] 
-    py-[100px] 
-    px-[30px]
-    sm:px-[50px]
-    xl:px-[200px]
-    2xl:px-[300px]
-    ">
+    <div class="flex justify-center items-center h-screen bg-[#7FF186]">
         <!-- WHITE CONTAINER -->
-        <div class="flex flex-row bg-[#FFFFFF] shadow-box w-full h-full">
+        <div class="flex flex-row bg-[#FFFFFF] shadow-box overflow-hidden
+        sm:w-[90%]
+        md:w-[80%]
+        lg:w-[80%]
+        xl:w-[65%]
+        2xl:w-[65%]
+        ">
             <!-- LOGIN LAYOUT -->
-            <div class="flex flex-col flex-1 p-[60px] w-1/2 h-fit">
-                <div class="flex flex-col p-[10px] gap-[40px]">
-                    <PgriLogo class="w-[71px]" />
+            <div class="flex flex-col flex-1 p-[30px] w-1/2 h-fit">
+                <div class="flex flex-col p-[10px] gap-[20px]">
+                    <PgriLogo class="w-[51px]" />
                     <div>
-                        <h1 class="text-[30px]">{{ title }}</h1>
-                        <p class="text-[22px] opacity-[70%]">{{ description }}</p>
+                        <h1 class="text-[20px]">{{ title }}</h1>
+                        <p class="text-[15px] opacity-[70%]">{{ description }}</p>
                     </div>
                 </div>
-                <div class="px-[10px] py-[20px]">
+                <div class="px-[10px] py-[10px]">
                     <slot></slot>
                 </div>
-                <div class="flex justify-center items-center w-full h-full">
+                <div class="flex justify-center items-center py-[10px]">
                     <CreditsText />
                 </div>
             </div>
             <!-- SLIDER -->
-            <Slider class="flex-1 w-1/2 hidden lg:inline" /> 
+            <Slider class="flex-1 w-1/2 hidden md:inline" /> 
         </div>
     </div>
 </template>

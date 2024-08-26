@@ -57,7 +57,7 @@ const submit = () => {
 
             <Button text="Masuk" text-color="white" bg-color="green" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"/>
 
-            <div class="flex flex-row justify-between">
+            <div class="flex flex-row justify-between text-[14px]">
                 <label class="flex items-center gap-[5px]">
                     <Checkbox name="remember" v-model:checked="form.remember" />
                     <span>Masuk Otomatis</span>
