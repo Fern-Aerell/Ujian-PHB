@@ -13,4 +13,13 @@ class UserType extends Model
         'type'
     ];
 
+    
+    /**
+     * Get the users associated with the user type.
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class, 'type', 'id');
+    }
+
 }

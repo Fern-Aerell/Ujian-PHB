@@ -42,4 +42,14 @@ class User extends Authenticatable
     {
         return [];
     }
+
+    
+    /**
+     * Get the user type associated with the user.
+     */
+    public function type()
+    {
+        return $this->belongsTo(UserType::class, 'type', 'type');
+    }
+    
 }

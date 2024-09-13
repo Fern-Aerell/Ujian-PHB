@@ -12,7 +12,6 @@ import LoginLayout from '@/Layouts/LoginLayout.vue';
 
 defineProps<{
     canResetPassword?: boolean;
-    status?: string;
 }>();
 
 const form = useForm({
@@ -32,9 +31,9 @@ const submit = () => {
 </script>
 
 <template>
-    <LoginLayout title="SELAMAT DATANG!" description="Di ujian phb smk pgri pekanbaru">
+    <Head title="Log in" />
 
-        <Head title="Log in" />
+    <LoginLayout title="SELAMAT DATANG!" description="Di ujian phb smk pgri pekanbaru">
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
             <div class="flex flex-col gap-[5px]">

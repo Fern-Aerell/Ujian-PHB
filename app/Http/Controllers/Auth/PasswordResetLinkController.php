@@ -17,7 +17,7 @@ class PasswordResetLinkController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('Auth/ForgotPassword', [
+        return Inertia::render('Guest/ForgotPassword', [
             'status' => session('status'),
         ]);
     }
@@ -33,7 +33,9 @@ class PasswordResetLinkController extends Controller
             'username' => 'required',
         ]);
 
-        return back()->with('status', __('information.if_the_password_reset_feature_cannot_be_performed'));
+        throw ValidationException::withMessages([
+            'username' => trans('information.if_the_password_reset_feature_cannot_be_performed'),
+        ]);
 
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we

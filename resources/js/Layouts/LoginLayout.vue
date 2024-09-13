@@ -13,17 +13,11 @@ const props = defineProps<{
 
 <template>
     <!-- GREEN BACKGROUND -->
-    <div class="flex justify-center items-center h-screen bg-[#7FF186]">
+    <div class="flex justify-center items-center min-h-screen bg-[#7FF186] p-[5vw] sm:p-[50px]">
         <!-- WHITE CONTAINER -->
-        <div class="flex flex-row bg-[#FFFFFF] shadow-box overflow-hidden
-        sm:w-[90%]
-        md:w-[80%]
-        lg:w-[80%]
-        xl:w-[65%]
-        2xl:w-[65%]
-        ">
+        <div class="flex flex-row bg-[#FFFFFF] shadow-box w-[800px] h-[534px]">
             <!-- LOGIN LAYOUT -->
-            <div class="flex flex-col flex-1 p-[30px] w-1/2 h-fit">
+            <div class="flex flex-col flex-1 p-[30px] w-1/2 h-full">
                 <div class="flex flex-col p-[10px] gap-[20px]">
                     <PgriLogo class="w-[51px]" />
                     <div>
@@ -34,7 +28,7 @@ const props = defineProps<{
                 <div class="px-[10px] py-[10px]">
                     <slot></slot>
                 </div>
-                <div class="flex justify-center items-center py-[10px]">
+                <div class="flex justify-center items-center py-[10px] h-full">
                     <CreditsText />
                 </div>
             </div>

@@ -8,10 +8,15 @@ import image3 from '../../../assets/images/image3.jpg';
 
 <template>
     <swiper-container
+        :style="{
+            '--swiper-pagination-color': '#D6D6D6',
+            '--swiper-pagination-bullet-inactive-color': '#FFFFFF',
+            '--swiper-pagination-bullet-inactive-opacity': '1'
+        }"
         :slidesPerView="1"
         :loop="true"
         :autoplay="{
-            delay: 2500,
+            delay: 5500,
             disableOnInteraction: false,
         }"
         :pagination="{
