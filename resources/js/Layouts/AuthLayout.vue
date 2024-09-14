@@ -1,30 +1,32 @@
 <script setup lang="ts">
-import Sidebar from '@/Components/Sidebar.vue';
-import SidebarHrefMenu from '@/Components/SidebarHrefMenu.vue';
-import SidebarButtonMenu from '@/Components/SidebarButtonMenu.vue';
-import { useForm } from '@inertiajs/vue3';
-import Swal from 'sweetalert2';
+import SidebarWithMenu from '@/Components/SidebarWithMenu.vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import enquire from 'enquire.js';
+import { ref } from 'vue';
 
 const props = defineProps<{
     title: string;
 }>();
 
-function logout() {
-    Swal.fire({
-        title: "Pemberitahuan",
-        text: "Yakin ingin keluar?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#5BD063",
-        cancelButtonColor: "#818181",
-        cancelButtonText: 'Tidak',
-        confirmButtonText: "Ya"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                useForm({}).post(route('logout'));
-            }
-    });
+const mobileSidebar = ref(false);
+
+function mobileSidebarToggle(value: boolean = !mobileSidebar.value) {
+    mobileSidebar.value = value;
 }
+
+function mobileSidebarContainerClickEvent(event: MouseEvent) {
+    if((event.target as HTMLDivElement).id === "mobileSidebarContainer") {
+        mobileSidebarToggle(false);
+    }
+}
+
+enquire.register("screen and (min-width: 1024px)", {
+    match: function() {
+        mobileSidebarToggle(false);
+    },
+    deferSetup: true
+});
 
 </script>
 
@@ -32,22 +34,17 @@ function logout() {
 
     <div class="bg-[#F2F2F2] flex flex-row min-h-screen">
         <!-- SIDEBAR -->
-        <Sidebar>
-            <template #top></template>
-            <template #mid>
-                <SidebarHrefMenu text="Dashboard" :href="route('dashboard')" method="get" as="button" :active="route().current('dashboard')"/>
-                <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="E&D Test" :href="route('e&dtest')" method="get" as="button" :active="route().current('e&dtest')"/>
-            </template>
-            <template #end>
-                <SidebarButtonMenu text="Log Out" :click="logout"/>
-            </template>
-        </Sidebar>
+        <div v-if="mobileSidebar" id="mobileSidebarContainer" @click="mobileSidebarContainerClickEvent" class="fixed lg:hidden bg-black bg-opacity-50 w-full">
+            <SidebarWithMenu/>
+        </div>
+        <SidebarWithMenu v-if="!mobileSidebar" class="hidden lg:flex"/>
         <!-- CONTENT CONTAINER -->
         <div class="flex flex-col w-full p-[20px] gap-[20px]">
             <!-- HEAD -->
             <div class="flex flex-row justify-between items-center">
-                <div class="flex flex-row items-center gap-[10px]">
-                    <h1 class="font-bold text-[25px]">{{ props.title }}</h1>
+                <div class="flex flex-row items-center gap-[10px] max-w-full">
+                    <button @click="mobileSidebarToggle()" class="static lg:hidden flex-shrink-0"><FontAwesomeIcon size="2x" :icon="faBars" /></button>
+                    <h1 class="font-bold text-[25px] truncate">{{ props.title }}</h1>
                 </div>
             </div>
             <!-- CONTENT -->

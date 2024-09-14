@@ -22,7 +22,7 @@ const formDekripsi = useForm({
 <template>
     <Head title="E&D Test" />
 
-    <AuthLayout title="Encryption And Decryption Test">
+    <AuthLayout title="E&D Test">
 
         <div class="flex flex-col gap-5">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">

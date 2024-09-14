@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CreditsText from '@/Components/Texts/CreditsText.vue';
 import PhotoProfileDefault from '../../assets/icons/photo_profile_default.png';
+
 </script>
 
 <template>
