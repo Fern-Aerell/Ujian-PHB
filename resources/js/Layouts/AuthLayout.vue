@@ -32,7 +32,7 @@ enquire.register("screen and (min-width: 1024px)", {
 
 <template>
 
-    <div class="bg-[#F2F2F2] flex flex-row min-h-screen">
+    <div class="bg-[#F2F2F2] flex flex-row h-screen overflow-hidden">
         <!-- SIDEBAR -->
         <div v-if="mobileSidebar" id="mobileSidebarContainer" @click="mobileSidebarContainerClickEvent" class="fixed lg:hidden bg-black bg-opacity-50 w-full">
             <SidebarWithMenu/>
@@ -48,7 +48,7 @@ enquire.register("screen and (min-width: 1024px)", {
                 </div>
             </div>
             <!-- CONTENT -->
-             <div>
+             <div class="overflow-auto">
                 <slot/>
              </div>
         </div>

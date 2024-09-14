@@ -32,7 +32,8 @@ function logout() {
         <template #top></template>
         <template #mid>
             <SidebarHrefMenu text="Dashboard" :href="route('dashboard')" method="get" as="button" :active="route().current('dashboard')"/>
-            <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="E&D Test" :href="route('e&dtest')" method="get" as="button" :active="route().current('e&dtest')"/>
+            <SidebarHrefMenu text="Account" :href="route('account.edit')" method="get" as="button" :active="route().current('account')"/>
+            <SidebarHrefMenu text="Settings" :href="route('settings')" method="get" as="button" :active="route().current('settings')"/>
         </template>
         <template #end>
             <SidebarButtonMenu text="Log Out" :click="logout"/>
