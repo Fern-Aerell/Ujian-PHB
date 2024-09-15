@@ -161,6 +161,7 @@ return [
     'url' => 'Kolom :attribute harus berupa URL yang valid.',
     'ulid' => 'Kolom :attribute harus merupakan ULID yang valid.',
     'uuid' => 'Kolom :attribute harus merupakan UUID yang valid.',
+    'user_type_not_registered' => 'Tipe akun tidak terdaftar.',
 
     /*
     |--------------------------------------------------------------------------

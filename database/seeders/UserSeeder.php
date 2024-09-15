@@ -16,14 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $userData = [
-            [
-                'type' => 'admin',
-                'name' => 'Admin',
-                'username' => 'admin',
-                'password' => Crypt::encryptString('admin#1234'),
-            ]
-        ];
+        $userData = [];
 
         foreach($userData as $user) {
             $userModel = new User;

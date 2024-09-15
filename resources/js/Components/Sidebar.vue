@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CreditsText from '@/Components/Texts/CreditsText.vue';
-import PhotoProfileDefault from '../../assets/icons/photo_profile_default.png';
+import PhotoProfile from './PhotoProfile.vue';
 
 </script>
 
@@ -11,7 +11,7 @@ import PhotoProfileDefault from '../../assets/icons/photo_profile_default.png';
         <div class="flex flex-col gap-[10px]">
             <!-- PHOTO PROFILE AND USER TYPE -->
             <div class="flex flex-row gap-[15px] items-center">
-                <img :src="PhotoProfileDefault" alt="profile picture" class="w-[45px] h-[45px] rounded-[10px] outline outline-1">
+                <PhotoProfile/>
                 <div class="flex flex-col">
                     <h1 class="text-[15px] font-semibold">{{ $page.props.auth.user.name }}</h1>
                     <p class="text-[13px]">{{ $page.props.auth.user.type }}</p>

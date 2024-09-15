@@ -49,7 +49,7 @@ const closeModal = () => {
             </p>
         </header>
 
-        <Button @click="confirmUserDeletion" text="Hapus Akun" text-color="white" bg-color="danger" class="w-fit px-[20px]" :class="{'opacity-25': form.processing}" :disabled="form.processing"/>
+        <Button @click="confirmUserDeletion" text="Hapus Akun" text-color="white" bg-color="danger" class="!w-fit px-[20px]" :class="{'opacity-25': form.processing}" :disabled="form.processing"/>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
@@ -79,13 +79,13 @@ const closeModal = () => {
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <Button @click="closeModal" text="Kembali" text-color="black" bg-color="grey" class="w-fit px-[20px]"/>
+                    <Button @click="closeModal" text="Kembali" text-color="black" bg-color="grey" class="!w-fit px-[20px]"/>
 
                     <Button
                         text="Hapus Akun"
                         text-color="white" 
                         bg-color="danger"
-                        class="ms-3 w-fit px-[20px]"
+                        class="ms-3 !w-fit px-[20px]"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="deleteUser"

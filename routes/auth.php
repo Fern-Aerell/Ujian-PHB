@@ -7,10 +7,11 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AccountController;
+use App\Http\Middleware\IfNoUserAdminMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', IfNoUserAdminMiddleware::class])->group(function () {
 
     Route::get('verify-email', EmailVerificationPromptController::class)
                 ->name('verification.notice');

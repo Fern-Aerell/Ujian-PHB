@@ -62,7 +62,7 @@ const form = useForm({
             </div>
 
             <div class="flex items-center gap-4">
-                <Button text="Simpan" text-color="white" bg-color="primary" class="w-fit px-[20px]" :class="{'opacity-25': form.processing}" :disabled="form.processing"/>
+                <Button text="Simpan" text-color="white" bg-color="primary" class="!w-fit px-[20px]" :class="{'opacity-25': form.processing}" :disabled="form.processing"/>
 
                 <Transition
                     enter-active-class="transition ease-in-out"
