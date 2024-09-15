@@ -31,7 +31,7 @@ const form = useForm({
 
         <form @submit.prevent="form.patch(route('account.update'))" class="mt-6 space-y-6">
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="name" value="Nama" />
 
                 <TextInput
                     id="name"

@@ -35,7 +35,7 @@ enquire.register("screen and (min-width: 1024px)", {
 
     <div class="bg-[#F2F2F2] flex flex-row h-screen overflow-hidden">
         <!-- SIDEBAR -->
-        <div v-if="mobileSidebar" id="mobileSidebarContainer" @click="mobileSidebarContainerClickEvent" class="fixed lg:hidden bg-black bg-opacity-50 w-full">
+        <div v-if="mobileSidebar" id="mobileSidebarContainer" @click="mobileSidebarContainerClickEvent" class="fixed lg:hidden bg-black bg-opacity-50 w-full z-50">
             <SidebarWithMenu/>
         </div>
         <SidebarWithMenu v-if="!mobileSidebar" class="hidden lg:flex"/>

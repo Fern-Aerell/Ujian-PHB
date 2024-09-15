@@ -17,7 +17,7 @@ const props = defineProps<{
         <!-- WHITE CONTAINER -->
         <div class="flex flex-row bg-[#FFFFFF] shadow-box w-[800px] min-h-[534px]">
             <!-- LOGIN LAYOUT -->
-            <div class="flex flex-col flex-1 p-[30px] w-1/2 h-full">
+            <div class="flex flex-col flex-1 p-[30px] w-1/2 min-h-[534px]">
                 <div class="flex flex-col p-[10px] gap-[20px]">
                     <PgriLogo class="w-[51px]" />
                     <div>
