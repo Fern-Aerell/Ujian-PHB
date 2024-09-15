@@ -6,6 +6,8 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 <template>
     <Head title="Settings" />
     <AuthLayout title="Settings">
-        Nothing to see here yet.
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6 text-gray-900">Belum ada apa-apa disini :(</div>
+        </div>
     </AuthLayout>
 </template>

@@ -7,6 +7,7 @@ import { ref } from 'vue';
 
 const props = defineProps<{
     title: string;
+    class?: string;
 }>();
 
 const mobileSidebar = ref(false);
@@ -48,7 +49,7 @@ enquire.register("screen and (min-width: 1024px)", {
                 </div>
             </div>
             <!-- CONTENT -->
-             <div class="overflow-auto">
+             <div class="overflow-auto" :class="props.class">
                 <slot/>
              </div>
         </div>

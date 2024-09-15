@@ -5,7 +5,7 @@ import { onMounted, ref } from 'vue';
 const props = defineProps<{
     text: string;
     textColor: 'white' | 'black';
-    bgColor: 'green' | 'yellow' | 'red' | 'grey';
+    bgColor: 'green' | 'yellow' | 'red' | 'grey' | 'danger' | 'primary' | 'white';
 }>();
 
 const textColor = ref<string>('');
@@ -34,6 +34,15 @@ onMounted(() => {
             break;
         case 'grey':
             bgColor.value = '#D2D2D2';
+            break;
+        case 'danger':
+            bgColor.value = '#dc2626';
+            break;
+        case 'primary':
+            bgColor.value = '#1f2937';
+            break;
+        case 'white':
+            bgColor.value = '#ffffff';
             break;
     }
 

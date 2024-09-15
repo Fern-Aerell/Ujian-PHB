@@ -33,4 +33,8 @@ return [
     // OG : 'user' => "We can't find a user with that email address.",
     'user' => "Kami tidak dapat menemukan pengguna dengan alamat email tersebut.",
 
+    // Google Translate : Password saat ini tidak benar.
+    // OG : 'current_password_wrong' => "The current password is incorrect.",
+    'current_password_wrong' => "Password saat ini tidak benar.",
+
 ];

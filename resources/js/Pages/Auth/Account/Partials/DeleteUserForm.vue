@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
+import Button from '@/Components/Buttons/Button.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { nextTick, ref } from 'vue';
@@ -42,25 +41,25 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <header>
-            <h2 class="text-lg font-medium text-gray-900">Delete Account</h2>
+            <h2 class="text-lg font-medium text-gray-900">Hapus Akun</h2>
 
             <p class="mt-1 text-sm text-gray-600">
-                Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting
-                your account, please download any data or information that you wish to retain.
+                Setelah akun Anda dihapus, semua sumber daya dan data akan dihapus secara permanen. Sebelum menghapus
+                akun Anda, harap unduh data atau informasi apa pun yang ingin Anda simpan.
             </p>
         </header>
 
-        <DangerButton @click="confirmUserDeletion">Delete Account</DangerButton>
+        <Button @click="confirmUserDeletion" text="Hapus Akun" text-color="white" bg-color="danger" class="w-fit px-[20px]" :class="{'opacity-25': form.processing}" :disabled="form.processing"/>
 
         <Modal :show="confirmingUserDeletion" @close="closeModal">
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900">
-                    Are you sure you want to delete your account?
+                    Apakah Anda yakin ingin menghapus akun Anda?
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data will be permanently deleted. Please
-                    enter your password to confirm you would like to permanently delete your account.
+                    Setelah akun Anda dihapus, semua sumber daya dan data akan dihapus secara permanen. Silakan
+                    masukkan kata sandi Anda untuk mengonfirmasi bahwa Anda ingin menghapus akun Anda secara permanen.
                 </p>
 
                 <div class="mt-6">
@@ -71,7 +70,7 @@ const closeModal = () => {
                         ref="passwordInput"
                         v-model="form.password"
                         type="password"
-                        class="mt-1 block w-3/4"
+                        class="mt-1 block w-full"
                         placeholder="Password"
                         @keyup.enter="deleteUser"
                     />
@@ -80,16 +79,17 @@ const closeModal = () => {
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                    <Button @click="closeModal" text="Kembali" text-color="black" bg-color="grey" class="w-fit px-[20px]"/>
 
-                    <DangerButton
-                        class="ms-3"
+                    <Button
+                        text="Hapus Akun"
+                        text-color="white" 
+                        bg-color="danger"
+                        class="ms-3 w-fit px-[20px]"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="deleteUser"
-                    >
-                        Delete Account
-                    </DangerButton>
+                    />
                 </div>
             </div>
         </Modal>

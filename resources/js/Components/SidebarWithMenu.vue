@@ -32,7 +32,7 @@ function logout() {
         <template #top></template>
         <template #mid>
             <SidebarHrefMenu text="Dashboard" :href="route('dashboard')" method="get" as="button" :active="route().current('dashboard')"/>
-            <SidebarHrefMenu text="Account" :href="route('account.edit')" method="get" as="button" :active="route().current('account')"/>
+            <SidebarHrefMenu text="Account" :href="route('account.edit')" method="get" as="button" :active="route().current('account.edit')"/>
             <SidebarHrefMenu text="Settings" :href="route('settings')" method="get" as="button" :active="route().current('settings')"/>
         </template>
         <template #end>

@@ -15,7 +15,7 @@ const props = defineProps<{
     <!-- GREEN BACKGROUND -->
     <div class="flex justify-center items-center min-h-screen bg-[#7FF186] p-[5vw] sm:p-[50px]">
         <!-- WHITE CONTAINER -->
-        <div class="flex flex-row bg-[#FFFFFF] shadow-box w-[800px] h-[534px]">
+        <div class="flex flex-row bg-[#FFFFFF] shadow-box w-[800px] min-h-[534px]">
             <!-- LOGIN LAYOUT -->
             <div class="flex flex-col flex-1 p-[30px] w-1/2 h-full">
                 <div class="flex flex-col p-[10px] gap-[20px]">
