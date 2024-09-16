@@ -3,7 +3,7 @@ import BasicLayout from '@/Layouts/BasicLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { User } from '@/types';
-import FormUser from './Partials/FormUser.vue';
+import FormUser from '@/Components/Forms/FormUser.vue';
 
 const props = defineProps<{
     user: User

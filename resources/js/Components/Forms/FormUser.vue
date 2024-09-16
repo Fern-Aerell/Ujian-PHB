@@ -24,7 +24,7 @@ const props = defineProps<{
 <template>
     <form @submit.prevent="submit">
         <div>
-            <InputLabel for="type" value="Tipe Akun" />
+            <InputLabel for="type" value="Tipe Akun" class="required" />
             <br>
 
             <select :disabled="props.disableType" id="type" v-model="form.type" required autofocus class="block w-full border-gray-300">
@@ -35,7 +35,7 @@ const props = defineProps<{
         </div>
 
         <div class="mt-4">
-            <InputLabel for="name" value="Nama" />
+            <InputLabel for="name" value="Nama" class="required" />
 
             <TextInput
                 id="name"
@@ -52,7 +52,7 @@ const props = defineProps<{
         </div>
 
         <div class="mt-4">
-            <InputLabel for="username" value="Username" />
+            <InputLabel for="username" value="Username" class="required" />
 
             <TextInput
                 id="username"
@@ -68,7 +68,7 @@ const props = defineProps<{
         </div>
 
         <div class="mt-4">
-            <InputLabel for="password" value="Password" />
+            <InputLabel for="password" value="Password" class="required" />
 
             <TextInput
                 id="password"
@@ -84,7 +84,7 @@ const props = defineProps<{
         </div>
 
         <div class="mt-4">
-            <InputLabel for="password_confirmation" value="Confirm Password" />
+            <InputLabel for="password_confirmation" value="Confirm Password" class="required" />
 
             <TextInput
                 id="password_confirmation"

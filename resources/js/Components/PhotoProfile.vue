@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PhotoProfileDefault from '../../assets/icons/photo_profile_default.png';
+import PhotoProfileImposter from '../../assets/icons/photo_profile_imposter.png';
 import PhotoProfileAdmin from '../../assets/icons/photo_profile_admin.png';
 import PhotoProfileGuru from '../../assets/icons/photo_profile_guru.png';
 import PhotoProfileMurid from '../../assets/icons/photo_profile_murid.png';
@@ -17,7 +17,7 @@ function getPhotoProfileWithType(type: string = usePage().props.auth.user.type) 
     } else if (type === 'murid') {
         return PhotoProfileMurid;
     } else {
-        return PhotoProfileDefault;
+        return PhotoProfileImposter;
     }
 }
 

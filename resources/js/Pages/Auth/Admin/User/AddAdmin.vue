@@ -2,7 +2,7 @@
 import BasicLayout from '@/Layouts/BasicLayout.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert, warningAlert } from '@/alert';
-import FormUser from './Partials/FormUser.vue';
+import FormUser from '@/Components/Forms/FormUser.vue';
 import { onMounted } from 'vue';
 
 const form = useForm({

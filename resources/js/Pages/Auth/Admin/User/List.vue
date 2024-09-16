@@ -64,7 +64,7 @@ async function deleteUser(username: string, id: number) {
             <table v-if="user_list.data.length > 0" class="min-w-full bg-white shadow-md overflow-hidden text-nowrap">
                 <thead class="bg-gray-100">
                     <tr>
-                        <th class="px-4 py-2 text-left">ID</th>
+                        <th class="px-4 py-2 text-left">No</th>
                         <th class="px-4 py-2 text-left">Photo</th>
                         <th class="px-4 py-2 text-left">Name</th>
                         <th class="px-4 py-2 text-left">Username</th>
@@ -73,8 +73,8 @@ async function deleteUser(username: string, id: number) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="user in props.user_list.data" :key="user.id" class="border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">{{ user.id }}</td>
+                    <tr v-for="(user, index) in props.user_list.data" :key="index" class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ index + 1 }}</td>
                         <td class="px-4 py-2">
                             <PhotoProfile :type="user.type" />
                         </td>

@@ -2,7 +2,7 @@
 import BasicLayout from '@/Layouts/BasicLayout.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
-import FormUser from './Partials/FormUser.vue';
+import FormUser from '@/Components/Forms/FormUser.vue';
 
 const form = useForm({
     type: usePage().props.auth.userTypes.at(-1)?.type || '',
