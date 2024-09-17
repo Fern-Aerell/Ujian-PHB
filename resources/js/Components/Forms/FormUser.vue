@@ -9,6 +9,7 @@ const props = defineProps<{
     disableType?: boolean;
     hideBackButton?: boolean;
     showEmailInfo?: boolean;
+    forAdmin?: boolean;
     submitTextButton: string;
     form: InertiaForm<{
         type: string;
@@ -31,7 +32,12 @@ const props = defineProps<{
             <br>
 
             <select :disabled="props.disableType" id="type" v-model="form.type" required autofocus class="block w-full border-gray-300">
-                <option v-for="(userType, index) in $page.props.auth.userTypes" :key="index" :value="userType.type">{{ userType.type }}</option>
+                <template v-if="props.disableType">
+                    <option :value="form.type">{{ form.type }}</option>
+                </template>
+                <template v-else>
+                    <option v-for="(userType, index) in $page.props.auth.userTypes" :key="index" :value="userType.type">{{ userType.type }}</option>
+                </template>
             </select>
 
             <InputError class="mt-2" :message="form.errors.type" />
@@ -71,7 +77,7 @@ const props = defineProps<{
         </div>
 
         <div class="mt-4">
-            <InputLabel for="email" value="Email" :class="{'required': form.type === 'admin'}" />
+            <InputLabel for="email" value="Email" :class="{'required': !props.forAdmin || form.type === 'admin'}" />
 
             <div class="flex flex-col">
                 <TextInput
@@ -79,14 +85,14 @@ const props = defineProps<{
                     type="email"
                     class="block w-full"
                     v-model="form.email"
-                    :required="form.type === 'admin'"
+                    :required="!props.forAdmin || form.type === 'admin'"
                     autocomplete="email"
                     placeholder="Masukkan alamat email"
                 />
-                <div v-if="showEmailInfo">
+                <div v-if="showEmailInfo && form.email">
                     <div v-if="form.email_verified_at" class="flex flex-col gap-1 p-3 bg-[#5BD063]">
                         <h1 class="font-semibold">Info!</h1>
-                        <p>{{ `Email sudah di verifikasi pada ${form.email_verified_at}` }}</p>
+                        <p>{{ `Email sudah di verifikasi pada ${new Date(form.email_verified_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}` }}</p>
                     </div>
                     <div v-else class="flex flex-col gap-1 p-3 bg-[#F1E07F]">
                         <h1 class="font-semibold">Info!</h1>

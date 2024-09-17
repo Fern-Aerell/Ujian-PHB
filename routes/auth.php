@@ -3,26 +3,31 @@
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AccountController;
 use App\Http\Middleware\IfNoUserAdminMiddleware;
+use App\Http\Middleware\VerifyEmailMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware(['auth', IfNoUserAdminMiddleware::class])->group(function () {
 
-    Route::get('verify-email', EmailVerificationPromptController::class)
-                ->name('verification.notice');
+    Route::get('verify-email', [VerifyEmailController::class, 'index'])->name('verification.index');
 
-    Route::get('verify-email/{id}/{hash}', VerifyEmailController::class)
+    Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, 'verify'])
                 ->middleware(['signed', 'throttle:6,1'])
                 ->name('verification.verify');
 
-    Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
+    Route::post('verify-email/send', [VerifyEmailController::class, 'send'])
                 ->middleware('throttle:6,1')
                 ->name('verification.send');
+
+    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+});
+
+Route::middleware(['auth', VerifyEmailMiddleware::class, IfNoUserAdminMiddleware::class])->group(function () {
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
                 ->name('password.confirm');
@@ -30,8 +35,6 @@ Route::middleware(['auth', IfNoUserAdminMiddleware::class])->group(function () {
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
-
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('/dashboard', function () {
         return Inertia::render('Auth/Dashboard');

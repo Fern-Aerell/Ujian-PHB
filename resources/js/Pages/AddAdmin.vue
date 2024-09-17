@@ -10,6 +10,7 @@ const form = useForm({
     name: '',
     username: '',
     email: '',
+    email_verified_at: '',
     password: '',
     password_confirmation: '',
 });

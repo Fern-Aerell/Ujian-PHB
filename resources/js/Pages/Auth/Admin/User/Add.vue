@@ -9,6 +9,7 @@ const form = useForm({
     name: '',
     username: '',
     email: '',
+    email_verified_at: '',
     password: '',
     password_confirmation: '',
 });
@@ -31,6 +32,6 @@ const submit = () => {
 <template>
     <Head title="Add User" />
     <BasicLayout title="Tambah User">
-        <FormUser :form="form" :submit="submit" submit-text-button="Tambahkan"/>
+        <FormUser for-admin :form="form" :submit="submit" submit-text-button="Tambahkan"/>
     </BasicLayout>
 </template>

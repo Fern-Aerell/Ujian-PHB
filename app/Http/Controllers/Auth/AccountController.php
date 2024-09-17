@@ -33,24 +33,24 @@ class AccountController extends Controller
     {
 
         $id = Auth::user()->id;
-
-        $request->validate([
-            'type' => ['required', 'string', new UserType],
-            'name' => 'required|string|max:255',
-            'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($id)],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
-
         $user = User::find($id);
 
         if (!$user) {
             return abort(404, 'User tidak ditemukan');
         }
 
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($id)],
+            'email' => ['required', 'email', Rule::unique(User::class)->ignore($id)],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
         $user->update([
-            'type' => $request->type,
             'name' => $request->name,
             'username' => $request->username,
+            'email' => $request->email,
+            'email_verified_at' => $user->email != $request->email ? null : $request->email_verified_at,
             'password' => Crypt::encryptString($request->password),
         ]);
 

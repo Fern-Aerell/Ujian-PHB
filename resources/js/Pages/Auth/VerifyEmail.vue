@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import Button from '@/Components/Buttons/Button.vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import BasicLayout from '@/Layouts/BasicLayout.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
 
 const props = defineProps<{
     status?: string;
 }>();
 
-const form = useForm({});
+const form = useForm({
+    email: usePage().props.auth.user.email,
+});
 
 const submit = () => {
     form.post(route('verification.send'));
@@ -18,23 +23,38 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Email Verification" />
+    <Head title="Email Verification" />
+    <BasicLayout title="Verifikasi Email">
 
-        <div class="mb-4 text-sm text-gray-600">
-            Thanks for signing up! Before getting started, could you verify your email address by clicking on the link
-            we just emailed to you? If you didn't receive the email, we will gladly send you another.
+        <div class="text-sm text-gray-600">
+            Terima kasih telah mendaftar! Mohon verifikasi email Anda dengan mengklik tautan yang kami kirim.
+            Jika tidak menerima, kami dapat mengirim ulang email verifikasi.
         </div>
 
-        <div class="mb-4 font-medium text-sm text-green-600" v-if="verificationLinkSent">
-            A new verification link has been sent to the email address you provided during registration.
+        <div class="font-medium text-sm text-green-600" v-if="verificationLinkSent">
+            Tautan verifikasi telah dikirim ke email Anda.
         </div>
 
         <form @submit.prevent="submit">
-            <div class="mt-4 flex items-center justify-between">
-                <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Resend Verification Email
-                </PrimaryButton>
+
+            <div class="mt-4">
+                <InputLabel for="email" value="Email" />
+
+                <TextInput
+                    id="email"
+                    type="email"
+                    class="block w-full"
+                    v-model="form.email"
+                    required
+                    autocomplete="email"
+                    placeholder="Masukkan alamat email"
+                />
+
+                <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="flex items-center justify-between mt-4">
+                <Button text="Kirim" text-color="white" type="submit" bg-color="primary" class="!w-fit px-5" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"/>
 
                 <Link
                     :href="route('logout')"
@@ -45,5 +65,5 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
                 >
             </div>
         </form>
-    </GuestLayout>
+    </BasicLayout>
 </template>

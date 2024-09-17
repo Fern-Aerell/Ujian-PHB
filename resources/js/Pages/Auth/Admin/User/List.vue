@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import Button from '@/Components/Buttons/Button.vue';
@@ -69,6 +69,7 @@ async function deleteUser(username: string, id: number) {
                         <th class="px-4 py-2 text-left">Name</th>
                         <th class="px-4 py-2 text-left">Username</th>
                         <th class="px-4 py-2 text-left">Tipe Akun</th>
+                        <th class="px-4 py-2 text-left">Email</th>
                         <th class="px-4 py-2 text-left">Actions</th>
                     </tr>
                 </thead>
@@ -81,6 +82,7 @@ async function deleteUser(username: string, id: number) {
                         <td class="px-4 py-2">{{ user.name }}</td>
                         <td class="px-4 py-2">{{ user.username }}</td>
                         <td class="px-4 py-2">{{ user.type }}</td>
+                        <td class="px-4 py-2">{{ user.email ? `${user.email} ${user.email_verified_at ? '✅' : '⚠️'}` : 'Tidak ada' }}</td>
                         <td class="px-4 py-2">
                             <div class="flex flex-col sm:flex-row gap-2">
                                 <Button @click="$inertia.get(route('user.edit', user.id))" text="Edit" text-color="white" bg-color="primary" class="w-full sm:w-fit px-3 py-1 text-sm"/>

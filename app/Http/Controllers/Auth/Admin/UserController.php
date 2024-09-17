@@ -98,6 +98,7 @@ class UserController extends Controller
                 'name' => $user->name,
                 'username' => $user->username,
                 'email' => $user->email,
+                'email_verified_at' => $user->email_verified_at,
                 'password' => Crypt::decryptString($user->password),
             ]
         ]);
@@ -115,7 +116,7 @@ class UserController extends Controller
             'type' => ['required', 'string', new UserType],
             'name' => 'required|string|max:255',
             'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($user->id)],
-            'email' => ['email', 'nullable', Rule::unique(User::class)->ignore($user->email)],
+            'email' => ['email', 'nullable', Rule::unique(User::class)->ignore($user->id)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

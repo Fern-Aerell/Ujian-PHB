@@ -14,6 +14,7 @@ const form = useForm({
     name: props.user.name,
     username: props.user.username,
     email: props.user.email,
+    email_verified_at: props.user.email_verified_at,
     password: props.user.password,
     password_confirmation: props.user.password,
 });
@@ -36,6 +37,6 @@ const submit = () => {
 <template>
     <Head title="Edit User" />
     <BasicLayout title="Edit User">
-        <FormUser :form="form" :submit="submit" submit-text-button="Simpan"/>
+        <FormUser for-admin show-email-info :form="form" :submit="submit" submit-text-button="Simpan"/>
     </BasicLayout>
 </template>

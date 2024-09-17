@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import SidebarWithMenu from '@/Components/SidebarWithMenu.vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import more_png from '../../assets/icons/more.png';
 import enquire from 'enquire.js';
 import { ref } from 'vue';
 
@@ -44,7 +43,7 @@ enquire.register("screen and (min-width: 1024px)", {
             <!-- HEAD -->
             <div class="flex flex-row justify-between items-center">
                 <div class="flex flex-row items-center gap-[10px] max-w-full">
-                    <button @click="mobileSidebarToggle()" class="static lg:hidden flex-shrink-0"><FontAwesomeIcon size="2x" :icon="faBars" /></button>
+                    <button @click="mobileSidebarToggle()" class="static lg:hidden flex-shrink-0"><img class="w-[32px] h-[32px]" :src="more_png" alt="Hamburger menu"></button>
                     <h1 class="font-bold text-[25px] truncate">{{ props.title }}</h1>
                 </div>
             </div>

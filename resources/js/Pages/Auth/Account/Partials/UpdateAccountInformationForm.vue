@@ -10,6 +10,7 @@ const form = useForm({
     name: user.name,
     username: user.username,
     email: user.email,
+    email_verified_at: user.email_verified_at,
     password: user.password,
     password_confirmation: user.password,
 });
@@ -39,6 +40,6 @@ const submit = () => {
             </p>
         </header>
         <br>
-        <FormUser :disable-type="user.type !== 'admin'" hide-back-button :form="form" :submit="submit" submit-text-button="Simpan" />
+        <FormUser show-email-info :disable-type="user.type !== 'admin'" hide-back-button :form="form" :submit="submit" submit-text-button="Simpan" />
     </section>
 </template>
