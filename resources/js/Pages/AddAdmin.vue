@@ -9,6 +9,7 @@ const form = useForm({
     type: 'admin',
     name: '',
     username: '',
+    email: '',
     password: '',
     password_confirmation: '',
 });

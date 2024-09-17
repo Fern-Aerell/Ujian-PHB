@@ -8,6 +8,7 @@ const form = useForm({
     type: usePage().props.auth.userTypes.at(-1)?.type || '',
     name: '',
     username: '',
+    email: '',
     password: '',
     password_confirmation: '',
 });

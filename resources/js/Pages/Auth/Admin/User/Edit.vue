@@ -13,6 +13,7 @@ const form = useForm({
     type: props.user.type,
     name: props.user.name,
     username: props.user.username,
+    email: props.user.email,
     password: props.user.password,
     password_confirmation: props.user.password,
 });

@@ -8,11 +8,14 @@ import { InertiaForm } from '@inertiajs/vue3';
 const props = defineProps<{
     disableType?: boolean;
     hideBackButton?: boolean;
+    showEmailInfo?: boolean;
     submitTextButton: string;
     form: InertiaForm<{
         type: string;
         name: string;
         username: string;
+        email: string;
+        email_verified_at: string;
         password: string;
         password_confirmation: string;
     }>;
@@ -65,6 +68,34 @@ const props = defineProps<{
             />
 
             <InputError class="mt-2" :message="form.errors.username" />
+        </div>
+
+        <div class="mt-4">
+            <InputLabel for="email" value="Email" :class="{'required': form.type === 'admin'}" />
+
+            <div class="flex flex-col">
+                <TextInput
+                    id="email"
+                    type="email"
+                    class="block w-full"
+                    v-model="form.email"
+                    :required="form.type === 'admin'"
+                    autocomplete="email"
+                    placeholder="Masukkan alamat email"
+                />
+                <div v-if="showEmailInfo">
+                    <div v-if="form.email_verified_at" class="flex flex-col gap-1 p-3 bg-[#5BD063]">
+                        <h1 class="font-semibold">Info!</h1>
+                        <p>{{ `Email sudah di verifikasi pada ${form.email_verified_at}` }}</p>
+                    </div>
+                    <div v-else class="flex flex-col gap-1 p-3 bg-[#F1E07F]">
+                        <h1 class="font-semibold">Info!</h1>
+                        <p>Email belum di verifikasi.</p>
+                    </div>
+                </div>
+            </div>
+
+            <InputError class="mt-2" :message="form.errors.email" />
         </div>
 
         <div class="mt-4">
