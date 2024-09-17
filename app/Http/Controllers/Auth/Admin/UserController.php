@@ -37,7 +37,9 @@ class UserController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('username', 'like', "%{$search}%")
-                    ->orWhere('id', 'like', "%{$search}%");
+                    ->orWhere('id', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('email_verified_at', 'like', "%{$search}%");
             });
         }
 
@@ -55,7 +57,7 @@ class UserController extends Controller
 
     public function addAdmin(): Response
     {
-        return Inertia::render('Auth/Admin/User/AddAdmin');
+        return Inertia::render('AddAdmin');
     }
 
     public function store(Request $request): RedirectResponse
@@ -64,6 +66,7 @@ class UserController extends Controller
             'type' => ['required', 'string', new UserType],
             'name' => 'required|string|max:255',
             'username' => 'required|string|lowercase|max:255|unique:' . User::class,
+            'email' => 'email|nullable|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -71,6 +74,7 @@ class UserController extends Controller
             'type' => $request->type,
             'name' => $request->name,
             'username' => $request->username,
+            'email' => $request->email ? $request->email : null,
             'password' => Crypt::encryptString($request->password),
         ]);
 
@@ -93,6 +97,7 @@ class UserController extends Controller
                 'type' => $user->type,
                 'name' => $user->name,
                 'username' => $user->username,
+                'email' => $user->email,
                 'password' => Crypt::decryptString($user->password),
             ]
         ]);
@@ -110,6 +115,7 @@ class UserController extends Controller
             'type' => ['required', 'string', new UserType],
             'name' => 'required|string|max:255',
             'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'email' => ['email', 'nullable', Rule::unique(User::class)->ignore($user->email)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -117,6 +123,8 @@ class UserController extends Controller
             'type' => $request->type,
             'name' => $request->name,
             'username' => $request->username,
+            'email' => $request->email,
+            'email_verified_at' => $user->email != $request->email ? null : $request->email_verified_at,
             'password' => Crypt::encryptString($request->password),
         ]);
 
