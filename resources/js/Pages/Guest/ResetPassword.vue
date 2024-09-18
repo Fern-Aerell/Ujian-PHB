@@ -11,6 +11,7 @@ import LoginLayout from '@/Layouts/LoginLayout.vue';
 const props = defineProps<{
     username: string;
     token: string;
+    status: string;
 }>();
 
 const form = useForm({
@@ -36,6 +37,8 @@ const submit = () => {
     <LoginLayout title="GANTI PASSWORD" :description="`Masukkan kata sandi baru untuk akun dengan username ${props.username} dan konfirmasi kata sandi baru untuk mengganti kata sandi Anda.`">
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
+
+            <p v-if="props.status">{{ props.status }}</p>
 
             <div class="flex flex-col gap-[5px]">
                 <InputLabel for="password" value="Password Baru" />

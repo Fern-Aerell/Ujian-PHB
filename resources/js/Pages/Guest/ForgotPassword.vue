@@ -7,14 +7,34 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 
 import Button from '@/Components/Buttons/Button.vue';
 import LoginLayout from '@/Layouts/LoginLayout.vue';
+import { onMounted } from 'vue';
+import { failedAlert, successAlert } from '@/alert';
+
+const props = defineProps<{
+    success_msg?: string;
+    failed_msg?: string;
+}>();
+
 
 const form = useForm({
-    username: '',
+    email: '',
 });
 
 const submit = () => {
     form.post(route('password.email'));
 };
+
+onMounted(() => {
+
+    if(props.success_msg) {
+        successAlert(props.success_msg);
+    }
+
+    if(props.failed_msg) {
+        failedAlert(props.failed_msg);
+    }
+    
+});
 
 </script>
 
@@ -26,12 +46,12 @@ const submit = () => {
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
 
             <div class="flex flex-col gap-[5px]">
-                <InputLabel for="username" value="Username" />
+                <InputLabel for="email" value="Email" />
 
-                <TextInput id="username" type="text" v-model="form.username" required autofocus autocomplete="username"
-                    placeholder="Masukkan username..." />
+                <TextInput id="email" type="text" v-model="form.email" required autofocus autocomplete="username"
+                    placeholder="Masukkan email..." />
 
-                <InputError :message="form.errors.username" />
+                <InputError :message="form.errors.email" />
             </div>
 
             <Button text="Ubah Password" text-color="white" bg-color="green" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"/>
