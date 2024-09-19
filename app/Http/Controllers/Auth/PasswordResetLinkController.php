@@ -38,11 +38,16 @@ class PasswordResetLinkController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        var_dump($user);
-        die;
-
         if(!$user) {
-            return back()->with('failed_msg', 'Email tidak terdaftar.');
+            throw ValidationException::withMessages([
+                'email' => 'Email tidak terdaftar.'
+            ]);
+        }
+
+        if($user->email_verified_at == null) {
+            throw ValidationException::withMessages([
+                'email' => 'Email belum diverifikasi.'
+            ]);
         }
         
         $status = Password::sendResetLink(

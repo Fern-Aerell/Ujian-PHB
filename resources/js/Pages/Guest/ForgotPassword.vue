@@ -24,18 +24,6 @@ const submit = () => {
     form.post(route('password.email'));
 };
 
-onMounted(() => {
-
-    if(props.success_msg) {
-        successAlert(props.success_msg);
-    }
-
-    if(props.failed_msg) {
-        failedAlert(props.failed_msg);
-    }
-    
-});
-
 </script>
 
 <template>
@@ -44,6 +32,9 @@ onMounted(() => {
     <LoginLayout title="LUPA PASSWORD" description="Masukkan email atau username Anda untuk menerima link pengaturan ulang kata sandi. Link akan dikirimkan ke email yang terdaftar.">
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
+
+            <p v-if="props.success_msg" class="text-green-500">{{ props.success_msg }}</p>
+            <p v-if="props.failed_msg" class="text-red-500">{{ props.failed_msg }}</p>
 
             <div class="flex flex-col gap-[5px]">
                 <InputLabel for="email" value="Email" />
