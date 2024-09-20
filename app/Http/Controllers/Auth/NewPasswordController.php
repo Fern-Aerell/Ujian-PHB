@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\PasswordResetToken;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,8 +23,19 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): Response
     {
+        echo Crypt::encryptString($request->route('token'));
+        die;
+        $passwordResetToken = PasswordResetToken::where('token', Crypt::encryptString($request->route('token')))->first();
+
+        if(!$passwordResetToken) {
+            return abort(404, 'Token tidak valid');
+        }
+
+        echo $passwordResetToken->user()->username;
+        die;
+
         return Inertia::render('Guest/ResetPassword', [
-            'username' => $request->username,
+            'username' => $passwordResetToken->user->username,
             'token' => $request->route('token'),
         ]);
     }

@@ -11,7 +11,6 @@ import LoginLayout from '@/Layouts/LoginLayout.vue';
 const props = defineProps<{
     username: string;
     token: string;
-    status: string;
 }>();
 
 const form = useForm({
