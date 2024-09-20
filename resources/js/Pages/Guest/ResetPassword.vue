@@ -11,6 +11,8 @@ import LoginLayout from '@/Layouts/LoginLayout.vue';
 const props = defineProps<{
     username: string;
     token: string;
+    success_msg?: string;
+    failed_msg?: string;
 }>();
 
 const form = useForm({
@@ -37,7 +39,8 @@ const submit = () => {
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
 
-            <p v-if="props.status">{{ props.status }}</p>
+            <p v-if="props.success_msg" class="text-green-500">{{ props.success_msg }}</p>
+            <p v-if="props.failed_msg" class="text-red-500">{{ props.failed_msg }}</p>
 
             <div class="flex flex-col gap-[5px]">
                 <InputLabel for="password" value="Password Baru" />

@@ -23,20 +23,25 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request): Response
     {
-        echo Crypt::encryptString($request->route('token'));
-        die;
-        $passwordResetToken = PasswordResetToken::where('token', Crypt::encryptString($request->route('token')))->first();
+        $plainToken = $request->route('token');
+        $email = $request->query('email');
+        $passwordResetToken = PasswordResetToken::where('email', $email)->first();
 
         if(!$passwordResetToken) {
-            return abort(404, 'Token tidak valid');
+            return abort(404, "Email '".$email."' tidak memiliki reset token.");
         }
 
-        echo $passwordResetToken->user()->username;
-        die;
+        $hashToken = $passwordResetToken->token;
+
+        if(!Hash::check($plainToken, $hashToken)) {
+            return abort(404, "Token tidak valid.");
+        }
 
         return Inertia::render('Guest/ResetPassword', [
+            'success_msg' => session('success_msg'),
+            'failed_msg' => session('failed_msg'),
             'username' => $passwordResetToken->user->username,
-            'token' => $request->route('token'),
+            'token' => $plainToken
         ]);
     }
 
@@ -52,6 +57,14 @@ class NewPasswordController extends Controller
             'username' => 'required',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        var_dump($request->token);
+        echo '<br>';
+        var_dump($request->username);
+        echo '<br>';
+        var_dump($request->password);
+        echo '<br>';
+        die;
 
         // Here we will attempt to reset the user's password. If it is successful we
         // will update the password on an actual user model and persist it to the
@@ -72,11 +85,9 @@ class NewPasswordController extends Controller
         // the application's home authenticated view. If there is an error we can
         // redirect them back to where they came from with their error message.
         if ($status == Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('status', __($status));
+            return redirect()->route('login')->with('success_msg', __($status));
         }
 
-        throw ValidationException::withMessages([
-            'username' => [trans($status)],
-        ]);
+        return redirect()->back()->with('failed_msg', trans($status));
     }
 }
