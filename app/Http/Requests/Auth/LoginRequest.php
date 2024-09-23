@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Rules\NoWhitespace;
 use Exception;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
@@ -30,7 +31,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'string'],
+            'id' => ['required', 'string', 'lowercase', 'max:255', new NoWhitespace],
             'password' => ['required', 'string'], 
         ];
     }

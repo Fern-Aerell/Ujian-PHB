@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Rules\CurrentPassword;
+use App\Rules\NoWhitespace;
 use Illuminate\Validation\Rules;
 use App\Rules\UserType;
 use Illuminate\Http\RedirectResponse;
@@ -41,7 +42,7 @@ class AccountController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($id)],
+            'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($id), new NoWhitespace],
             'email' => ['required', 'email', Rule::unique(User::class)->ignore($id)],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
