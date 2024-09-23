@@ -29,7 +29,7 @@ const submit = () => {
 <template>
     <Head title="Forgot Password" />
 
-    <LoginLayout title="LUPA PASSWORD" description="Masukkan email atau username Anda untuk menerima link pengaturan ulang kata sandi. Link akan dikirimkan ke email yang terdaftar.">
+    <LoginLayout title="LUPA PASSWORD" description="Masukkan email Anda untuk menerima link pengaturan ulang kata sandi. Link akan dikirimkan ke email yang terdaftar.">
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
 
