@@ -41,8 +41,4 @@ Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::patch('/account', [AccountController::class, 'update'])->name('account.update');
     Route::delete('/account', [AccountController::class, 'destroy'])->name('account.destroy');
-    
-    Route::get('/settings', function() {
-        return Inertia::render('Auth/Settings');
-    })->name('settings');
 });

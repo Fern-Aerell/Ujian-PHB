@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\Admin\ConfigController;
 use App\Http\Controllers\Auth\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\VerifyEmailMiddleware;
@@ -14,5 +15,7 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::get('/user/{id}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::post('/user/{id}/update', [UserController::class, 'update'])->name('user.update');
     Route::delete('/user/{id}/delete', [UserController::class, 'delete'])->name('user.delete');
+
+    Route::get('/config', [ConfigController::class, 'index'])->name('config');
 
 });
