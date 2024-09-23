@@ -10,8 +10,10 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 import Button from '@/Components/Buttons/Button.vue';
 import LoginLayout from '@/Layouts/LoginLayout.vue';
 
-defineProps<{
+const props = defineProps<{
     canResetPassword?: boolean;
+    success_msg?: string;
+    failed_msg?: string;
 }>();
 
 const form = useForm({
@@ -36,6 +38,10 @@ const submit = () => {
     <LoginLayout title="SELAMAT DATANG!" description="Di ujian phb smk pgri pekanbaru">
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
+
+            <p v-if="props.success_msg" class="text-green-500">{{ props.success_msg }}</p>
+            <p v-if="props.failed_msg" class="text-red-500">{{ props.failed_msg }}</p>
+
             <div class="flex flex-col gap-[5px]">
                 <InputLabel for="username" value="Username" />
 
