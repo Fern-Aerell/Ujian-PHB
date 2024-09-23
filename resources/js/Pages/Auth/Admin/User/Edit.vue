@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import BasicLayout from '@/Layouts/BasicLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { User } from '@/types';
 import FormUser from '@/Components/Forms/FormUser.vue';
+import CustomHead from '@/Components/CustomHead.vue';
 
 const props = defineProps<{
     user: User
@@ -35,7 +36,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Edit User" />
+    <CustomHead title="Edit User" />
     <BasicLayout title="Edit User">
         <FormUser for-admin show-email-info :form="form" :submit="submit" submit-text-button="Simpan"/>
     </BasicLayout>

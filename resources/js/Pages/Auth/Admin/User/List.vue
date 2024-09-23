@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import CustomHead from '@/Components/CustomHead.vue';
 import { router } from '@inertiajs/vue3';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import Button from '@/Components/Buttons/Button.vue';
@@ -34,7 +34,7 @@ async function deleteUser(username: string, id: number) {
 </script>
 
 <template>
-    <Head title="User List" />
+    <CustomHead title="User List" />
     <AuthLayout title="User List" class="flex flex-col gap-3">
         <div class="flex flex-col md:flex-row justify-between mb-4 gap-4">
             <!-- Add User Button -->

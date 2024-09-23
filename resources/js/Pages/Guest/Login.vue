@@ -4,7 +4,8 @@ import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import CustomHead from '@/Components/CustomHead.vue';
 
 import Button from '@/Components/Buttons/Button.vue';
 import LoginLayout from '@/Layouts/LoginLayout.vue';
@@ -31,9 +32,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Log in" />
+    <CustomHead title="Log in" />
 
-    <LoginLayout title="SELAMAT DATANG!" description="Di ujian phb smk pgri pekanbaru">
+    <LoginLayout title="SELAMAT DATANG!" :description="`Di ${$page.props.config.activity_type} ${$page.props.config.activity_title_abbreviation} ${$page.props.config.school_name}`">
 
         <form @submit.prevent="submit" class="flex flex-col gap-[20px]">
 

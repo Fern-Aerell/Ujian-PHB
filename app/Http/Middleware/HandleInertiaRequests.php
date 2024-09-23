@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Config;
 use App\Models\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -33,6 +34,7 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            'config' => Config::first(),
             'auth' => [
                 'user' => $request->user() ? [
                     'id' => $request->user()->id,
@@ -43,7 +45,7 @@ class HandleInertiaRequests extends Middleware
                     'email_verified_at' => $request->user()->email_verified_at,
                     'password' => Crypt::decryptString($request->user()->password),
                 ] : null,
-                'userTypes' => UserType::all()
+                'userTypes' => UserType::all(),
             ],
         ];
     }

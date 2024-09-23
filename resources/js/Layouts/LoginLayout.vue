@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import Slider from '@/Components/Sliders/Slider.vue';
-import PgriLogo from '@/Components/Logos/PgriLogo.vue';
+import Logo from '@/Components/Logos/Logo.vue';
 import CreditsText from '@/Components/Texts/CreditsText.vue';
 
 const props = defineProps<{
@@ -19,7 +19,7 @@ const props = defineProps<{
             <!-- LOGIN LAYOUT -->
             <div class="flex flex-col flex-1 p-[30px] w-1/2 min-h-[534px]">
                 <div class="flex flex-col p-[10px] gap-[20px]">
-                    <PgriLogo class="w-[51px]" />
+                    <Logo class="w-[51px]" />
                     <div>
                         <h1 class="text-[20px]">{{ title }}</h1>
                         <p class="text-[15px] opacity-[70%]">{{ description }}</p>

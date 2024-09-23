@@ -3,7 +3,8 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { useForm } from '@inertiajs/vue3';
+import CustomHead from '@/Components/CustomHead.vue';
 
 import Button from '@/Components/Buttons/Button.vue';
 import LoginLayout from '@/Layouts/LoginLayout.vue';
@@ -33,7 +34,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Reset Password" />
+    <CustomHead title="Reset Password" />
     
     <LoginLayout title="GANTI PASSWORD" :description="`Masukkan kata sandi baru untuk akun dengan username ${props.username} dan konfirmasi kata sandi baru untuk mengganti kata sandi Anda.`">
 

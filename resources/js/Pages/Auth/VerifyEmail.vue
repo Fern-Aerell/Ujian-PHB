@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import Button from '@/Components/Buttons/Button.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Link, useForm, usePage } from '@inertiajs/vue3';
+import CustomHead from '@/Components/CustomHead.vue';
 import BasicLayout from '@/Layouts/BasicLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -23,7 +24,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 </script>
 
 <template>
-    <Head title="Email Verification" />
+    <CustomHead title="Email Verification" />
     <BasicLayout title="Verifikasi Email">
 
         <div class="text-sm text-gray-600">

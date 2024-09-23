@@ -56,11 +56,6 @@ class UserController extends Controller
         return Inertia::render('Auth/Admin/User/Add');
     }
 
-    public function addAdmin(): Response
-    {
-        return Inertia::render('AddAdmin');
-    }
-
     public function store(Request $request): RedirectResponse
     {
         $request->validate([

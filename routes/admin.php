@@ -2,11 +2,10 @@
 
 use App\Http\Controllers\Auth\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
-use App\Http\Middleware\IfNoUserAdminMiddleware;
 use App\Http\Middleware\VerifyEmailMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class, IfNoUserAdminMiddleware::class])->group(function () {
+Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class])->group(function () {
     
     Route::get('/user/list', [UserController::class, 'list'])->name('user.list');
 

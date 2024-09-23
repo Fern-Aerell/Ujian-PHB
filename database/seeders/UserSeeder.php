@@ -16,15 +16,19 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $userData = [];
+        $userData = [
+            [
+                'type' => 'admin',
+                'name' => 'Admin',
+                'username' => 'admin',
+                'email' => 'admin@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Crypt::encryptString('admin#1234'),
+            ]
+        ];
 
         foreach($userData as $user) {
-            $userModel = new User;
-            $userModel->type = $user['type'];
-            $userModel->name = $user['name'];
-            $userModel->username = $user['username'];
-            $userModel->password = $user['password'];
-            $userModel->save();
+            User::create($user);
         }
     }
 }

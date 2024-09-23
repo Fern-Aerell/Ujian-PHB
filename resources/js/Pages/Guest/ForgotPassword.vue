@@ -3,12 +3,11 @@
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import CustomHead from '@/Components/CustomHead.vue';
 
 import Button from '@/Components/Buttons/Button.vue';
 import LoginLayout from '@/Layouts/LoginLayout.vue';
-import { onMounted } from 'vue';
-import { failedAlert, successAlert } from '@/alert';
 
 const props = defineProps<{
     success_msg?: string;
@@ -27,7 +26,7 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Forgot Password" />
+    <CustomHead title="Forgot Password" />
 
     <LoginLayout title="LUPA PASSWORD" description="Masukkan email Anda untuk menerima link pengaturan ulang kata sandi. Link akan dikirimkan ke email yang terdaftar.">
 

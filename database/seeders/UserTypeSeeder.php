@@ -20,9 +20,9 @@ class UserTypeSeeder extends Seeder
         ];
 
         foreach($typeData as $type) {
-            $typeModel = new UserType;
-            $typeModel->type = $type;
-            $typeModel->save();
+            UserType::create([
+                'type' => $type
+            ]);
         }
     }
 }

@@ -2,16 +2,14 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
-use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AccountController;
-use App\Http\Middleware\IfNoUserAdminMiddleware;
 use App\Http\Middleware\VerifyEmailMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware(['auth', IfNoUserAdminMiddleware::class])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     Route::get('verify-email', [VerifyEmailController::class, 'index'])->name('verification.index');
 
@@ -27,7 +25,7 @@ Route::middleware(['auth', IfNoUserAdminMiddleware::class])->group(function () {
 
 });
 
-Route::middleware(['auth', VerifyEmailMiddleware::class, IfNoUserAdminMiddleware::class])->group(function () {
+Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
 
     Route::get('confirm-password', [ConfirmablePasswordController::class, 'show'])
                 ->name('password.confirm');

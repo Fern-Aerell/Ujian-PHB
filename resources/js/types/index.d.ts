@@ -36,7 +36,16 @@ export interface UserListResponse {
     total: number;
 }
 
+export interface Config {
+    logo: string;
+    school_name: string;
+    activity_type: string;
+    activity_title: string;
+    activity_title_abbreviation: string;
+}
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+    config: Config;
     auth: {
         user: User;
         userTypes: Array<UserType>;

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AuthLayout from '@/Layouts/AuthLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import CustomHead from '@/Components/CustomHead.vue';
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <CustomHead title="Dashboard" />
 
     <AuthLayout title="Dashboard">
 
