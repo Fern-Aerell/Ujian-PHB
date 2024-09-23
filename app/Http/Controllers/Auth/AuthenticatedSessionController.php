@@ -21,8 +21,6 @@ class AuthenticatedSessionController extends Controller
         return Inertia::render('Guest/Login', [
             'success_msg' => session('success_msg'),
             'failed_msg' => session('failed_msg'),
-            'canResetPassword' => Route::has('password.request'),
-            'status' => session('status'),
         ]);
     }
 

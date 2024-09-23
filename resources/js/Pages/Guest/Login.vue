@@ -3,7 +3,6 @@
 import Checkbox from '@/Components/Checkbox.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
@@ -11,13 +10,12 @@ import Button from '@/Components/Buttons/Button.vue';
 import LoginLayout from '@/Layouts/LoginLayout.vue';
 
 const props = defineProps<{
-    canResetPassword?: boolean;
     success_msg?: string;
     failed_msg?: string;
 }>();
 
 const form = useForm({
-    username: '',
+    id: '',
     password: '',
     remember: false,
 });
@@ -43,12 +41,12 @@ const submit = () => {
             <p v-if="props.failed_msg" class="text-red-500">{{ props.failed_msg }}</p>
 
             <div class="flex flex-col gap-[5px]">
-                <InputLabel for="username" value="Username" />
+                <InputLabel for="id" value="Email/Username" />
 
-                <TextInput id="username" type="text" v-model="form.username" required autofocus autocomplete="username"
-                    placeholder="Masukkan username..." />
+                <TextInput id="id" type="text" v-model="form.id" required autofocus autocomplete="id"
+                    placeholder="Masukkan email atau username..." />
 
-                <InputError :message="form.errors.username" />
+                <InputError :message="form.errors.id" />
             </div>
 
             <div class="flex flex-col gap-[5px]">
@@ -68,7 +66,7 @@ const submit = () => {
                     <span>Masuk Otomatis</span>
                 </label>
 
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-[#637BF6]">
+                <Link :href="route('password.request')" class="underline text-[#637BF6]">
                 Lupa Password?
                 </Link>
             </div>

@@ -30,7 +30,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string'],
+            'id' => ['required', 'string'],
             'password' => ['required', 'string'], 
         ];
     }
@@ -44,18 +44,18 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $credentials = $this->only('username', 'password');
-        $username = $credentials['username'];
+        $credentials = $this->only('id', 'password');
+        $id = $credentials['id'];
         $password = $credentials['password'];
 
-        $user = User::where('username', $username)->first();
+        $user = User::where('username', $id)->orWhere('email', $id)->whereNotNull('email_verified_at')->first();
 
         if(!$user || Crypt::decryptString($user->password) !== $password) {
             // Gagal
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'username' => trans('auth.failed'),
+                'id' => trans('auth.failed'),
             ]);
 
             return;
@@ -94,7 +94,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'username' => trans('auth.throttle', [
+            'id' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -106,6 +106,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('username')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('id')).'|'.$this->ip());
     }
 }
