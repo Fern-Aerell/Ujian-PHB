@@ -12,6 +12,17 @@ class ConfigSeeder extends Seeder
      */
     public function run(): void
     {
+        $folder_logo_in_storage = __DIR__.'/../../storage/app/public/logo';
+        $file_logo = __DIR__.'/../../resources/assets/logo/logo.png';
+
+        if(!file_exists($folder_logo_in_storage)) {
+            mkdir($folder_logo_in_storage, 0777, true);
+        }
+
+        if(file_exists($file_logo)) {
+            copy($file_logo, __DIR__.'/../../storage/app/public/logo/logo.png');
+        }
+
         $configData = [
             [
                 'logo' => 'storage/logo/logo.png',
