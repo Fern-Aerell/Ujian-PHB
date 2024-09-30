@@ -10,7 +10,7 @@
         "@tailwindcss/forms": "^0.5.3",
         "@types/enquire.js": "^2.1.5",
         "@vitejs/plugin-vue": "^5.0.0",
-        "@vueuse/core": "^11.0.3",
+        "@vueuse/core": "^11.1.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^1.0",
