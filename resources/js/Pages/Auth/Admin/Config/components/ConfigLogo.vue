@@ -1,20 +1,37 @@
-<script setup lang="ts">
+ky<script setup lang="ts">
+import { ref } from 'vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
 
-import { useFileDialog } from '@vueuse/core';
+const selectedImage = ref<string | null>(null);
 
-const { files, open, reset, onCancel, onChange } = useFileDialog({
-  accept: 'image/*',
-  directory: false,
-  multiple: false
-})
-
+function onFileChange(event: Event) {
+  const fileInput = event.target as HTMLInputElement;
+  if(fileInput.files && fileInput.files[0]) {
+    const file = fileInput.files[0];
+    selectedImage.value = URL.createObjectURL(file);
+  }
+}
 </script>
 
 <template>
-    <div class="bg-white p-5 w-fit rounded-md">
-        <h1>Logo</h1>
-        <p>Ini akan digunakan untuk icon web dan beberapa halaman web.</p>
-        <p v-if="files">{{ files[0].name }}</p>
-        <button @click="() => open()"><img :src="$page.props.config.logo" alt="logo"></button>
+    <div class="flex flex-col bg-white p-5 w-fit rounded-md gap-4">
+        <div class="flex flex-col gap-1">
+          <h1 class="font-bold text-xl">Logo</h1>
+          <p>Ini akan digunakan untuk icon web dan beberapa halaman web.</p>
+        </div>
+        <div class="flex flex-row items-center gap-3">
+          <img :src="selectedImage || $page.props.config.logo" alt="logo" class="w-[64px] h-[64px]">
+          <PrimaryButton @click="$refs.fileInput.click()">Ubah foto</PrimaryButton>
+          <!-- Input file yg disembunyikan -->
+          <input 
+            ref="fileInput"
+            type="file" 
+            class="hidden"
+            @change="onFileChange"
+            accept="image/*"
+            name="logo" 
+            id="logo"
+          >
+        </div>
     </div>
-</template>j
+</template>

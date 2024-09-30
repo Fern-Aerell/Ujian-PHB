@@ -9,6 +9,7 @@
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.3",
         "@types/enquire.js": "^2.1.5",
+        "@types/node": "^22.7.4",
         "@vitejs/plugin-vue": "^5.0.0",
         "@vueuse/core": "^11.1.0",
         "autoprefixer": "^10.4.12",
