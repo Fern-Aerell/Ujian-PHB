@@ -52,10 +52,12 @@ onChange((files) => {
 </script>
 
 <template>
-    <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-[450px] h-fit rounded-md gap-4">
+    <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md gap-4">
       <div class="flex flex-col gap-1">
         <InputLabel for="logo" class="required" value="Logo"/>
-        <button type="button" @click="() => open()"><img :src="image || $page.props.config.logo" alt="logo" class="w-[100px] h-[100px] rounded-full"></button>
+              <button type="button" @click="() => open()" title="Klik untuk mengganti logo" class="w-fit">
+                <img :src="image || $page.props.config.logo" alt="logo" class="w-[100px] h-[100px] rounded-full">
+              </button>
       </div>
       <div class="flex flex-col gap-1">
         <InputLabel for="school_name" class="required" value="School name"/>
