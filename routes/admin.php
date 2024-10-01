@@ -17,5 +17,6 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::delete('/user/{id}/delete', [UserController::class, 'delete'])->name('user.delete');
 
     Route::get('/config', [ConfigController::class, 'index'])->name('config');
+    Route::post('/config/update', [ConfigController::class, 'update'])->name('config.update');
 
 });

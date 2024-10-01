@@ -1,18 +1,26 @@
 import Swal from "sweetalert2";
 
-export function successAlert(message: string) {
+export function successAlert(message: string, isConfirmed?: Function) {
     Swal.fire({
         position: 'center',
         icon: 'success',
-        title: message
+        title: message,
+    }).then(result => {
+        if(isConfirmed && result.isConfirmed) {
+            isConfirmed();
+        }
     });
 }
 
-export function failedAlert(message: string) {
+export function failedAlert(message: string, isConfirmed?: Function) {
     Swal.fire({
         title: "Gagal",
         text: message,
         icon: "error",
+    }).then(result => {
+        if(isConfirmed && result.isConfirmed) {
+            isConfirmed();
+        }
     });
 }
 
