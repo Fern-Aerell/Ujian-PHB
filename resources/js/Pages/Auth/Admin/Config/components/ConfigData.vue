@@ -7,7 +7,7 @@ import InputError from '@/Components/InputError.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { ref, computed } from 'vue';
-import { stringFormatDate } from '@/utils';
+import { stringFormatDateWithDay } from '@/utils';
 
 const image = ref<string | null>(null);
 
@@ -171,7 +171,7 @@ onChange((files) => {
             Tanggal ujian tidak valid
           </p>
           <p v-else>
-            Ujian akan berlagsung pada tanggal {{ stringFormatDate(form.exam_date_start) }} sampai {{ stringFormatDate(form.exam_date_end) }}
+            Ujian akan berlagsung pada {{ stringFormatDateWithDay(form.exam_date_start) }} sampai {{ stringFormatDateWithDay(form.exam_date_end) }}
           </p>
         </div>
       </div>
