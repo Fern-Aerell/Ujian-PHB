@@ -30,7 +30,44 @@ class ConfigController extends Controller
             'activity_title_abbreviation' => 'required|string|max:255',
             'exam_date_start' => 'required|date|regex:/^\d{4}-\d{2}-\d{2}$/',
             'exam_date_end' => 'required|date|regex:/^\d{4}-\d{2}-\d{2}$/|after_or_equal:exam_date_start',
-            'holiday_date' => 'nullable|string',
+            'holiday_date' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($request) {
+                    if (empty(trim($value))) {
+                        return;
+                    }
+
+                    $holidays = array_map('intval', explode(',', $value));
+                    $startDate = new \DateTime($request->exam_date_start);
+                    $endDate = new \DateTime($request->exam_date_end);
+
+                    $isValid = true;
+                    $formattedHolidays = [];
+
+                    foreach ($holidays as $day) {
+                        $holidayDate = clone $startDate;
+                        $holidayDate->setDate($holidayDate->format('Y'), $holidayDate->format('m'), $day);
+
+                        if ($holidayDate < $startDate || $holidayDate > $endDate) {
+                            $isValid = false;
+                            break;
+                        }
+
+                        $formattedDate = $holidayDate->format('Y-m-d');
+                        if (in_array($formattedDate, $formattedHolidays)) {
+                            $isValid = false;
+                            break;
+                        }
+
+                        $formattedHolidays[] = $formattedDate;
+                    }
+
+                    if (!$isValid) {
+                        $fail('Tanggal libur tidak valid. Ada tanggal yang duplikat atau di luar rentang ujian.');
+                    }
+                },
+            ],
             'exam_time_start' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
             'exam_time_end' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
         ]);
@@ -53,5 +90,4 @@ class ConfigController extends Controller
         $config->save();
 
         return redirect()->back();
-
     }}

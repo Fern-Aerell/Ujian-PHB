@@ -12,9 +12,9 @@ import { stringFormatDateWithDay } from '@/utils';
 const image = ref<string | null>(null);
 
 const { files, open, reset, onChange } = useFileDialog({
-  accept: 'image/*', // Set to accept only image files
-  directory: false, // Select directories instead of files if set true
-  multiple: false, // Allow selecting multiple files if set true
+  accept: 'image/*',
+  directory: false,
+  multiple: false,
 })
 
 const form = useForm<{
@@ -42,11 +42,62 @@ const form = useForm<{
 });
 
 const isExamDateValid = computed(() => {
-  return new Date(form.exam_date_end) >= new Date() && new Date(form.exam_date_start) <= new Date(form.exam_date_end);});
+  const startDate = new Date(form.exam_date_start);
+  const endDate = new Date(form.exam_date_end);
+  if (!form.holiday_date.trim()) {
+    return endDate >= new Date() && startDate <= endDate;
+  }
+  const holidays = form.holiday_date.split(',').map(d => parseInt(d.trim()));
+  const isHolidayValid = holidays.every(day => {
+    const holidayDate = new Date(startDate);
+    holidayDate.setDate(day);
+    return holidayDate >= startDate && holidayDate <= endDate;
+  });
+  return endDate >= new Date() && startDate <= endDate && isHolidayValid;
+});
+
+const formatHolidays = computed((): { formattedHolidays: string[], isValid: boolean } => {
+  if (!form.holiday_date.trim()) {
+    return { formattedHolidays: [], isValid: true };
+  }
+
+  const holidays: number[] = form.holiday_date.split(',').map(d => parseInt(d.trim()));
+  const startDate: Date = new Date(form.exam_date_start);
+  const endDate: Date = new Date(form.exam_date_end);
+
+  let formattedHolidays: string[] = [];
+  let currentDate: Date = new Date(startDate);
+  let isValid = true;
+
+  while (currentDate <= endDate) {
+    const currentDay: number = currentDate.getDate();
+    if (holidays.includes(currentDay)) {
+      const formattedDate = stringFormatDateWithDay(currentDate.toDateString());
+      if (!formattedHolidays.includes(formattedDate)) {
+        formattedHolidays.push(formattedDate);
+      } else {
+        isValid = false;
+      }
+      holidays.splice(holidays.indexOf(currentDay), 1);
+    }
+
+    if (holidays.length === 0) {
+      break;
+    }
+
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  if (holidays.length > 0) {
+    isValid = false;
+  }
+
+  return { formattedHolidays, isValid };
+});
 
 const submit = () => {
-    if (!isExamDateValid.value) {
-      failedAlert('Tanggal ujian tidak valid. Tidak dapat menyimpan data.');
+    if (!isExamDateValid.value || !formatHolidays.value.isValid) {
+      failedAlert('Tanggal ujian atau tanggal libur tidak valid. Tidak dapat menyimpan data.');
       return;
     }
     form.post(route('config.update'), {
@@ -149,7 +200,6 @@ onChange((files) => {
             id="holiday_date" 
             class="flex-1"
             v-model="form.holiday_date"
-            required
             autocomplete="holiday_date"
             placeholder="Masukkan tanggal libur, contoh: 20,21,26..."
           />
@@ -157,22 +207,33 @@ onChange((files) => {
         </div>
         <InputError class="mt-2" :message="form.errors.holiday_date" />
         <div :class="['flex flex-col gap-1 p-3', 
-          !isExamDateValid
+          !isExamDateValid || !formatHolidays.isValid
           ? 'bg-[#FF6B6B]' 
           : 'bg-[#5BD063]'
         ]">
           <h1 class="font-semibold">
-            {{ !isExamDateValid
+            {{ !isExamDateValid || !formatHolidays.isValid
               ? 'Error!' 
-              : 'Info!' 
+              : 'Ringkasan!' 
             }}
           </h1>
           <p v-if="!isExamDateValid">
             Tanggal ujian tidak valid
           </p>
-          <p v-else>
-            Ujian akan berlagsung pada {{ stringFormatDateWithDay(form.exam_date_start) }} sampai {{ stringFormatDateWithDay(form.exam_date_end) }}
+          <p v-else-if="!formatHolidays.isValid">
+            Tanggal libur tidak valid. Ada tanggal yang duplikat atau di luar rentang ujian.
           </p>
+          <template v-else>
+            <p>
+              Ujian akan berlangsung pada <strong>{{ stringFormatDateWithDay(form.exam_date_start) }}</strong> sampai <strong>{{ stringFormatDateWithDay(form.exam_date_end) }}</strong>
+            </p>
+            <p v-if="formatHolidays.formattedHolidays.length > 0">
+              Ujian akan libur pada: <strong>{{ formatHolidays.formattedHolidays.join(', ') }}</strong>
+            </p>
+            <p v-else>
+              Tidak ada hari libur untuk ujian ini
+            </p>
+          </template>
         </div>
       </div>
       <div class="flex flex-col gap-1">
@@ -188,6 +249,6 @@ onChange((files) => {
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_end" />
       </div>
-      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamDateValid }" :disabled="form.processing || !isExamDateValid"/>
+      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamDateValid || !formatHolidays.isValid }" :disabled="form.processing || !isExamDateValid || !formatHolidays.isValid"/>
     </form>
 </template>
