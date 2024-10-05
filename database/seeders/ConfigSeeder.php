@@ -29,7 +29,12 @@ class ConfigSeeder extends Seeder
                 'school_name' => 'SMK PGRI PEKANBARU',
                 'activity_type' => 'Ujian',
                 'activity_title' => 'Penilaian Harian Bulanan',
-                'activity_title_abbreviation' => 'PHB'
+                'activity_title_abbreviation' => 'PHB',
+                'exam_date_start' => '2024-10-02',
+                'exam_date_end' => '2024-10-10',
+                'holiday_date' => '5,6',
+                'exam_time_start' => '12:00',
+                'exam_time_end' => '16:00',
             ]
         ];
 

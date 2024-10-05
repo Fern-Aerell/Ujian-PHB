@@ -42,6 +42,11 @@ export interface Config {
     activity_type: string;
     activity_title: string;
     activity_title_abbreviation: string;
+    exam_date_start: string;
+    exam_date_end: string;
+    holiday_date: string;
+    exam_time_start: string;
+    exam_time_end: string;
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {

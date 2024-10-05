@@ -4,6 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Button from '@/Components/Buttons/Button.vue';
 import { InertiaForm } from '@inertiajs/vue3';
+import { stringFormatDate } from '@/utils';
 
 const props = defineProps<{
     disableType?: boolean;
@@ -92,7 +93,7 @@ const props = defineProps<{
                 <div v-if="showEmailInfo && form.email">
                     <div v-if="form.email_verified_at" class="flex flex-col gap-1 p-3 bg-[#5BD063]">
                         <h1 class="font-semibold">Info!</h1>
-                        <p>{{ `Email sudah di verifikasi pada ${new Date(form.email_verified_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}` }}</p>
+                        <p>{{ `Email sudah di verifikasi pada ${stringFormatDate(form.email_verified_at)}` }}</p>
                     </div>
                     <div v-else class="flex flex-col gap-1 p-3 bg-[#F1E07F]">
                         <h1 class="font-semibold">Info!</h1>

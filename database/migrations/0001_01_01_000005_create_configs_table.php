@@ -18,6 +18,11 @@ return new class extends Migration
             $table->string('activity_type');
             $table->string('activity_title');
             $table->string('activity_title_abbreviation');
+            $table->date('exam_date_start');
+            $table->date('exam_date_end');
+            $table->string('holiday_date')->nullable();
+            $table->time('exam_time_start');
+            $table->time('exam_time_end');
         });
     }
 

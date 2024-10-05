@@ -14,7 +14,11 @@ class Config extends Model
         'school_name',
         'activity_type',
         'activity_title',
-        'activity_title_abbreviation'
+        'activity_title_abbreviation',
+        'exam_date_start',
+        'exam_date_end',
+        'exam_time_start',
+        'exam_time_end',
     ];
 
     public $timestamps = false;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ExamTimeCard from './ExamTimeCard.vue';
 import Swal from 'sweetalert2';
 import Sidebar from './Sidebar.vue';
 import SidebarHrefMenu from '@/Components/SidebarHrefMenu.vue';
@@ -29,7 +30,9 @@ function logout() {
 
 <template>
     <Sidebar>
-        <template #top></template>
+        <template #top>
+            <ExamTimeCard/>
+        </template>
         <template #mid>
             <SidebarHrefMenu text="Dashboard" :href="route('dashboard')" method="get" as="button" :active="route().current('dashboard')"/>
             <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="User List" :href="route('user.list')" method="get" as="button" :active="route().current('user.list')"/>
