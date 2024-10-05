@@ -28,8 +28,8 @@ class ConfigController extends Controller
             'activity_type' => 'required|string|max:255',
             'activity_title' => 'required|string|max:255',
             'activity_title_abbreviation' => 'required|string|max:255',
-            'exam_date_start' => 'required|string|regex:/^\d{4}-\d{2}-\d{2}$/',
-            'exam_date_end' => 'required|string|regex:/^\d{4}-\d{2}-\d{2}$/',
+            'exam_date_start' => 'required|date|regex:/^\d{4}-\d{2}-\d{2}$/',
+            'exam_date_end' => 'required|date|regex:/^\d{4}-\d{2}-\d{2}$/|after_or_equal:exam_date_start',
             'holiday_date' => 'nullable|string',
             'exam_time_start' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
             'exam_time_end' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
@@ -53,5 +53,5 @@ class ConfigController extends Controller
         $config->save();
 
         return redirect()->back();
-    }
-}
+
+    }}
