@@ -6,7 +6,7 @@ import { useFileDialog } from '@vueuse/core';
 import InputError from '@/Components/InputError.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { stringFormatDate } from '@/utils';
 
 const image = ref<string | null>(null);
@@ -41,7 +41,14 @@ const form = useForm<{
   exam_time_end: usePage().props.config.exam_time_end,
 });
 
+const isExamDateValid = computed(() => {
+  return new Date(form.exam_date_end) >= new Date() && new Date(form.exam_date_start) <= new Date(form.exam_date_end);});
+
 const submit = () => {
+    if (!isExamDateValid.value) {
+      failedAlert('Tanggal ujian tidak valid. Tidak dapat menyimpan data.');
+      return;
+    }
     form.post(route('config.update'), {
       onError: (error) => {
         failedAlert(error.message);
@@ -135,9 +142,23 @@ onChange((files) => {
           <p  class="flex-1">End</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_date_end" />
-        <div class="flex flex-col gap-1 p-3 bg-[#5BD063]">
-          <h1 class="font-semibold">Info!</h1>
-          <p>Ujian akan berlagsung pada tanggal {{ stringFormatDate(form.exam_date_start) }} sampai {{ stringFormatDate(form.exam_date_end) }}</p>
+        <div :class="['flex flex-col gap-1 p-3', 
+          !isExamDateValid
+          ? 'bg-[#FF6B6B]' 
+          : 'bg-[#5BD063]'
+        ]">
+          <h1 class="font-semibold">
+            {{ !isExamDateValid
+              ? 'Error!' 
+              : 'Info!' 
+            }}
+          </h1>
+          <p v-if="!isExamDateValid">
+            Tanggal ujian tidak valid
+          </p>
+          <p v-else>
+            Ujian akan berlagsung pada tanggal {{ stringFormatDate(form.exam_date_start) }} sampai {{ stringFormatDate(form.exam_date_end) }}
+          </p>
         </div>
         <div class="flex flex-row gap-2 items-center">
           <TextInput 
@@ -167,6 +188,6 @@ onChange((files) => {
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_end" />
       </div>
-      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"/>
+      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamDateValid }" :disabled="form.processing || !isExamDateValid"/>
     </form>
 </template>
