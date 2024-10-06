@@ -68,8 +68,8 @@ class ConfigController extends Controller
                     }
                 },
             ],
-            'exam_time_start' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
-            'exam_time_end' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
+            'exam_time_start' => 'required|string|regex:/^\d{2}:\d{2}(:\d{2})?$/',
+            'exam_time_end' => 'required|string|regex:/^\d{2}:\d{2}(:\d{2})?$/',
         ]);
 
         if($request->hasFile('logo')) {
