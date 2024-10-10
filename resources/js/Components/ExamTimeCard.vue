@@ -1,88 +1,100 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import { isAfter, isBefore, isEqual } from 'date-fns';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 
 // #ENUM
-enum Status { // Enum for exam state
-    None = 0, // Exam not available
-    StartingSoon = 2, // Exam starting soon
-    OnGoing = 3, // Exam on going
-    Holiday = 4, // Holiday, no exam today
-    Finished = 5 // Exam finished
+enum Status {
+    None = 0,
+    StartingSoon = 2,
+    OnGoing = 3,
+    Holiday = 4,
+    Finished = 5
 }
 
 // #VARIABLES
-const examStatus = ref<Status>(Status.None); // Variable for saving the status of the exam for display
-const examDate = ref<string|null>(null); // Variable for saving the date of the exam for display
-const examTimeRemaining = ref<string|null>(null); // Variable for saving the time remaining for the exam for display
+const examStatus = ref<Status>(Status.None);
+const examDate = ref<string|null>(null);
+const examTimeRemaining = ref<string|null>(null);
 
-function set( // Function for setting the exam status
+let intervalId: NodeJS.Timeout | null = null;
+
+function set(
     exam_date_start: string = usePage().props.config.exam_date_start, 
     exam_date_end: string = usePage().props.config.exam_date_end,
-    holiday_date: string = usePage().props.config.holiday_date,
+    holiday_date: string | null = usePage().props.config.holiday_date,
     exam_time_start: string = usePage().props.config.exam_time_start,
     exam_time_end: string = usePage().props.config.exam_time_end
 ) {
-    // Parse input dates
-    const examStartDate = new Date(exam_date_start);
-    const examEndDate = new Date(exam_date_end);
+    const startDate = new Date(exam_date_start);
+    const endDate = new Date(exam_date_end);
     const currentDate = new Date();
 
-    // Parse holiday dates (e.g., "2,4" to [2, 4])
-    const holidays = holiday_date.split(":").map(Number);
+    const holidayDates = holiday_date ? holiday_date.split(',').map(day => parseInt(day.trim())) : [];
 
-    // Format waktu ujian
-    const [startHour, startMinute, startSecond] = exam_time_start.split(":").map(Number);
-    const [endHour, endMinute, endSecond] = exam_time_end.split(":").map(Number);
+    const isHoliday = (date: Date): boolean => {
+        return holidayDates.includes(date.getDate());
+    };
 
-    // Check if current date is outside the exam range
-    if(currentDate < examStartDate || currentDate > examEndDate) {
+    if (currentDate < startDate || currentDate > endDate) {
         examStatus.value = Status.None;
         return;
     }
 
-    // Check if today is a holiday
-    const isHoliday = holidays.includes(currentDate.getDate());
-
-    if(isHoliday) {
+    if (isHoliday(currentDate)) {
         examStatus.value = Status.Holiday;
         return;
     }
 
-    // Create today's exam start and end datetme
+    const [startHour, startMinute] = exam_time_start.split(':').map(Number);
+    const [endHour, endMinute] = exam_time_end.split(':').map(Number);
+
     const examStartTime = new Date(currentDate);
-    examStartDate.setHours(startHour, startMinute, startSecond, 0);
+    examStartTime.setHours(startHour, startMinute, 0);
 
     const examEndTime = new Date(currentDate);
-    examEndTime.setHours(endHour, endMinute, endSecond, 0);
+    examEndTime.setHours(endHour, endMinute, 0);
 
-    // Check if current time is before exam start time
-    if(currentDate < examStartTime) {
-        const timeRemaining = Math.floor((examStartTime.getTime() - currentDate.getTime()) / 1000 / 60);
+    const formatDate = (date: Date): string => {
+        return `${date.getDate()} ${date.toLocaleString('id-ID', { month: 'short' })} ${date.getFullYear()}, Jam ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    };
+
+    const calculateTimeRemaining = (target: Date): string => {
+        const diff = target.getTime() - new Date().getTime();
+        if (diff <= 0) return "0 detik";
+        
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+
+        if (hours > 0) return `${hours} jam ${minutes % 60} menit lagi`;
+        if (minutes > 0) return `${minutes} menit lagi`;
+        return `${seconds} detik lagi`;
+    };
+
+    if (currentDate < examStartTime) {
         examStatus.value = Status.StartingSoon;
-        examDate.value = `${examStartTime.toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'})}, Jam ${examStartTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}`;
-        examTimeRemaining.value = `${timeRemaining} menit lagi...`;
-        return;
-    }
-
-    // Check if current time is within the exam time
-    if(currentDate >= examStartTime && currentDate <= examEndTime) {
-        const timeRemaining = Math.floor((examEndTime.getTime() - currentDate.getTime()) / 1000 / 60);
+        examDate.value = formatDate(examStartTime);
+        examTimeRemaining.value = calculateTimeRemaining(examStartTime);
+    } else if (currentDate >= examStartTime && currentDate < examEndTime) {
         examStatus.value = Status.OnGoing;
-        examDate.value = `${examEndTime.toLocaleDateString('id-ID', {day: '2-digit', month: 'short', year: 'numeric'})}, Jam ${examEndTime.toLocaleTimeString('id-ID', {hour: '2-digit', minute: '2-digit'})}`;
-        examTimeRemaining.value = `${timeRemaining} menit lagi...`;
-        return;
+        examDate.value = formatDate(examEndTime);
+        examTimeRemaining.value = calculateTimeRemaining(examEndTime);
+    } else {
+        examStatus.value = Status.Finished;
     }
-    examStatus.value = Status.Finished;
 }
 
 // #LIFECYCLE
 onMounted(() => {
     set();
+    intervalId = setInterval(set, 1000);
 });
 
-onUnmounted(() => {});
+onUnmounted(() => {
+    if (intervalId !== null) {
+        clearInterval(intervalId);
+    }
+});
 
 </script>
 
