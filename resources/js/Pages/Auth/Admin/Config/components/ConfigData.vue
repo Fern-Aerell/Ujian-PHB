@@ -102,8 +102,8 @@ const isExamTimeValid = computed(() => {
 });
 
 const formatExamTime = computed(() => {
-  const startTime = form.exam_time_start;
-  const endTime = form.exam_time_end;
+  const startTime = form.exam_time_start.slice(0, 5);
+  const endTime = form.exam_time_end.slice(0, 5);
   return `${startTime} - ${endTime}`;
 });
 
