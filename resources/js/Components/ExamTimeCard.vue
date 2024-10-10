@@ -1,36 +1,88 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { isAfter, isBefore, isEqual } from 'date-fns';
+import { onMounted, onUnmounted, ref } from 'vue';
 
-enum Status {
-    NOT_STARTED,
-    STARTED,
-    ENDED
+// #ENUM
+enum Status { // Enum for exam state
+    None = 0, // Exam not available
+    StartingSoon = 2, // Exam starting soon
+    OnGoing = 3, // Exam on going
+    Holiday = 4, // Holiday, no exam today
+    Finished = 5 // Exam finished
 }
 
-const status = ref<Status>(Status.ENDED);
+// #VARIABLES
+const examStatus = ref<Status>(Status.None); // Variable for saving the status of the exam for display
+const examDate = ref<string|null>(null); // Variable for saving the date of the exam for display
+const examTimeRemaining = ref<string|null>(null); // Variable for saving the time remaining for the exam for display
+
+// #FUNCTIONS
+function getDateWithExamTime(date: Date, examTime: string) {
+    const [hours, minutes, seconds] = examTime.split(':');
+    return date.setHours(parseInt(hours), parseInt(minutes), parseInt(seconds));
+}
+
+function getDateResetHours(date: Date) {
+    return date.setHours(0, 0, 0, 0);
+}
+
+function set( // Function for setting the exam status
+    exam_date_start: string = usePage().props.config.exam_date_start, 
+    exam_date_end: string = usePage().props.config.exam_date_end,
+    holiday_date: string = usePage().props.config.holiday_date,
+    exam_time_start: string = usePage().props.config.exam_time_start,
+    exam_time_end: string = usePage().props.config.exam_time_end
+) {
+    const now = new Date();
+    const examStartDate = new Date(exam_date_start);
+    const examEndDate = new Date(exam_date_end);
+    const examHoliday = holiday_date.length > 0 ? holiday_date.split(',').map(day => parseInt(day.trim())) : null;
+
+    if(isBefore(getDateResetHours(now), getDateResetHours(examStartDate)) || isAfter(getDateResetHours(now), getDateResetHours(examEndDate))) {
+        console.log('Ujian tidak ada');
+        examStatus.value = Status.None;
+        return;
+    }
+
+    if(isEqual(getDateResetHours(now), getDateResetHours(examStartDate)) || isAfter(getDateResetHours(now), getDateResetHours(examStartDate)) && isBefore(now, getDateWithExamTime(now, exam_time_start))) {
+        console.log('Ujian akan dimulai');
+        examStatus.value = Status.StartingSoon;
+        return;
+    }
+
+    console.log('void');
+}
+
+// #LIFECYCLE
+onMounted(() => {
+    set();
+});
+
+onUnmounted(() => {});
+
 </script>
 
 <template>
     <div :class="[
         'rounded-[10px] p-[10px]',
         {
-            'bg-[#F1E07F]': status === Status.NOT_STARTED,
-            'bg-[#F1C57F]': status === Status.STARTED,
-            'bg-[#D2D2D2]': status === Status.ENDED
+            'bg-[#F1E07F]': examStatus === Status.StartingSoon,
+            'bg-[#F1C57F]': examStatus === Status.OnGoing,
+            'bg-[#D2D2D2]': examStatus === Status.Finished || examStatus === Status.Holiday || examStatus === Status.None
         }
     ]">
-        <template v-if="status === Status.NOT_STARTED">
-            <p class="text-[15px]">Ujian akan dimulai pada jam</p>
-            <h1 class="text-[32px]">{{ $page.props.config.exam_time_start }}</h1>
-            <p class="text-[15px]">10 menit lagi...</p>
-        </template>
-        <template v-else-if="status === Status.STARTED">
-            <p class="text-[15px]">Ujian akan berakhir pada jam</p>
-            <h1 class="text-[32px]">{{ $page.props.config.exam_time_end }}</h1>
-            <p class="text-[15px]">34 menit lagi...</p>
-        </template>
-        <template v-else>
-            <p class="text-[15px]">Ujian telah berakhir, silahkan tunggu waktu ujian selanjutnya.</p>
+        <p class="text-[15px]" v-if="examStatus === Status.None || examStatus === Status.Holiday || examStatus === Status.Finished">
+            {{ 
+                examStatus === Status.None ? 'Tidak ada ujian saat ini.' :
+                examStatus === Status.Holiday ? 'Ujian libur saat ini.' :
+                'Ujian telah selesai.'
+            }}
+        </p>
+        <template v-else-if="examStatus === Status.StartingSoon || examStatus === Status.OnGoing">
+            <p class="text-[15px] font-bold">{{ examStatus === Status.StartingSoon ? 'Ujian akan dimulai pada:' : 'Ujian akan berakhir pada:' }}</p>
+            <p class="text-[15px]">{{ examDate }}</p>
+            <p class="text-[15px]">{{ examTimeRemaining }}</p>
         </template>
     </div>
 </template>
