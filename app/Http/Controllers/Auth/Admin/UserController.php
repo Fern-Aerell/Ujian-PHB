@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Rules\NoWhitespace;
+use App\Rules\Password;
 use App\Rules\UserType;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -70,7 +71,7 @@ class UserController extends Controller
                 new NoWhitespace
             ],
             'email' => 'email|nullable|unique:' . User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', new Password],
         ]);
 
         $user = User::create([
@@ -120,7 +121,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($user->id), new NoWhitespace],
             'email' => ['email', 'nullable', Rule::unique(User::class)->ignore($user->id)],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', new Password],
         ]);
 
         $user->update([

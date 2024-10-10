@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\PasswordResetToken;
+use App\Rules\Password as RulesPassword;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class NewPasswordController extends Controller
         $request->validate([
             'token' => 'required',
             'username' => 'required',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', new RulesPassword],
         ]);
         
         // Here we will attempt to reset the user's password. If it is successful we
