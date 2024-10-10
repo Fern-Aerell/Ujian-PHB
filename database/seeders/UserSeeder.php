@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserType;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,7 +19,7 @@ class UserSeeder extends Seeder
     {
         $userData = [
             [
-                'type' => 'admin',
+                'type' => UserType::ADMIN,
                 'name' => 'Admin',
                 'username' => 'admin',
                 'email' => 'admin@gmail.com',
@@ -26,7 +27,7 @@ class UserSeeder extends Seeder
                 'password' => Crypt::encryptString('admin#1234'),
             ],
             [
-                'type' => 'murid',
+                'type' => UserType::MURID,
                 'name' => 'Fern Aerell',
                 'username' => 'aerell',
                 'email' => 'aerell@gmail.com',
@@ -34,10 +35,10 @@ class UserSeeder extends Seeder
                 'password' => Crypt::encryptString('12345678'),
             ],
             [
-                'type' => 'guru',
-                'name' => 'Reski Ramadhan',
-                'username' => 'reski',
-                'email' => 'reski@gmail.com',
+                'type' => UserType::GURU,
+                'name' => 'Khairul Amri CM',
+                'username' => 'amri',
+                'email' => 'amri@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Crypt::encryptString('12345678'),
             ]
