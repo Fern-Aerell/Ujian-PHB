@@ -13,12 +13,12 @@ defineProps<{
 <template>
     <CustomHead title="Account" />
 
-    <AuthLayout title="Account">
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg max-w-xl">
+    <AuthLayout title="Account" class="flex flex-row flex-wrap gap-[10px]">
+        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg w-full sm:w-[450px] h-fit">
             <UpdateAccountInformationForm class="max-w-xl"/>
         </div>
         <br>
-        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg max-w-xl">
+        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg w-full sm:max-w-xl h-fit">
             <DeleteUserForm class="max-w-xl" />
         </div>
     </AuthLayout title="Account">
