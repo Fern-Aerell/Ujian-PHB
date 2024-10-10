@@ -30,10 +30,9 @@ class ConfigSeeder extends Seeder
                 'activity_type' => 'Ujian',
                 'activity_title' => 'Penilaian Harian Bulanan',
                 'activity_title_abbreviation' => 'PHB',
-                'exam_date_start' => '2024-10-02',
-                'exam_date_end' => '2024-10-10',
-                'holiday_date' => '5,6',
-                'exam_time_start' => '12:00',
+                'exam_date_start' => now()->format('Y-m-d'),
+                'exam_date_end' => now()->addDays(7)->format('Y-m-d'),
+                'holiday_date' => now()->addDays(rand(0, 7))->format('d') . ',' . now()->addDays(rand(0, 7))->format('d'),                'exam_time_start' => '12:00',
                 'exam_time_end' => '16:00',
             ]
         ];
