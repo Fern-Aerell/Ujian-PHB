@@ -95,9 +95,21 @@ const formatHolidays = computed((): { formattedHolidays: string[], isValid: bool
   return { formattedHolidays, isValid };
 });
 
+const isExamTimeValid = computed(() => {
+  const startTime = form.exam_time_start;
+  const endTime = form.exam_time_end;
+  return startTime < endTime;
+});
+
+const formatExamTime = computed(() => {
+  const startTime = form.exam_time_start;
+  const endTime = form.exam_time_end;
+  return `${startTime} - ${endTime}`;
+});
+
 const submit = () => {
-    if (!isExamDateValid.value || !formatHolidays.value.isValid) {
-      failedAlert('Tanggal ujian atau tanggal libur tidak valid. Tidak dapat menyimpan data.');
+    if (!isExamDateValid.value || !formatHolidays.value.isValid || !isExamTimeValid.value) {
+      failedAlert('Tanggal ujian, tanggal libur, atau waktu ujian tidak valid. Tidak dapat menyimpan data.');
       return;
     }
     form.post(route('config.update'), {
@@ -248,7 +260,25 @@ onChange((files) => {
           <p class="flex-1">End</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_end" />
+        <div :class="['flex flex-col gap-1 p-3', 
+          !isExamTimeValid
+          ? 'bg-[#FF6B6B]' 
+          : 'bg-[#5BD063]'
+        ]">
+          <h1 class="font-semibold">
+            {{ !isExamTimeValid
+              ? 'Error!' 
+              : 'Ringkasan!' 
+            }}
+          </h1>
+          <p v-if="!isExamTimeValid">
+            Waktu ujian tidak valid. Waktu mulai harus lebih awal dari waktu selesai.
+          </p>
+          <p v-else>
+            Ujian akan berlangsung dari <strong>{{ formatExamTime }}</strong>
+          </p>
+        </div>
       </div>
-      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamDateValid || !formatHolidays.isValid }" :disabled="form.processing || !isExamDateValid || !formatHolidays.isValid"/>
+      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamDateValid || !formatHolidays.isValid || !isExamTimeValid }" :disabled="form.processing || !isExamDateValid || !formatHolidays.isValid || !isExamTimeValid"/>
     </form>
 </template>
