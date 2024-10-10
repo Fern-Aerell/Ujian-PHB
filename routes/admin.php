@@ -17,6 +17,9 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::delete('/user/{id}/delete', [UserController::class, 'delete'])->name('user.delete');
 
     Route::get('/config', [ConfigController::class, 'index'])->name('config');
-    Route::post('/config/update', [ConfigController::class, 'update'])->name('config.update');
+    Route::post('/config/activity_data/update', [ConfigController::class, 'update_activity_data'])->name('config.activity_data.update');
+    Route::post('/config/exam_schedule_data/update', [ConfigController::class, 'update_exam_schedule_data'])->name('config.exam_schedule_data.update');
+    Route::post('/config/exam_time_date/update', [ConfigController::class, 'update_exam_time_data'])->name('config.exam_time_data.update');
+    Route::post('/config/school_data/update', [ConfigController::class, 'update_school_data'])->name('config.school_data.update');
 
 });
