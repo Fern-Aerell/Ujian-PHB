@@ -6,7 +6,7 @@ import PhotoProfile from './PhotoProfile.vue';
 
 <template>
     <!-- SIDEBAR -->
-    <div class="flex flex-col p-[30px] bg-[#FFFFFF] w-[306px] justify-between min-h-screen">
+    <div class="flex flex-col p-[30px] bg-[#FFFFFF] w-[350px] justify-between min-h-screen">
         <!-- TOP -->
         <div class="flex flex-col gap-[10px]">
             <!-- PHOTO PROFILE AND USER TYPE -->

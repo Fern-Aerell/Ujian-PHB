@@ -24,6 +24,22 @@ class UserSeeder extends Seeder
                 'email' => 'admin@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Crypt::encryptString('admin#1234'),
+            ],
+            [
+                'type' => 'murid',
+                'name' => 'Fern Aerell',
+                'username' => 'aerell',
+                'email' => 'aerell@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Crypt::encryptString('12345678'),
+            ],
+            [
+                'type' => 'guru',
+                'name' => 'Reski Ramadhan',
+                'username' => 'reski',
+                'email' => 'reski@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Crypt::encryptString('12345678'),
             ]
         ];
 

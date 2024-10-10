@@ -36,7 +36,7 @@ const form = useForm<{
   activity_title_abbreviation:  usePage().props.config.activity_title_abbreviation,
   exam_date_start: usePage().props.config.exam_date_start,
   exam_date_end: usePage().props.config.exam_date_end,
-  holiday_date: usePage().props.config.holiday_date,
+  holiday_date: usePage().props.config.holiday_date != null ? usePage().props.config.holiday_date : '',
   exam_time_start: usePage().props.config.exam_time_start,
   exam_time_end: usePage().props.config.exam_time_end,
 });
