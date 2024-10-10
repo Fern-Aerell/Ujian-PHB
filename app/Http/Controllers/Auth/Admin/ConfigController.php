@@ -10,15 +10,17 @@ use Inertia\Inertia;
 
 class ConfigController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return Inertia::render('Auth/Admin/Config/Config');
     }
 
-    public function update(Request $request) {
+    public function update(Request $request)
+    {
 
         $config = Config::first();
 
-        if(!$config) {
+        if (!$config) {
             throw new Error('Config not found');
         }
 
@@ -68,11 +70,28 @@ class ConfigController extends Controller
                     }
                 },
             ],
-            'exam_time_start' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
-            'exam_time_end' => 'required|string|regex:/^\d{2}:\d{2}:\d{2}$/',
+            'exam_time_start' => [
+                'required',
+                'string',
+                'regex:/^\d{2}:\d{2}(:\d{2})?$/',
+                function ($attribute, $value, $fail) use ($request) {
+                    $startTime = \DateTime::createFromFormat('H:i', $value);
+                    $endTime = \DateTime::createFromFormat('H:i', $request->exam_time_end);
+
+                    if ($startTime >= $endTime) {
+                        $fail('Waktu mulai ujian harus lebih awal dari waktu selesai.');
+                    }
+                },
+            ],
+            'exam_time_end' => [
+                'required',
+                'string',
+                'regex:/^\d{2}:\d{2}(:\d{2})?$/',
+                'after:exam_time_start',
+            ],
         ]);
 
-        if($request->hasFile('logo')) {
+        if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $path = $file->storeAs('logo', 'logo.png', 'public');
             $config->logo = 'storage/' . $path;
@@ -90,4 +109,5 @@ class ConfigController extends Controller
         $config->save();
 
         return redirect()->back();
-    }}
+    }
+}
