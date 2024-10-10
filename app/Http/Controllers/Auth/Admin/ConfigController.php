@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth\Admin;
 
+use App\Events\UpdateExamTimeCard;
 use App\Http\Controllers\Controller;
 use App\Models\Config;
 use Error;
@@ -95,6 +96,8 @@ class ConfigController extends Controller
         $config->holiday_date = $request->holiday_date;
         $config->save();
 
+        broadcast(new UpdateExamTimeCard)->toOthers();
+
         return redirect()->back();
     }
 
@@ -132,6 +135,8 @@ class ConfigController extends Controller
         $config->exam_time_start = $request->exam_time_start;
         $config->exam_time_end = $request->exam_time_end;
         $config->save();
+
+        broadcast(new UpdateExamTimeCard)->toOthers();
 
         return redirect()->back();
     }

@@ -13,13 +13,13 @@ enum Status {
 
 // #VARIABLES
 const examStatus = ref<Status>(Status.None);
-const examDate = ref<string|null>(null);
-const examTimeRemaining = ref<string|null>(null);
+const examDate = ref<string | null>(null);
+const examTimeRemaining = ref<string | null>(null);
 
 let intervalId: NodeJS.Timeout | null = null;
 
 function set(
-    exam_date_start: string = usePage().props.config.exam_date_start, 
+    exam_date_start: string = usePage().props.config.exam_date_start,
     exam_date_end: string = usePage().props.config.exam_date_end,
     holiday_date: string | null = usePage().props.config.holiday_date,
     exam_time_start: string = usePage().props.config.exam_time_start,
@@ -28,6 +28,11 @@ function set(
     const startDate = new Date(exam_date_start);
     const endDate = new Date(exam_date_end);
     const currentDate = new Date();
+
+    // Reset time part for date comparison
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+    currentDate.setHours(0, 0, 0, 0);
 
     const holidayDates = holiday_date ? holiday_date.split(',').map(day => parseInt(day.trim())) : [];
 
@@ -61,7 +66,7 @@ function set(
     const calculateTimeRemaining = (target: Date): string => {
         const diff = target.getTime() - new Date().getTime();
         if (diff <= 0) return "0 detik";
-        
+
         const seconds = Math.floor(diff / 1000);
         const minutes = Math.floor(seconds / 60);
         const hours = Math.floor(minutes / 60);
@@ -71,11 +76,13 @@ function set(
         return `${seconds} detik lagi`;
     };
 
-    if (currentDate < examStartTime) {
+    const now = new Date();
+
+    if (now < examStartTime) {
         examStatus.value = Status.StartingSoon;
         examDate.value = formatDate(examStartTime);
         examTimeRemaining.value = calculateTimeRemaining(examStartTime);
-    } else if (currentDate >= examStartTime && currentDate < examEndTime) {
+    } else if (now >= examStartTime && now < examEndTime) {
         examStatus.value = Status.OnGoing;
         examDate.value = formatDate(examEndTime);
         examTimeRemaining.value = calculateTimeRemaining(examEndTime);
@@ -84,13 +91,31 @@ function set(
     }
 }
 
+function updateExamTimeCard(event: {
+    exam_date_start: string,
+    exam_date_end: string,
+    holiday_date: string | null,
+    exam_time_start: string,
+    exam_time_end: string
+}) {
+    usePage().props.config.exam_date_start = event.exam_date_start;
+    usePage().props.config.exam_date_end = event.exam_date_end;
+    usePage().props.config.holiday_date = event.holiday_date != null ? event.holiday_date : '';
+    usePage().props.config.exam_time_start = event.exam_time_start;
+    usePage().props.config.exam_time_end = event.exam_time_end;
+}
+
 // #LIFECYCLE
 onMounted(() => {
+    window.Echo.channel('examTimeCard').listen('UpdateExamTimeCard', updateExamTimeCard);
+
     set();
     intervalId = setInterval(set, 1000);
 });
 
 onUnmounted(() => {
+    window.Echo.channel('examTimeCard').stopListening('UpdateExamTimeCard', updateExamTimeCard);
+
     if (intervalId !== null) {
         clearInterval(intervalId);
     }
@@ -107,15 +132,16 @@ onUnmounted(() => {
             'bg-[#D2D2D2]': examStatus === Status.Finished || examStatus === Status.Holiday || examStatus === Status.None
         }
     ]">
-        <p class="text-[15px]" v-if="examStatus === Status.None || examStatus === Status.Holiday || examStatus === Status.Finished">
-            {{ 
+        <p class="text-[15px]"
+            v-if="examStatus === Status.None || examStatus === Status.Holiday || examStatus === Status.Finished">
+            {{
                 examStatus === Status.None ? 'Tidak ada ujian saat ini.' :
-                examStatus === Status.Holiday ? 'Ujian libur saat ini.' :
-                'Ujian telah selesai.'
+                    examStatus === Status.Holiday ? 'Ujian libur saat ini.' :
+                        'Ujian telah selesai.'
             }}
         </p>
         <template v-else-if="examStatus === Status.StartingSoon || examStatus === Status.OnGoing">
-            <p class="text-[15px] font-bold">{{ examStatus === Status.StartingSoon ? 'Ujian akan dimulai pada:' : 'Ujian akan berakhir pada:' }}</p>
+            <p class="text-[15px] font-bold">{{ examStatus === Status.StartingSoon ? 'Ujian akan dimulai pada:' : 'Ujian akan berakhir pada: ' }}</p>
             <p class="text-[15px]">{{ examDate }}</p>
             <p class="text-[15px]">{{ examTimeRemaining }}</p>
         </template>
