@@ -73,60 +73,61 @@ const formatHolidays = computed((): { formattedHolidays: string[], isValid: bool
 });
 
 const submit = () => {
-    if (!isExamDateValid.value || !formatHolidays.value.isValid) {
-      failedAlert('Tanggal ujian atau tanggal libur tidak valid. Tidak dapat menyimpan data.');
-      return;
+  if (!isExamDateValid.value || !formatHolidays.value.isValid) {
+    failedAlert('Tanggal ujian atau tanggal libur tidak valid. Tidak dapat menyimpan data.');
+    return;
+  }
+  form.post(route('config.exam_schedule_data.update'), {
+    onError: (error) => {
+      failedAlert(error.message);
+    },
+    onSuccess: () => {
+      successAlert('Data jadwal ujian berhasil diubah');
     }
-    form.post(route('config.exam_schedule_data.update'), {
-      onError: (error) => {
-        failedAlert(error.message);
-      },
-      onSuccess: () => {
-        successAlert('Data jadwal ujian berhasil diubah');
-      }
-    });
+  });
 };
 
 </script>
 
 <template>
-    <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md gap-4">
-      <h1 class="text-xl font-bold">Exam Schedule Data</h1>
-      <hr>
+  <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md">
+    <header>
+      <h2 class="text-lg font-medium text-gray-900">Data tanggal ujian</h2>
+
+      <p class="mt-1 text-sm text-gray-600">
+        Perbarui informasi data tanggal ujian. Pastikan semua detail tercakup untuk memastikan kelancaran proses ujian.</p>
+    </header>
+    <br>
+    <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <InputLabel for="exam_date" class="required" value="Exam Date"/>
+        <InputLabel for="exam_date" class="required" value="Exam Date" />
         <div class="flex flex-row gap-2 items-center">
-          <input v-model="form.exam_date_start" type="date" name="exam_date_start" id="exam_date_start" class="flex-1 border-gray-300">
+          <input v-model="form.exam_date_start" type="date" name="exam_date_start" id="exam_date_start"
+            class="flex-1 border-gray-300">
           <p class="flex-1">Start</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_date_start" />
         <div class="flex flex-row gap-2 items-center">
-          <input v-model="form.exam_date_end" type="date" name="exam_date_end" id="exam_date_end" class="flex-1 border-gray-300">
-          <p  class="flex-1">End</p>
+          <input v-model="form.exam_date_end" type="date" name="exam_date_end" id="exam_date_end"
+            class="flex-1 border-gray-300">
+          <p class="flex-1">End</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_date_end" />
         <div class="flex flex-row gap-2 items-center">
-          <TextInput 
-            type="text"
-            name="holiday_date" 
-            id="holiday_date" 
-            class="flex-1"
-            v-model="form.holiday_date"
-            autocomplete="holiday_date"
-            placeholder="Masukkan tanggal libur, contoh: 20,21,26..."
-          />
+          <TextInput type="text" name="holiday_date" id="holiday_date" class="flex-1" v-model="form.holiday_date"
+            autocomplete="holiday_date" placeholder="Masukkan tanggal libur, contoh: 20,21,26..." />
           <p class="flex-1">Holiday</p>
         </div>
         <InputError class="mt-2" :message="form.errors.holiday_date" />
-        <div :class="['flex flex-col gap-1 p-3', 
+        <div :class="['flex flex-col gap-1 p-3',
           !isExamDateValid || !formatHolidays.isValid
-          ? 'bg-[#FF6B6B]' 
-          : 'bg-[#5BD063]'
+            ? 'bg-[#FF6B6B]'
+            : 'bg-[#5BD063]'
         ]">
           <h1 class="font-semibold">
             {{ !isExamDateValid || !formatHolidays.isValid
-              ? 'Error!' 
-              : 'Ringkasan!' 
+              ? 'Error!'
+              : 'Ringkasan!'
             }}
           </h1>
           <p v-if="!isExamDateValid">
@@ -137,7 +138,8 @@ const submit = () => {
           </p>
           <template v-else>
             <p>
-              Ujian akan berlangsung pada <strong>{{ stringFormatDateWithDay(form.exam_date_start) }}</strong> sampai <strong>{{ stringFormatDateWithDay(form.exam_date_end) }}</strong>
+              Ujian akan berlangsung pada <strong>{{ stringFormatDateWithDay(form.exam_date_start) }}</strong> sampai
+              <strong>{{ stringFormatDateWithDay(form.exam_date_end) }}</strong>
             </p>
             <p v-if="formatHolidays.formattedHolidays.length > 0">
               Ujian akan libur pada: <strong>{{ formatHolidays.formattedHolidays.join(', ') }}</strong>
@@ -148,6 +150,9 @@ const submit = () => {
           </template>
         </div>
       </div>
-      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamDateValid || !formatHolidays.isValid }" :disabled="form.processing || !isExamDateValid || !formatHolidays.isValid"/>
-    </form>
+      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6"
+        :class="{ 'opacity-25': form.processing || !isExamDateValid || !formatHolidays.isValid }"
+        :disabled="form.processing || !isExamDateValid || !formatHolidays.isValid" />
+    </div>
+  </form>
 </template>

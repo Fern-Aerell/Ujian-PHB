@@ -9,12 +9,10 @@ import ConfigActivityData from './components/ConfigActivityData.vue';
 
 <template>
     <CustomHead title="Config" />
-    <AuthLayout title="Config" class="flex flex-row flex-wrap gap-[20px]">
-        <div class="flex flex-col gap-[20px]">
-            <ConfigExamScheduleData/>
-            <ConfigExamTimeData/>
-        </div>
-        <ConfigActivityData/>
-        <ConfigSchoolData/>
+    <AuthLayout title="Config">
+        <ConfigSchoolData />
+        <ConfigActivityData />
+        <ConfigExamScheduleData />
+        <ConfigExamTimeData />
     </AuthLayout>
 </template>

@@ -2,7 +2,8 @@
 import SidebarWithMenu from '@/Components/SidebarWithMenu.vue';
 import more_png from '../../assets/icons/more.png';
 import enquire from 'enquire.js';
-import { ref } from 'vue';
+import MagicGrid from 'magic-grid';
+import { onMounted, ref } from 'vue';
 
 const props = defineProps<{
     title: string;
@@ -10,6 +11,7 @@ const props = defineProps<{
 }>();
 
 const mobileSidebar = ref(false);
+const gridContainer = ref();
 
 function mobileSidebarToggle(value: boolean = !mobileSidebar.value) {
     mobileSidebar.value = value;
@@ -26,6 +28,19 @@ enquire.register("screen and (min-width: 1024px)", {
         mobileSidebarToggle(false);
     },
     deferSetup: true
+});
+
+onMounted(() => {
+    const magicGrid = new MagicGrid({
+        container: gridContainer.value,
+        animate: false,
+        static: true,
+        center: false,
+        gutter: 20,
+        useMin: true
+    });
+
+    magicGrid.listen();
 });
 
 </script>
@@ -48,7 +63,7 @@ enquire.register("screen and (min-width: 1024px)", {
                 </div>
             </div>
             <!-- CONTENT -->
-             <div class="overflow-auto" :class="props.class">
+             <div class="overflow-auto" :class="props.class" ref="gridContainer">
                 <slot/>
              </div>
         </div>

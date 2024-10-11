@@ -46,23 +46,31 @@ onChange((files) => {
 </script>
 
 <template>
-    <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md gap-4">
-        <h1 class="text-xl font-bold">School Data</h1>
-        <hr>
-        <div class="flex flex-col gap-1">
-            <InputLabel for="logo" class="required" value="Logo" />
-            <button type="button" @click="() => open()" title="Klik untuk mengganti logo" class="w-fit">
-                <img :src="image || $page.props.config.logo" alt="logo" class="w-[100px] h-[100px] rounded-full">
-            </button>
-            <InputError class="mt-2" :message="form.errors.logo" />
+    <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md">
+        <header>
+            <h2 class="text-lg font-medium text-gray-900">Data sekolah</h2>
+
+            <p class="mt-1 text-sm text-gray-600">
+                Perbarui informasi dan data sekolah.
+            </p>
+        </header>
+        <br>
+        <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+                <InputLabel for="logo" class="required" value="Logo" />
+                <button type="button" @click="() => open()" title="Klik untuk mengganti logo" class="w-fit">
+                    <img :src="image || $page.props.config.logo" alt="logo" class="w-[100px] h-[100px] rounded-full">
+                </button>
+                <InputError class="mt-2" :message="form.errors.logo" />
+            </div>
+            <div class="flex flex-col gap-1">
+                <InputLabel for="school_name" class="required" value="School name" />
+                <TextInput type="text" name="school_name" id="school_name" v-model="form.school_name" required
+                    autocomplete="school_name" placeholder="Masukkan nama sekolah..." />
+                <InputError class="mt-2" :message="form.errors.school_name" />
+            </div>
+            <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6"
+                :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
         </div>
-        <div class="flex flex-col gap-1">
-            <InputLabel for="school_name" class="required" value="School name" />
-            <TextInput type="text" name="school_name" id="school_name" v-model="form.school_name" required
-                autocomplete="school_name" placeholder="Masukkan nama sekolah..." />
-            <InputError class="mt-2" :message="form.errors.school_name" />
-        </div>
-        <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6"
-            :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
     </form>
 </template>

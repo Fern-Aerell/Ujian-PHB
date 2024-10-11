@@ -36,7 +36,7 @@ async function deleteUser(username: string, id: number) {
 <template>
     <CustomHead title="User List" />
     <AuthLayout title="User List">
-        <div class="flex flex-col gap-3 bg-white p-5 rounded-md">
+        <div class="flex flex-col gap-3 bg-white p-5 rounded-md w-full">
             <div class="flex flex-col md:flex-row justify-between mb-4 gap-4">
                 <!-- Add User Button -->
                 <div class="w-full md:w-auto">

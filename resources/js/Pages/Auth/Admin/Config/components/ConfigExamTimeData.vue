@@ -27,47 +27,56 @@ const formatExamTime = computed(() => {
 });
 
 const submit = () => {
-    if (!isExamTimeValid.value) {
-      failedAlert('waktu ujian tidak valid. Tidak dapat menyimpan data.');
-      return;
+  if (!isExamTimeValid.value) {
+    failedAlert('waktu ujian tidak valid. Tidak dapat menyimpan data.');
+    return;
+  }
+  form.post(route('config.exam_time_data.update'), {
+    onError: (error) => {
+      failedAlert(error.message);
+    },
+    onSuccess: () => {
+      successAlert('Data waktu ujian berhasil diubah');
     }
-    form.post(route('config.exam_time_data.update'), {
-      onError: (error) => {
-        failedAlert(error.message);
-      },
-      onSuccess: () => {
-        successAlert('Data waktu ujian berhasil diubah');
-      }
-    });
+  });
 };
 
 </script>
 
 <template>
-    <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md gap-4">
-      <h1 class="text-xl font-bold">Exam Time Data</h1>
-      <hr>
+  <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md">
+    <header>
+      <h2 class="text-lg font-medium text-gray-900">Data waktu ujian</h2>
+
+      <p class="mt-1 text-sm text-gray-600">
+        Perbarui informasi mengenai waktu pelaksanaan ujian untuk memastikan keakuratan jadwal dan kelancaran proses ujian.
+      </p>
+    </header>
+    <br>
+    <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <InputLabel for="exam_time" class="required" value="Exam Time"/>
+        <InputLabel for="exam_time" class="required" value="Exam Time" />
         <div class="flex flex-row gap-2 items-center">
-          <input v-model="form.exam_time_start" type="time" name="exam_time_start" id="exam_time_start" class="flex-1 border-gray-300">
+          <input v-model="form.exam_time_start" type="time" name="exam_time_start" id="exam_time_start"
+            class="flex-1 border-gray-300">
           <p class="flex-1">Start</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_start" />
         <div class="flex flex-row gap-2 items-center">
-          <input v-model="form.exam_time_end" type="time" name="exam_time_end" id="exam_time_end" class="flex-1 border-gray-300">
+          <input v-model="form.exam_time_end" type="time" name="exam_time_end" id="exam_time_end"
+            class="flex-1 border-gray-300">
           <p class="flex-1">End</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_end" />
-        <div :class="['flex flex-col gap-1 p-3', 
+        <div :class="['flex flex-col gap-1 p-3',
           !isExamTimeValid
-          ? 'bg-[#FF6B6B]' 
-          : 'bg-[#5BD063]'
+            ? 'bg-[#FF6B6B]'
+            : 'bg-[#5BD063]'
         ]">
           <h1 class="font-semibold">
             {{ !isExamTimeValid
-              ? 'Error!' 
-              : 'Ringkasan!' 
+              ? 'Error!'
+              : 'Ringkasan!'
             }}
           </h1>
           <p v-if="!isExamTimeValid">
@@ -78,6 +87,9 @@ const submit = () => {
           </p>
         </div>
       </div>
-      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing || !isExamTimeValid }" :disabled="form.processing || !isExamTimeValid"/>
-    </form>
+      <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6"
+        :class="{ 'opacity-25': form.processing || !isExamTimeValid }"
+        :disabled="form.processing || !isExamTimeValid" />
+    </div>
+  </form>
 </template>

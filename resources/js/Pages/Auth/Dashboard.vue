@@ -8,7 +8,7 @@ import CustomHead from '@/Components/CustomHead.vue';
 
     <AuthLayout title="Dashboard">
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg w-full">
             <div class="p-6 text-gray-900">Anda telah berhasil masuk!</div>
         </div>
 

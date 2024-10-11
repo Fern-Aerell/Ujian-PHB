@@ -27,7 +27,7 @@
         "vue-tsc": "^2.0.24"
     },
     "dependencies": {
-        "date-fns": "^4.1.0",
-        "enquire.js": "^2.1.6"
+        "enquire.js": "^2.1.6",
+        "magic-grid": "^3.4.7"
     }
 }

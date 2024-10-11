@@ -39,7 +39,7 @@ const closeModal = () => {
 </script>
 
 <template>
-    <section class="space-y-6">
+    <section class="space-y-6 flex flex-col bg-white p-5 w-full sm:max-w-xl h-fit rounded-md">
         <header>
             <h2 class="text-lg font-medium text-gray-900">Hapus Akun</h2>
 

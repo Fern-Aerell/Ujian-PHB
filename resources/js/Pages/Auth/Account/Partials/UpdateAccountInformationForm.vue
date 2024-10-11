@@ -31,7 +31,7 @@ const submit = () => {
 </script>
 
 <template>
-    <section>
+    <section class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md">
         <header>
             <h2 class="text-lg font-medium text-gray-900">Informasi Akun</h2>
 
