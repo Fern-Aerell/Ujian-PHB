@@ -8,7 +8,8 @@ enum Status {
     StartingSoon = 2,
     OnGoing = 3,
     Holiday = 4,
-    Finished = 5
+    Finished = 5,
+    FutureExam = 6
 }
 
 // #VARIABLES
@@ -40,6 +41,18 @@ function set(
         return holidayDates.includes(date.getDate());
     };
 
+    const formatDate = (date: Date): string => {
+        return `${date.getDate()} ${date.toLocaleString('id-ID', { month: 'short' })} ${date.getFullYear()}, Jam ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+    };
+
+    if (currentDate < startDate) {
+        examStatus.value = Status.FutureExam;
+        const [startHour, startMinute] = exam_time_start.split(':').map(Number);
+        startDate.setHours(startHour, startMinute, 0);
+        examDate.value = formatDate(startDate);
+        return;
+    }
+
     if (currentDate < startDate || currentDate > endDate) {
         examStatus.value = Status.None;
         return;
@@ -58,10 +71,6 @@ function set(
 
     const examEndTime = new Date(currentDate);
     examEndTime.setHours(endHour, endMinute, 0);
-
-    const formatDate = (date: Date): string => {
-        return `${date.getDate()} ${date.toLocaleString('id-ID', { month: 'short' })} ${date.getFullYear()}, Jam ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    };
 
     const calculateTimeRemaining = (target: Date): string => {
         const diff = target.getTime() - new Date().getTime();
@@ -129,15 +138,16 @@ onUnmounted(() => {
         {
             'bg-[#F1E07F]': examStatus === Status.StartingSoon,
             'bg-[#F1C57F]': examStatus === Status.OnGoing,
-            'bg-[#D2D2D2]': examStatus === Status.Finished || examStatus === Status.Holiday || examStatus === Status.None
+            'bg-[#D2D2D2]': examStatus === Status.Finished || examStatus === Status.Holiday || examStatus === Status.None || examStatus === Status.FutureExam
         }
     ]">
         <p class="text-[15px]"
-            v-if="examStatus === Status.None || examStatus === Status.Holiday || examStatus === Status.Finished">
+            v-if="examStatus === Status.None || examStatus === Status.Holiday || examStatus === Status.Finished || examStatus === Status.FutureExam">
             {{
                 examStatus === Status.None ? 'Tidak ada ujian saat ini.' :
                     examStatus === Status.Holiday ? 'Ujian libur saat ini.' :
-                        'Ujian telah selesai.'
+                        examStatus === Status.Finished ? 'Ujian telah selesai.' :
+                            `Ujian akan dimulai pada ${examDate}`
             }}
         </p>
         <template v-else-if="examStatus === Status.StartingSoon || examStatus === Status.OnGoing">
