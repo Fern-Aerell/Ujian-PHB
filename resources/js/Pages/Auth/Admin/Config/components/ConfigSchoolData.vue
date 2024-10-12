@@ -2,21 +2,10 @@
 import Button from '@/Components/Buttons/Button.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { useFileDialog } from '@vueuse/core';
 import InputError from '@/Components/InputError.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
-import { ref } from 'vue';
-
-import whitePencilIcon from '../../../../../../assets/icons/white_pencil.webp';
-
-const image = ref<string | null>(null);
-
-const { files, open, reset, onChange } = useFileDialog({
-    accept: 'image/*',
-    directory: false,
-    multiple: false,
-})
+import EditableImg from '@/Components/EditableImg.vue';
 
 const form = useForm<{
     logo: File | null;
@@ -37,14 +26,6 @@ const submit = () => {
     });
 };
 
-onChange((files) => {
-    if (files && files.length > 0) {
-        const file = files[0];
-        image.value = URL.createObjectURL(file);
-        form.logo = file;
-    }
-});
-
 </script>
 
 <template>
@@ -60,15 +41,13 @@ onChange((files) => {
         <div class="flex flex-col gap-4">
             <div class="flex flex-col gap-1">
                 <InputLabel for="logo" class="required" value="Logo" />
-                <button type="button" @click="() => open()" title="Klik untuk mengganti logo"
-                    class="w-fit relative group">
-                    <img :src="image || $page.props.config.logo" alt="logo"
-                        class="w-[100px] h-[100px] rounded-full transition-all duration-300 group-hover:brightness-50">
-                    <div
-                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <img :src="whitePencilIcon" alt="edit icon" class="w-6 h-6" />
-                    </div>
-                </button>
+                <EditableImg 
+                    :src="$page.props.config.logo" 
+                    imgClass="w-[100px] h-[100px]"
+                    :onChange="(file) => {
+                        form.logo = file;
+                    }"
+                />
                 <InputError class="mt-2" :message="form.errors.logo" />
             </div>
             <div class="flex flex-col gap-1">
