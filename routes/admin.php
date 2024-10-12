@@ -21,5 +21,6 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::post('/config/exam_schedule_data/update', [ConfigController::class, 'update_exam_schedule_data'])->name('config.exam_schedule_data.update');
     Route::post('/config/exam_time_date/update', [ConfigController::class, 'update_exam_time_data'])->name('config.exam_time_data.update');
     Route::post('/config/school_data/update', [ConfigController::class, 'update_school_data'])->name('config.school_data.update');
+    Route::post('/config/slider_data/update', [ConfigController::class, 'update_slider_data'])->name('config.slider_data.update');
 
 });

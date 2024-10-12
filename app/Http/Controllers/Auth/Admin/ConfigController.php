@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Config;
 use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ConfigController extends Controller
@@ -19,17 +20,17 @@ class ConfigController extends Controller
     public function update_activity_data(Request $request)
     {
 
-        $config = Config::first();
-
-        if (!$config) {
-            throw new Error('Config not found');
-        }
-
         $request->validate([
             'activity_type' => 'required|string|max:255',
             'activity_title' => 'required|string|max:255',
             'activity_title_abbreviation' => 'required|string|max:255',
         ]);
+
+        $config = Config::first();
+
+        if (!$config) {
+            throw new Error('Config not found');
+        }
 
         $config->activity_type = $request->activity_type;
         $config->activity_title = $request->activity_title;
@@ -41,12 +42,6 @@ class ConfigController extends Controller
 
     public function update_exam_schedule_data(Request $request)
     {
-
-        $config = Config::first();
-
-        if (!$config) {
-            throw new Error('Config not found');
-        }
 
         $request->validate([
             'exam_date_start' => 'required|date|regex:/^\d{4}-\d{2}-\d{2}$/',
@@ -91,6 +86,12 @@ class ConfigController extends Controller
             ]
         ]);
 
+        $config = Config::first();
+
+        if (!$config) {
+            throw new Error('Config not found');
+        }
+
         $config->exam_date_start = $request->exam_date_start;
         $config->exam_date_end = $request->exam_date_end;
         $config->holiday_date = $request->holiday_date;
@@ -103,12 +104,6 @@ class ConfigController extends Controller
 
     public function update_exam_time_data(Request $request)
     {
-
-        $config = Config::first();
-
-        if (!$config) {
-            throw new Error('Config not found');
-        }
 
         $request->validate([
             'exam_time_start' => [
@@ -132,6 +127,12 @@ class ConfigController extends Controller
             ],
         ]);
 
+        $config = Config::first();
+
+        if (!$config) {
+            throw new Error('Config not found');
+        }
+
         $config->exam_time_start = $request->exam_time_start;
         $config->exam_time_end = $request->exam_time_end;
         $config->save();
@@ -144,16 +145,17 @@ class ConfigController extends Controller
     public function update_school_data(Request $request)
     {
 
+        $request->validate([
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'school_name' => 'required|string|max:255'
+        ]);
+
         $config = Config::first();
 
         if (!$config) {
             throw new Error('Config not found');
         }
 
-        $request->validate([
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'school_name' => 'required|string|max:255'
-        ]);
 
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
@@ -165,5 +167,103 @@ class ConfigController extends Controller
         $config->save();
 
         return redirect()->back();
+    }
+
+    public function update_slider_data(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'images' => 'nullable|array|max:9',
+            'images.*' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    if (preg_match('/^data:image\/[a-zA-Z]+;base64,/', $value)) {
+                        // Cek ukuran file base64
+                        $data = substr($value, strpos($value, ',') + 1);
+                        $fileSize = (int)(strlen($data) * 3 / 4);
+                        $fileSize -= substr($data, -2) === '==' ? 2 : (substr($data, -1) === '=' ? 1 : 0);
+
+                        if ($fileSize > 2 * 1024 * 1024) {
+                            $fail("Ukuran file {$attribute} tidak boleh lebih dari 2 MB.");
+                        }
+                    } elseif (!str_starts_with($value, 'storage/slider/')) {
+                        $fail("Format {$attribute} tidak valid.");
+                    }
+                },
+            ],
+        ]);
+
+        // Cek konfigurasi
+        $config = Config::firstOrFail();
+
+        $rawImages = $request->images;
+
+        // Backup folder 'slider' ke 'temp'
+        $this->backupSliderFolder();
+
+        // Hapus semua file di folder 'slider'
+        Storage::disk('public')->deleteDirectory('slider');
+        Storage::disk('public')->makeDirectory('slider');
+
+        // Proses gambar baru
+        foreach ($rawImages as $index => $image) {
+            $newPath = 'slider/slider' . ($index + 1) . '.webp';
+
+            if (str_starts_with($image, 'storage/slider/')) {
+                // Pindahkan dari 'temp' ke 'slider'
+                $sourcePath = str_replace('storage/slider', 'temp', $image);
+                Storage::disk('public')->copy($sourcePath, $newPath);
+            } elseif ($this->isValidBase64Image($image)) {
+                // Simpan gambar baru dari base64
+                $this->saveBase64ImageToStorage($image, $newPath);
+            } else {
+                throw new \Exception('Format data URI tidak valid.');
+            }
+
+            $rawImages[$index] = 'storage/' . $newPath;
+        }
+
+        // Hapus folder 'temp' setelah selesai
+        Storage::disk('public')->deleteDirectory('temp');
+
+        // Simpan konfigurasi
+        $config->slider_images = json_encode($rawImages);
+        $config->save();
+
+        return redirect()->back();
+    }
+
+    // Fungsi untuk backup folder slider ke temp
+    private function backupSliderFolder()
+    {
+        $files = Storage::disk('public')->allFiles('slider');
+        foreach ($files as $file) {
+            $destination = str_replace('slider/', 'temp/', $file);
+            Storage::disk('public')->copy($file, $destination);
+        }
+    }
+
+    // Fungsi untuk mengecek apakah gambar base64 valid
+    private function isValidBase64Image($image)
+    {
+        return preg_match('/^data:image\/[a-zA-Z]+;base64,/', $image);
+    }
+
+    // Fungsi untuk menyimpan gambar base64 ke storage
+    private function saveBase64ImageToStorage($dataUri, $path)
+    {
+        if (preg_match('/^data:image\/(\w+);base64,/', $dataUri, $type)) {
+            $data = substr($dataUri, strpos($dataUri, ',') + 1);
+            $data = base64_decode($data);
+
+            if ($data === false) {
+                throw new \Exception('Gagal melakukan decode data base64.');
+            }
+
+            Storage::disk('public')->put($path, $data);
+        } else {
+            throw new \Exception('Format data URI tidak valid.');
+        }
     }
 }

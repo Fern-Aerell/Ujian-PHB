@@ -1,27 +1,19 @@
-import Swal from "sweetalert2";
+import Swal, { SweetAlertResult } from "sweetalert2";
 
-export function successAlert(message: string, isConfirmed?: Function) {
+export function successAlert(message: string, callback?: (result: SweetAlertResult) => void) {
     Swal.fire({
         position: 'center',
         icon: 'success',
         title: message,
-    }).then(result => {
-        if(isConfirmed && result.isConfirmed) {
-            isConfirmed();
-        }
-    });
+    }).then(callback);
 }
 
-export function failedAlert(message: string, isConfirmed?: Function) {
+export function failedAlert(message: string, callback?: (result: SweetAlertResult) => void) {
     Swal.fire({
         title: "Gagal",
         text: message,
         icon: "error",
-    }).then(result => {
-        if(isConfirmed && result.isConfirmed) {
-            isConfirmed();
-        }
-    });
+    }).then(callback);
 }
 
 export function errorAlert(message: string) {

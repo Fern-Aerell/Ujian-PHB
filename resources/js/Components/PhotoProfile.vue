@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import PhotoProfileImposter from '../../assets/icons/photo_profile_imposter.png';
-import PhotoProfileAdmin from '../../assets/icons/photo_profile_admin.png';
-import PhotoProfileGuru from '../../assets/icons/photo_profile_guru.png';
-import PhotoProfileMurid from '../../assets/icons/photo_profile_murid.png';
+import PhotoProfileImposter from '../../assets/icons/photo_profile_imposter.webp';
+import PhotoProfileAdmin from '../../assets/icons/photo_profile_admin.webp';
+import PhotoProfileGuru from '../../assets/icons/photo_profile_guru.webp';
+import PhotoProfileMurid from '../../assets/icons/photo_profile_murid.webp';
 import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps<{

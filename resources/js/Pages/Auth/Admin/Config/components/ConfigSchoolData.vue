@@ -42,8 +42,7 @@ const submit = () => {
             <div class="flex flex-col gap-1">
                 <InputLabel for="logo" class="required" value="Logo" />
                 <EditableImg 
-                    :src="$page.props.config.logo" 
-                    imgClass="w-[100px] h-[100px]"
+                    :src="$page.props.config.logo"
                     :onChange="(file) => {
                         form.logo = file;
                     }"

@@ -47,6 +47,7 @@ export interface Config {
     holiday_date: string;
     exam_time_start: string;
     exam_time_end: string;
+    slider_images: string;
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
