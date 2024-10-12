@@ -35,7 +35,7 @@ const submit = () => {
       <h2 class="text-lg font-medium text-gray-900">Data aktivitas</h2>
 
       <p class="mt-1 text-sm text-gray-600">
-        Perbarui informasi mengenai jenis aktivitas atau kegiatan yang dilakukan melalui web ini. Pengaturan ini akan mempengaruhi tampilan dan fungsi di berbagai bagian aplikasi.
+        Perbarui informasi mengenai jenis aktifitas atau kegiatan yang dilakukan melalui web ini. Pengaturan ini akan mempengaruhi tampilan dan fungsi di berbagai bagian aplikasi.
       </p>
     </header>
     <br>
