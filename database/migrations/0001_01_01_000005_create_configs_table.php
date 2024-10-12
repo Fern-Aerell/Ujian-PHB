@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('holiday_date')->nullable();
             $table->time('exam_time_start');
             $table->time('exam_time_end');
+            $table->json('slider_images')->nullable();
         });
     }
 

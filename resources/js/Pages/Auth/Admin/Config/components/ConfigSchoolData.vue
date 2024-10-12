@@ -2,19 +2,10 @@
 import Button from '@/Components/Buttons/Button.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { useFileDialog } from '@vueuse/core';
 import InputError from '@/Components/InputError.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
-import { ref } from 'vue';
-
-const image = ref<string | null>(null);
-
-const { files, open, reset, onChange } = useFileDialog({
-    accept: 'image/*',
-    directory: false,
-    multiple: false,
-})
+import EditableImg from '@/Components/EditableImg.vue';
 
 const form = useForm<{
     logo: File | null;
@@ -35,14 +26,6 @@ const submit = () => {
     });
 };
 
-onChange((files) => {
-    if (files && files.length > 0) {
-        const file = files[0];
-        image.value = URL.createObjectURL(file);
-        form.logo = file;
-    }
-});
-
 </script>
 
 <template>
@@ -58,9 +41,12 @@ onChange((files) => {
         <div class="flex flex-col gap-4">
             <div class="flex flex-col gap-1">
                 <InputLabel for="logo" class="required" value="Logo" />
-                <button type="button" @click="() => open()" title="Klik untuk mengganti logo" class="w-fit">
-                    <img :src="image || $page.props.config.logo" alt="logo" class="w-[100px] h-[100px] rounded-full">
-                </button>
+                <EditableImg 
+                    :src="$page.props.config.logo"
+                    :onChange="(file) => {
+                        form.logo = file;
+                    }"
+                />
                 <InputError class="mt-2" :message="form.errors.logo" />
             </div>
             <div class="flex flex-col gap-1">

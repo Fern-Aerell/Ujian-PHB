@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "enquire.js": "^2.1.6",
-        "magic-grid": "^3.4.7"
+        "magic-grid": "^3.4.7",
+        "vuedraggable": "^4.1.0"
     }
 }

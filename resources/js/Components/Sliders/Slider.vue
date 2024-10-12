@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
 
-import image1 from '../../../assets/images/image1.jpg';
-import image2 from '../../../assets/images/image2.jpg';
-import image3 from '../../../assets/images/image3.jpg';
+
+const images: string[] = JSON.parse(usePage().props.config.slider_images) ?? [];
 
 </script>
 
 <template>
-    <swiper-container
+    <swiper-container v-if="images.length > 0"
         :style="{
             '--swiper-pagination-color': '#D6D6D6',
             '--swiper-pagination-bullet-inactive-color': '#FFFFFF',
@@ -23,20 +23,8 @@ import image3 from '../../../assets/images/image3.jpg';
             clickable: true
         }"
     >
-        <swiper-slide :style="{
-            backgroundImage: `url(${image1})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: '60% center',
-        }"></swiper-slide>
-        <swiper-slide :style="{
-            backgroundImage: `url(${image2})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            backgroundPosition: '60% center',
-        }"></swiper-slide>
-        <swiper-slide :style="{
-            backgroundImage: `url(${image3})`,
+        <swiper-slide v-for="(image, index) in images" :key="index" :style="{
+            backgroundImage: `url(${image})`,
             backgroundRepeat: 'no-repeat',
             backgroundSize: 'cover',
             backgroundPosition: '60% center',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SidebarWithMenu from '@/Components/SidebarWithMenu.vue';
-import more_png from '../../assets/icons/more.png';
+import more_png from '../../assets/icons/more.webp';
 import enquire from 'enquire.js';
 import MagicGrid from 'magic-grid';
 import { onMounted, ref } from 'vue';

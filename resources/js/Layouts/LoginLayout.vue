@@ -15,7 +15,7 @@ const props = defineProps<{
     <!-- GREEN BACKGROUND -->
     <div class="flex justify-center items-center min-h-screen bg-[#7FF186] p-[5vw] sm:p-[50px]">
         <!-- WHITE CONTAINER -->
-        <div class="flex flex-row bg-[#FFFFFF] shadow-box w-[800px] min-h-[534px]">
+        <div class="flex flex-row bg-[#FFFFFF] shadow-box min-h-[534px]" :class="{'w-[800px]': (JSON.parse($page.props.config.slider_images) ?? []).length > 0, 'w-[450px]': (JSON.parse($page.props.config.slider_images) ?? []).length === 0}">
             <!-- LOGIN LAYOUT -->
             <div class="flex flex-col flex-1 p-[30px] w-1/2 min-h-[534px]">
                 <div class="flex flex-col p-[10px] gap-[20px]">
