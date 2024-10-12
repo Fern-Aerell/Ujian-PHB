@@ -7,6 +7,7 @@ import { computed } from 'vue';
 import draggable from 'vuedraggable';
 import { failedAlert, successAlert, warningAlert } from '@/alert';
 import InputError from '@/Components/InputError.vue';
+import Swal from 'sweetalert2';
 
 const MAX_IMAGES = 9;
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
@@ -72,7 +73,24 @@ onChange((files) => {
 });
 
 function removeImage(index: number) {
-    form.images.splice(index, 1);
+    Swal.fire(
+        {
+            title: "Pemberitahuan",
+            text: `Yakin ingin menghapus gambar ${index + 1}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#5BD063",
+            cancelButtonColor: "#818181",
+            cancelButtonText: 'Tidak',
+            confirmButtonText: "Ya"
+        }
+    ).then(
+        (result) => {
+            if (result.isConfirmed) {
+                form.images.splice(index, 1);
+            }
+        }
+    );
 }
 
 </script>
