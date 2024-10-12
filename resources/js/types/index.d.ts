@@ -50,6 +50,11 @@ export interface Config {
     slider_images: string;
 }
 
+export interface Kelas {
+    bilangan: number;
+    romawi: string;
+}
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     config: Config;
     auth: {
