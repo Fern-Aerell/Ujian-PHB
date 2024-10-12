@@ -8,6 +8,8 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { ref } from 'vue';
 
+import whitePencilIcon from '../../../../../../assets/icons/white_pencil.webp';
+
 const image = ref<string | null>(null);
 
 const { files, open, reset, onChange } = useFileDialog({
@@ -58,8 +60,14 @@ onChange((files) => {
         <div class="flex flex-col gap-4">
             <div class="flex flex-col gap-1">
                 <InputLabel for="logo" class="required" value="Logo" />
-                <button type="button" @click="() => open()" title="Klik untuk mengganti logo" class="w-fit">
-                    <img :src="image || $page.props.config.logo" alt="logo" class="w-[100px] h-[100px] rounded-full">
+                <button type="button" @click="() => open()" title="Klik untuk mengganti logo"
+                    class="w-fit relative group">
+                    <img :src="image || $page.props.config.logo" alt="logo"
+                        class="w-[100px] h-[100px] rounded-full transition-all duration-300 group-hover:brightness-50">
+                    <div
+                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <img :src="whitePencilIcon" alt="edit icon" class="w-6 h-6" />
+                    </div>
                 </button>
                 <InputError class="mt-2" :message="form.errors.logo" />
             </div>

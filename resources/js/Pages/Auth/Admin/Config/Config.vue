@@ -5,6 +5,7 @@ import ConfigExamScheduleData from './components/ConfigExamScheduleData.vue';
 import ConfigExamTimeData from './components/ConfigExamTimeData.vue';
 import ConfigSchoolData from './components/ConfigSchoolData.vue';
 import ConfigActivityData from './components/ConfigActivityData.vue';
+import ConfigSliderData from './components/ConfigSliderData.vue';
 </script>
 
 <template>
@@ -14,5 +15,6 @@ import ConfigActivityData from './components/ConfigActivityData.vue';
         <ConfigActivityData />
         <ConfigExamScheduleData />
         <ConfigExamTimeData />
+        <ConfigSliderData />
     </AuthLayout>
 </template>
