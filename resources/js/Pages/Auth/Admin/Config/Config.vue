@@ -6,6 +6,13 @@ import ConfigExamTimeData from './components/ConfigExamTimeData.vue';
 import ConfigSchoolData from './components/ConfigSchoolData.vue';
 import ConfigActivityData from './components/ConfigActivityData.vue';
 import ConfigSliderData from './components/ConfigSliderData.vue';
+import ConfigKelasData from './components/ConfigKelasData.vue';
+import { Kelas } from '@/types';
+
+const props = defineProps<{
+    kelas: Kelas[]   
+}>();
+
 </script>
 
 <template>
@@ -16,5 +23,6 @@ import ConfigSliderData from './components/ConfigSliderData.vue';
         <ConfigExamScheduleData />
         <ConfigExamTimeData />
         <ConfigSliderData />
+        <ConfigKelasData :kelas="kelas" />
     </AuthLayout>
 </template>

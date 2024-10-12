@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth\Admin;
 use App\Events\UpdateExamTimeCard;
 use App\Http\Controllers\Controller;
 use App\Models\Config;
+use App\Models\Kelas;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +15,9 @@ class ConfigController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Auth/Admin/Config/Config');
+        return Inertia::render('Auth/Admin/Config/Config', [
+            "kelas" => Kelas::all()
+        ]);
     }
 
     public function update_activity_data(Request $request)
@@ -265,5 +268,24 @@ class ConfigController extends Controller
         } else {
             throw new \Exception('Format data URI tidak valid.');
         }
+    }
+
+    public function store_kelas_data(Request $request)
+    {
+        $request->validate([
+            'bilangan' => 'required|integer|unique:'.Kelas::class,
+            'romawi' => 'required|string|uppercase|unique:'.Kelas::class
+        ]);
+
+        kelas::create($request->all());
+        return redirect()->back();
+    }
+
+    public function delete_kelas_data(Request $request, int $bilangan)
+    {
+        $kelas = Kelas::where('bilangan', $bilangan);
+        if(!$kelas) return abort(404, 'Kelas tidak ditemukan');
+        $kelas->delete();
+        return redirect()->back();
     }
 }
