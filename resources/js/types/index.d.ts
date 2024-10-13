@@ -55,6 +55,11 @@ export interface Kelas {
     romawi: string;
 }
 
+export interface KelasKategori {
+    kepanjangan: string;
+    kependekan: string;
+}
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     config: Config;
     auth: {

@@ -22,8 +22,9 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::post('/config/exam_time_date/update', [ConfigController::class, 'update_exam_time_data'])->name('config.exam_time_data.update');
     Route::post('/config/school_data/update', [ConfigController::class, 'update_school_data'])->name('config.school_data.update');
     Route::post('/config/slider_data/update', [ConfigController::class, 'update_slider_data'])->name('config.slider_data.update');
-
     Route::post('/config/kelas_data/store', [ConfigController::class, 'store_kelas_data'])->name('config.kelas_data.store');
     Route::delete('/config/kelas_data/{bilangan}/delete', [ConfigController::class, 'delete_kelas_data'])->name('config.kelas_data.delete');
+    Route::post('/config/kelas_kategori_data/store', [ConfigController::class, 'store_kelas_kategori_data'])->name('config.kelas_kategori_data.store');
+    Route::delete('/config/kelas_kategori_data/{kependekan}/delete', [ConfigController::class, 'delete_kelas_kategori_data'])->name('config.kelas_kategori_data.delete');
 
 });

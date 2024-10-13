@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ConfigSeeder::class,
             KelasSeeder::class,
+            KelasKategoriSeeder::class,
         ]);
     }
 }

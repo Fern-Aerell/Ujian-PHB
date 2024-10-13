@@ -6,6 +6,7 @@ use App\Events\UpdateExamTimeCard;
 use App\Http\Controllers\Controller;
 use App\Models\Config;
 use App\Models\Kelas;
+use App\Models\KelasKategori;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -16,7 +17,8 @@ class ConfigController extends Controller
     public function index()
     {
         return Inertia::render('Auth/Admin/Config/Config', [
-            "kelas" => Kelas::all()
+            "kelas" => Kelas::all(),
+            "kelas_kategoris" => KelasKategori::all(),
         ]);
     }
 
@@ -273,8 +275,8 @@ class ConfigController extends Controller
     public function store_kelas_data(Request $request)
     {
         $request->validate([
-            'bilangan' => 'required|integer|unique:'.Kelas::class,
-            'romawi' => 'required|string|uppercase|unique:'.Kelas::class
+            'bilangan' => 'required|integer|unique:' . Kelas::class,
+            'romawi' => 'required|string|uppercase|unique:' . Kelas::class
         ]);
 
         kelas::create($request->all());
@@ -284,8 +286,31 @@ class ConfigController extends Controller
     public function delete_kelas_data(Request $request, int $bilangan)
     {
         $kelas = Kelas::where('bilangan', $bilangan);
-        if(!$kelas) return abort(404, 'Kelas tidak ditemukan');
+        if (!$kelas) return abort(404, 'Kelas tidak ditemukan');
         $kelas->delete();
+        return redirect()->back();
+    }
+
+    public function store_kelas_kategori_data(Request $request)
+    {
+        $request->validate([
+            'kepanjangan' => [
+                'required',
+                'string',
+                'unique:' . KelasKategori::class,
+                'regex:/^([A-Z][a-z]*\s*)+$/',
+            ],
+            'kependekan' => 'required|string|uppercase|unique:' . KelasKategori::class
+        ]);
+        KelasKategori::create($request->all());
+        return redirect()->back();
+    }
+
+    public function delete_kelas_kategori_data(Request $request, string $kependekan)
+    {
+        $kelas_kategori = KelasKategori::where('kependekan', $kependekan);
+        if (!$kelas_kategori) return abort(404, 'Kelas kategori tidak ditemukan');
+        $kelas_kategori->delete();
         return redirect()->back();
     }
 }
