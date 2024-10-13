@@ -60,6 +60,13 @@ export interface KelasKategori {
     kependekan: string;
 }
 
+export interface Mapel {
+    id: number;
+    kepanjangan: string;
+    kependekan: string;
+    tags: string;
+}
+
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     config: Config;
     auth: {

@@ -26,5 +26,8 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::delete('/config/kelas_data/{bilangan}/delete', [ConfigController::class, 'delete_kelas_data'])->name('config.kelas_data.delete');
     Route::post('/config/kelas_kategori_data/store', [ConfigController::class, 'store_kelas_kategori_data'])->name('config.kelas_kategori_data.store');
     Route::delete('/config/kelas_kategori_data/{kependekan}/delete', [ConfigController::class, 'delete_kelas_kategori_data'])->name('config.kelas_kategori_data.delete');
+    Route::post('/config/mapel_data/store', [ConfigController::class, 'store_mapel_data'])->name('config.mapel_data.store');
+    Route::delete('/config/mapel_data/{id}/delete', [ConfigController::class, 'delete_mapel_data'])->name('config.mapel_data.delete');
+    Route::post('/config/mapel_data/{id}/update', [ConfigController::class, 'update_mapel_data'])->name('config.mapel_data.update');
 
 });
