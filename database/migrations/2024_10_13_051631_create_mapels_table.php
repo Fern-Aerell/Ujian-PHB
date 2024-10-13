@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('mapels', function (Blueprint $table) {
-            $table->string('kepanjangan')->primary();
+            $table->id();
+            $table->string('kepanjangan')->unique();
             $table->string('kependekan')->unique();
+            $table->json('tags')->nullable();
             $table->timestamps();
         });
     }

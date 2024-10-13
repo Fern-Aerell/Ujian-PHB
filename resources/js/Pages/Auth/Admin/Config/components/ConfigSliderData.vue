@@ -4,7 +4,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import { useFileDialog } from '@vueuse/core';
 import AddImage from '../../../../../../assets/images/add_image.webp';
 import { computed } from 'vue';
-import draggable from 'vuedraggable';
+import Draggable from 'vuedraggable';
 import { failedAlert, successAlert, warningAlert } from '@/alert';
 import InputError from '@/Components/InputError.vue';
 import Swal from 'sweetalert2';
@@ -108,7 +108,7 @@ function removeImage(index: number) {
         <br>
         <div class="flex flex-col gap-4">
             <div class="flex flex-row flex-wrap">
-                <draggable v-model="form.images" item-key="index" :animation="200" class="flex flex-wrap gap-2">
+                <Draggable v-model="form.images" item-key="index" :animation="200" class="flex flex-wrap gap-2">
                     <template #item="{ element, index }">
                         <div class="relative w-[100px] h-[100px]">
                             <img :src="element" alt="gambar" :key="index"
@@ -124,7 +124,7 @@ function removeImage(index: number) {
                             <img :src="AddImage" alt="tambah gambar" class="w-full h-full">
                         </button>
                     </template>
-                </draggable>
+                </Draggable>
             </div>
             <Button type="submit" text="Simpan" bg-color="primary" text-color="white" class="!w-fit px-6"
                 :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />

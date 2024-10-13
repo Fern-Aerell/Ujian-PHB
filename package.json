@@ -14,8 +14,10 @@
         "@vueuse/core": "^11.1.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.6.4",
+        "enquire.js": "^2.1.6",
         "laravel-echo": "^1.16.1",
         "laravel-vite-plugin": "^1.0",
+        "magic-grid": "^3.4.7",
         "postcss": "^8.4.31",
         "pusher-js": "^8.4.0-rc2",
         "sweetalert2": "^11.6.13",
@@ -24,11 +26,7 @@
         "typescript": "^5.5.3",
         "vite": "^5.0",
         "vue": "^3.4.0",
-        "vue-tsc": "^2.0.24"
-    },
-    "dependencies": {
-        "enquire.js": "^2.1.6",
-        "magic-grid": "^3.4.7",
+        "vue-tsc": "^2.0.24",
         "vuedraggable": "^4.1.0"
     }
 }

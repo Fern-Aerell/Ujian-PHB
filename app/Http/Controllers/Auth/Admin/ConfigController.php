@@ -7,10 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Config;
 use App\Models\Kelas;
 use App\Models\KelasKategori;
+use App\Models\Mapel;
 use Error;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class ConfigController extends Controller
 {
@@ -19,6 +21,7 @@ class ConfigController extends Controller
         return Inertia::render('Auth/Admin/Config/Config', [
             "kelas" => Kelas::all(),
             "kelas_kategoris" => KelasKategori::all(),
+            "mapels" => Mapel::all(),
         ]);
     }
 
@@ -311,6 +314,62 @@ class ConfigController extends Controller
         $kelas_kategori = KelasKategori::where('kependekan', $kependekan);
         if (!$kelas_kategori) return abort(404, 'Kelas kategori tidak ditemukan');
         $kelas_kategori->delete();
+        return redirect()->back();
+    }
+
+    public function store_mapel_data(Request $request)
+    {
+        $request->validate([
+            'kepanjangan' => [
+                'required',
+                'string',
+                'unique:' . Mapel::class,
+                'regex:/^([A-Z][a-z]*\s*)+$/',
+            ],
+            'kependekan' => 'required|string|uppercase|unique:' . Mapel::class,
+            'tags' => 'required|array',
+            'tags.*' => 'string|distinct'
+        ]);
+
+        $mapel = new Mapel($request->only(['kepanjangan', 'kependekan']));
+        $mapel->tags = json_encode($request->tags);
+        $mapel->save();
+
+        return redirect()->back();
+    }
+
+    public function update_mapel_data(Request $request, int $id)
+    {
+        $request->validate([
+            'kepanjangan' => [
+                'required',
+                'string',
+                Rule::unique(Mapel::class)->ignore($id),
+                'regex:/^([A-Z][a-z]*\s*)+$/',
+            ],
+            'kependekan' => [
+                'required',
+                'string',
+                'uppercase',
+                Rule::unique(Mapel::class)->ignore($id),
+            ],
+            'tags' => 'required|array',
+            'tags.*' => 'string|distinct'
+        ]);
+
+        $mapel = Mapel::find($id);
+        if (!$mapel) return abort(404, 'Mapel tidak ditemukan');
+        $mapel->update($request->only(['kepanjangan', 'kependekan']));
+        $mapel->tags = json_encode($request->tags);
+        $mapel->save();
+        return redirect()->back();
+    }
+
+    public function delete_mapel_data(Request $request, int $id)
+    {
+        $mapel = Mapel::find($id);
+        if (!$mapel) return abort(404, 'Mapel tidak ditemukan');
+        $mapel->delete();
         return redirect()->back();
     }
 }

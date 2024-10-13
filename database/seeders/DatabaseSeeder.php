@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ConfigSeeder::class,
             KelasSeeder::class,
             KelasKategoriSeeder::class,
+            MapelSeeder::class,
         ]);
     }
 }

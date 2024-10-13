@@ -34,7 +34,7 @@ onMounted(() => {
     const magicGrid = new MagicGrid({
         container: gridContainer.value,
         animate: false,
-        static: true,
+        items: gridContainer.value.children.length,
         center: false,
         gutter: 20,
         useMin: true

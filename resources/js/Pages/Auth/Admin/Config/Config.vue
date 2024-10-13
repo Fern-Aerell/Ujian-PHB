@@ -8,11 +8,13 @@ import ConfigActivityData from './components/ConfigActivityData.vue';
 import ConfigSliderData from './components/ConfigSliderData.vue';
 import ConfigKelasData from './components/ConfigKelasData.vue';
 import ConfigKelasKategoriData from './components/ConfigKelasKategoriData.vue';
-import { Kelas, KelasKategori } from '@/types';
+import ConfigMapelData from './components/ConfigMapelData.vue';
+import { Kelas, KelasKategori, Mapel } from '@/types';
 
 const props = defineProps<{
     kelas: Kelas[],
-    kelas_kategoris: KelasKategori[]
+    kelas_kategoris: KelasKategori[],
+    mapels: Mapel[],
 }>();
 
 </script>
@@ -20,12 +22,13 @@ const props = defineProps<{
 <template>
     <CustomHead title="Config" />
     <AuthLayout title="Config">
+        <!-- <ConfigExamScheduleData />
+        <ConfigExamTimeData />
         <ConfigSchoolData />
         <ConfigActivityData />
-        <ConfigExamScheduleData />
-        <ConfigExamTimeData />
         <ConfigSliderData />
         <ConfigKelasData :kelas="props.kelas" />
-        <ConfigKelasKategoriData :kelas_kategoris="props.kelas_kategoris" />
+        <ConfigKelasKategoriData :kelas_kategoris="props.kelas_kategoris" /> -->
+        <ConfigMapelData :kelas="props.kelas" :kelas_kategoris="props.kelas_kategoris" :mapels="props.mapels" />
     </AuthLayout>
 </template>
