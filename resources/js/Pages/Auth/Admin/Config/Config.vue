@@ -22,13 +22,13 @@ const props = defineProps<{
 <template>
     <CustomHead title="Config" />
     <AuthLayout title="Config">
-        <!-- <ConfigExamScheduleData />
+        <ConfigExamScheduleData />
         <ConfigExamTimeData />
         <ConfigSchoolData />
         <ConfigActivityData />
         <ConfigSliderData />
         <ConfigKelasData :kelas="props.kelas" />
-        <ConfigKelasKategoriData :kelas_kategoris="props.kelas_kategoris" /> -->
+        <ConfigKelasKategoriData :kelas_kategoris="props.kelas_kategoris" />
         <ConfigMapelData :kelas="props.kelas" :kelas_kategoris="props.kelas_kategoris" :mapels="props.mapels" />
     </AuthLayout>
 </template>
