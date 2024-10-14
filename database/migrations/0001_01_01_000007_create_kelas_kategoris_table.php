@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kelas_kategoris', function (Blueprint $table) {
-            $table->string('kepanjangan')->primary();
+            $table->id();
+            $table->string('kepanjangan')->uniqid();
             $table->string('kependekan')->unique();
             $table->timestamps();
         });

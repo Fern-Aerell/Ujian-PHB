@@ -322,9 +322,27 @@ class ConfigController extends Controller
         return redirect()->back();
     }
 
-    public function delete_kelas_kategori_data(Request $request, string $kependekan)
+    public function update_kelas_kategori_data(Request $request, int $id)
     {
-        $kelas_kategori = KelasKategori::where('kependekan', $kependekan);
+        $request->validate([
+            'kepanjangan' => [
+                'required',
+                'string',
+                Rule::unique(KelasKategori::class)->ignore($id),
+                'regex:/^([A-Z][a-z]*\s*)+$/',
+            ],
+            'kependekan' => ['required','string','uppercase', Rule::unique(KelasKategori::class)->ignore($id)],
+        ]);
+        $kelas_kategori = KelasKategori::find($id);
+        if (!$kelas_kategori) return abort(404, 'Kelas kategori tidak ditemukan');
+        $kelas_kategori->update($request->all());
+        $kelas_kategori->save();
+        return redirect()->back();
+    }
+
+    public function delete_kelas_kategori_data(Request $request, int $id)
+    {
+        $kelas_kategori = KelasKategori::find($id);
         if (!$kelas_kategori) return abort(404, 'Kelas kategori tidak ditemukan');
         $kelas_kategori->delete();
         return redirect()->back();
