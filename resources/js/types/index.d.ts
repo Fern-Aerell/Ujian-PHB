@@ -57,6 +57,7 @@ export interface Kelas {
 }
 
 export interface KelasKategori {
+    id: number;
     kepanjangan: string;
     kependekan: string;
 }
