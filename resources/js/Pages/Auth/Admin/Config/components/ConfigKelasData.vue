@@ -3,13 +3,14 @@ import Button from '@/Components/Buttons/Button.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
+import Kelas from '@/Components/Kelas.vue';
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
-import { Kelas } from '@/types';
+import { Kelas as KelasType } from '@/types';
 import Swal from 'sweetalert2';
 
 const props = defineProps<{
-  kelas: Kelas[]
+  kelas: KelasType[]
 }>();
 
 const form = useForm<{
@@ -32,11 +33,11 @@ function submit() {
   });
 }
 
-function deleteKelas(bilangan: number) {
+function deleteKelas(id: number) {
   Swal.fire(
     {
       title: "Pemberitahuan",
-      text: `Yakin ingin menghapus kelas ${bilangan}?`,
+      text: `Yakin ingin menghapus kelas?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#5BD063",
@@ -47,12 +48,12 @@ function deleteKelas(bilangan: number) {
   ).then(
     (result) => {
       if (result.isConfirmed) {
-        router.delete(route('config.kelas_data.delete', { bilangan }), {
+        router.delete(route('config.kelas_data.delete', { id: id }), {
           onError: (error) => {
             failedAlert(error.message);
           },
           onSuccess: () => {
-            successAlert(`Kelas ${bilangan} berhasil dihapus`);
+            successAlert(`Kelas berhasil dihapus`);
           },
         });
       }
@@ -73,15 +74,13 @@ function deleteKelas(bilangan: number) {
     </header>
     <br>
     <div class="flex flex-col">
+        <Kelas v-for="(kelas, index) in props.kelas" :key="index" :bilangan="kelas.bilangan" :romawi="kelas.romawi" editable/>
+    </div>
+    <div class="flex flex-col">
       <div v-for="(data, index) in props.kelas" :key="index"
-        class="flex flex-row border-gray-300 border p-3 items-center justify-between">
-        <div class="flex flex-row gap-2">
-          <span>{{ data.bilangan }}</span>
-          -
-          <span>{{ data.romawi }}</span>
-        </div>
-        <button type="button" @click="deleteKelas(data.bilangan)"
-          class="bg-gray-500 hover:bg-red-500 font-bold px-3 py-1 text-white">X</button>
+        class="flex flex-row border-gray-300 border p-3 items-center justify-between w-full">
+          <span class="truncate">{{ data.bilangan }} - {{ data.romawi }}</span>
+          <button type="button" @click="deleteKelas(data.id)" class="bg-gray-500 hover:bg-red-500 font-bold px-3 py-1 text-white">X</button>
       </div>
     </div>
     <br>
