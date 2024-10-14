@@ -37,7 +37,7 @@ const props = defineProps<{
                     <option :value="form.type">{{ form.type }}</option>
                 </template>
                 <template v-else>
-                    <option v-for="(userType, index) in $page.props.auth.userTypes" :key="index" :value="userType.type">{{ userType.type }}</option>
+                    <option v-for="(userType, index) in $page.props.auth.userTypes" :key="index" :value="userType">{{ userType }}</option>
                 </template>
             </select>
 

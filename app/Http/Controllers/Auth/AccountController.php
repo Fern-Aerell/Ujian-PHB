@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Rules\CurrentPassword;
 use App\Rules\NoWhitespace;
 use App\Rules\Password;
-use Illuminate\Validation\Rules;
-use App\Rules\UserType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

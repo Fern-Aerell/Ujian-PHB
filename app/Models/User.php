@@ -44,15 +44,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return [];
     }
 
-    
-    /**
-     * Get the user type associated with the user.
-     */
-    public function type()
-    {
-        return $this->belongsTo(UserType::class, 'type', 'type');
-    }
-
     public function resetPasswordToken() {
         return $this->hasOne(PasswordResetToken::class, 'email', 'email');
     }

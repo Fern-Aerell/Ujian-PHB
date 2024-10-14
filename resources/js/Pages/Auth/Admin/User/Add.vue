@@ -6,7 +6,7 @@ import FormUser from '@/Components/Forms/FormUser.vue';
 import CustomHead from '@/Components/CustomHead.vue';
 
 const form = useForm({
-    type: usePage().props.auth.userTypes.at(-1)?.type || '',
+    type: usePage().props.auth.userTypes.at(-1) || '',
     name: '',
     username: '',
     email: '',
