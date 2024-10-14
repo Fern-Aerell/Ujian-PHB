@@ -286,6 +286,19 @@ class ConfigController extends Controller
         return redirect()->back();
     }
 
+    public function update_kelas_data(Request $request, int $id)
+    {
+        $request->validate([
+            'bilangan' => ['required','integer',Rule::unique(Kelas::class)->ignore($id)],
+            'romawi' => ['required','string','uppercase',Rule::unique(Kelas::class)->ignore($id)],
+        ]);
+        $kelas = Kelas::find($id);
+        if(!$kelas) return abort(404, 'Kelas tidak ditemukan');
+        $kelas->update($request->all());
+        $kelas->save();
+        return redirect()->back();
+    }
+
     public function delete_kelas_data(Request $request, int $id)
     {
         $kelas = Kelas::find($id);
