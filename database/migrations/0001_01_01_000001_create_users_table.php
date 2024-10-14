@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
+            $table->enum('type', array_map(fn($case) => $case->value, UserType::cases()));
             $table->string('name');
             $table->string('username')->unique();
             $table->string('email')->nullable()->unique();
@@ -21,8 +22,6 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-
-            $table->foreign('type')->references('type')->on('user_types');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

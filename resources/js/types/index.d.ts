@@ -10,10 +10,6 @@ export interface User {
     password: string;
 }
 
-export interface UserType {
-    type: string;
-}
-
 export interface PaginationLink {
     url: string | null;
     label: string;
@@ -73,6 +69,6 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     config: Config;
     auth: {
         user: User;
-        userTypes: Array<UserType>;
+        userTypes: string[];
     };
 };

@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Enums\UserType as EnumsUserType;
 use App\Models\User;
 use App\Models\UserType as ModelsUserType;
 use Closure;
@@ -16,6 +17,7 @@ class UserType implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        ModelsUserType::where('type', $value)->first() ? null : $fail(trans('validation.user_type_not_registered'));
+        
+        EnumsUserType::tryFrom($value) != null ? null : $fail(trans('validation.user_type_not_registered'));
     }
 }
