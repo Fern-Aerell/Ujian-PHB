@@ -51,6 +51,7 @@ export interface Config {
 }
 
 export interface Kelas {
+    id: number;
     bilangan: number;
     romawi: string;
 }
