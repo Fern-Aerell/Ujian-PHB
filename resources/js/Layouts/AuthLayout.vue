@@ -3,7 +3,7 @@ import SidebarWithMenu from '@/Components/SidebarWithMenu.vue';
 import more_png from '../../assets/icons/more.webp';
 import enquire from 'enquire.js';
 import MagicGrid from 'magic-grid';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps<{
     title: string;
@@ -11,6 +11,7 @@ const props = defineProps<{
 }>();
 
 const mobileSidebar = ref(false);
+const magicGrid = ref<MagicGrid>();
 const gridContainer = ref();
 
 function mobileSidebarToggle(value: boolean = !mobileSidebar.value) {
@@ -30,8 +31,11 @@ enquire.register("screen and (min-width: 1024px)", {
     deferSetup: true
 });
 
+let resizeObserver: ResizeObserver;
+
 onMounted(() => {
-    const magicGrid = new MagicGrid({
+
+    magicGrid.value = new MagicGrid({
         container: gridContainer.value,
         animate: false,
         items: gridContainer.value.children.length,
@@ -40,7 +44,34 @@ onMounted(() => {
         useMin: true
     });
 
-    magicGrid.listen();
+    magicGrid.value.listen();
+
+    resizeObserver = new ResizeObserver(() => {
+        if(magicGrid.value) {
+            magicGrid.value.positionItems();
+        }
+    });
+
+    Array.from(gridContainer.value.children).forEach(child => {
+        resizeObserver.observe(child as Element);
+    });
+
+    setTimeout(() => {
+        magicGrid.value = new MagicGrid({
+            container: gridContainer.value,
+            animate: true,
+            items: gridContainer.value.children.length,
+            center: false,
+            gutter: 20,
+            useMin: true
+        });
+    }, 200);
+});
+
+onUnmounted(() => {
+    if (resizeObserver) {
+        resizeObserver.disconnect();
+    }
 });
 
 </script>
