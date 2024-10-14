@@ -286,9 +286,9 @@ class ConfigController extends Controller
         return redirect()->back();
     }
 
-    public function delete_kelas_data(Request $request, int $bilangan)
+    public function delete_kelas_data(Request $request, int $id)
     {
-        $kelas = Kelas::where('bilangan', $bilangan);
+        $kelas = Kelas::find($id);
         if (!$kelas) return abort(404, 'Kelas tidak ditemukan');
         $kelas->delete();
         return redirect()->back();

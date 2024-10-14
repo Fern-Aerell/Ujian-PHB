@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('kelas', function (Blueprint $table) {
-            $table->integer('bilangan')->primary();
+            $table->id();
+            $table->integer('bilangan')->unique();
             $table->string('romawi')->unique();
             $table->timestamps();
         });
