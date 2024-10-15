@@ -34,42 +34,43 @@ enquire.register("screen and (min-width: 1024px)", {
 let resizeObserver: ResizeObserver;
 
 onMounted(() => {
-
-    magicGrid.value = new MagicGrid({
-        container: gridContainer.value,
-        animate: false,
-        items: gridContainer.value.children.length,
-        center: false,
-        gutter: 20,
-        useMin: true
-    });
-
-    magicGrid.value.listen();
-
-    resizeObserver = new ResizeObserver(() => {
-        if(magicGrid.value) {
-            magicGrid.value.positionItems();
-        }
-    });
-
-    Array.from(gridContainer.value.children).forEach(child => {
-        resizeObserver.observe(child as Element);
-    });
-
-    setTimeout(() => {
+    if(gridContainer.value && gridContainer.value.children.length > 0) {
         magicGrid.value = new MagicGrid({
             container: gridContainer.value,
-            animate: true,
+            animate: false,
             items: gridContainer.value.children.length,
             center: false,
             gutter: 20,
             useMin: true
         });
-    }, 200);
+
+        magicGrid.value.listen();
+
+        resizeObserver = new ResizeObserver(() => {
+            if(magicGrid.value) {
+                magicGrid.value.positionItems();
+            }
+        });
+
+        Array.from(gridContainer.value.children).forEach(child => {
+            resizeObserver.observe(child as Element);
+        });
+
+        setTimeout(() => {
+            magicGrid.value = new MagicGrid({
+                container: gridContainer.value,
+                animate: true,
+                items: gridContainer.value.children.length,
+                center: false,
+                gutter: 20,
+                useMin: true
+            });
+        }, 200);
+    }
 });
 
 onUnmounted(() => {
-    if (resizeObserver) {
+    if (gridContainer.value && gridContainer.value.children.length > 0 && resizeObserver) {
         resizeObserver.disconnect();
     }
 });
