@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Semester;
 use App\Models\Config;
 use Illuminate\Database\Seeder;
 
@@ -43,6 +44,9 @@ class ConfigSeeder extends Seeder
                 'activity_type' => 'Ujian',
                 'activity_title' => 'Penilaian Harian Bulanan',
                 'activity_title_abbreviation' => 'PHB',
+                'semester' => Semester::GANJIL,
+                'school_year_start' => now()->format('Y'),
+                'school_year_end' => now()->addYears(1)->format('Y'),
                 'exam_date_start' => now()->format('Y-m-d'),
                 'exam_date_end' => now()->addDays(7)->format('Y-m-d'),
                 'holiday_date' => now()->addDays(rand(1, 3))->format('d') . ',' . now()->addDays(rand(4, 6))->format('d'),
