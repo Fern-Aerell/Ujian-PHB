@@ -38,6 +38,10 @@ Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
         return Inertia::render('Auth/Dashboard');
     })->name('dashboard');
 
+    Route::get('/activity', function () {
+        return Inertia::render('Auth/Activity');
+    })->name('activity');
+
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::patch('/account', [AccountController::class, 'update'])->name('account.update');
     Route::delete('/account', [AccountController::class, 'destroy'])->name('account.destroy');
