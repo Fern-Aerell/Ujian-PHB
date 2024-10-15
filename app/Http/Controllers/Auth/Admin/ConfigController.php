@@ -32,6 +32,15 @@ class ConfigController extends Controller
             'activity_type' => 'required|string|max:255',
             'activity_title' => 'required|string|max:255',
             'activity_title_abbreviation' => 'required|string|max:255',
+            'semester' => ['required', 'string', Rule::enum(\App\Enums\Semester::class)],
+            'school_year_start' => 'required|integer|min:1945|max:9999',
+            'school_year_end' => [
+                'required',
+                'integer',
+                'min:1945',
+                'max:9999',
+                'gt:school_year_start',
+            ],
         ]);
 
         $config = Config::first();
@@ -43,6 +52,9 @@ class ConfigController extends Controller
         $config->activity_type = $request->activity_type;
         $config->activity_title = $request->activity_title;
         $config->activity_title_abbreviation = $request->activity_title_abbreviation;
+        $config->semester = $request->semester;
+        $config->school_year_start = $request->school_year_start;
+        $config->school_year_end = $request->school_year_end;
         $config->save();
 
         return redirect()->back();

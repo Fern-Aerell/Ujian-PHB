@@ -38,6 +38,9 @@ export interface Config {
     activity_type: string;
     activity_title: string;
     activity_title_abbreviation: string;
+    semester: string;
+    school_year_start: number;
+    school_year_end: number;
     exam_date_start: string;
     exam_date_end: string;
     holiday_date: string;
