@@ -35,10 +35,26 @@ class UserSeeder extends Seeder
                 'password' => Crypt::encryptString('12345678'),
             ],
             [
+                'type' => UserType::MURID,
+                'name' => 'Fufufafa',
+                'username' => 'fufufafa',
+                'email' => 'fufufafa@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Crypt::encryptString('12345678'),
+            ],
+            [
                 'type' => UserType::GURU,
                 'name' => 'Khairul Amri CM',
                 'username' => 'amri',
                 'email' => 'amri@gmail.com',
+                'email_verified_at' => now(),
+                'password' => Crypt::encryptString('12345678'),
+            ],
+            [
+                'type' => UserType::GURU,
+                'name' => 'Mulyono',
+                'username' => 'mulyono',
+                'email' => 'mulyono@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Crypt::encryptString('12345678'),
             ]
