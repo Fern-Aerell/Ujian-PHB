@@ -16,15 +16,18 @@ class KelasSeeder extends Seeder
         $kelass = [
             [
                 "bilangan" => 10,
-                "romawi" => 'X'
+                "romawi" => 'X',
+                "pengucapan" => 'Sepuluh'
             ],
             [
                 "bilangan" => 11,
-                "romawi" => 'XI'
+                "romawi" => 'XI',
+                "pengucapan" => 'Sebelas'
             ],
             [
                 "bilangan" => 12,
-                "romawi" => 'XII'
+                "romawi" => 'XII',
+                "pengucapan" => 'Dua Belas'
             ],
         ];
 

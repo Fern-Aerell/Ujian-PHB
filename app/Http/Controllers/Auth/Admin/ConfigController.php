@@ -279,7 +279,13 @@ class ConfigController extends Controller
     {
         $request->validate([
             'bilangan' => 'required|integer|unique:' . Kelas::class,
-            'romawi' => 'required|string|uppercase|unique:' . Kelas::class
+            'romawi' => 'required|string|uppercase|unique:' . Kelas::class,
+            'pengucapan' => [
+                'required',
+                'string',
+                'unique:' . Kelas::class,
+                'regex:/^([A-Z][a-z]*\s*)+$/'
+            ],
         ]);
 
         kelas::create($request->all());
@@ -291,6 +297,12 @@ class ConfigController extends Controller
         $request->validate([
             'bilangan' => ['required','integer',Rule::unique(Kelas::class)->ignore($id)],
             'romawi' => ['required','string','uppercase',Rule::unique(Kelas::class)->ignore($id)],
+            'pengucapan' => [
+                'required',
+                'string',
+                Rule::unique(Kelas::class)->ignore($id),
+                'regex:/^([A-Z][a-z]*\s*)+$/'
+            ],
         ]);
         $kelas = Kelas::find($id);
         if(!$kelas) return abort(404, 'Kelas tidak ditemukan');

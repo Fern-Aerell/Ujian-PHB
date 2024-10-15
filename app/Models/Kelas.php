@@ -11,6 +11,7 @@ class Kelas extends Model
 
     protected $fillable = [
         'bilangan',
-        'romawi'
+        'romawi',
+        'pengucapan'
     ];
 }

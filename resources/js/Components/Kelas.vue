@@ -20,7 +20,8 @@ const props = defineProps<{
 const form = useForm(
     {
         bilangan: props.kelas?.bilangan ?? null,
-        romawi: props.kelas?.romawi ?? null
+        romawi: props.kelas?.romawi ?? null,
+        pengucapan: props.kelas?.pengucapan ?? null,
     }
 );
 
@@ -75,6 +76,7 @@ function kembali() {
                 if (props.kelas) {
                     form.bilangan = props.kelas.bilangan;
                     form.romawi = props.kelas.romawi;
+                    form.pengucapan = props.kelas.pengucapan;
                 }
             }
         }
@@ -112,7 +114,7 @@ defineExpose({ isHide });
         <!-- NON EDIT MODE -->
         <template v-if="!isEdit && !props.add">
             <div class="flex flex-row w-full justify-between items-center">
-                <span class="truncate">{{ form.bilangan }} ({{ form.romawi }})</span>
+                <span class="truncate">{{ form.bilangan }} ({{ form.pengucapan }}) ({{ form.romawi }})</span>
                 <button v-if="editable"
                     @click="if (props.callbackEditMode) props.callbackEditMode(); isEdit = true; isHide = false;"
                     class="bg-gray-500 hover:bg-gray-600 font-bold px-3 py-1 text-white">Edit</button>
@@ -133,6 +135,12 @@ defineExpose({ isHide });
                     <TextInput type="text" name="romawi" id="romawi" v-model="form.romawi" required
                         autocomplete="romawi" placeholder="Masukkan bilangan romawi untuk kelas" />
                     <InputError class="mt-2" :message="form.errors.romawi" />
+                </div>
+                <div class="flex flex-col gap-1 flex-1">
+                    <InputLabel for="pengucapan" class="required" value="pengucapan bilangan" />
+                    <TextInput type="text" name="pengucapan" id="pengucapan" v-model="form.pengucapan" required
+                        autocomplete="pengucapan" placeholder="Masukkan pengucapan bilangan untuk kelas" />
+                    <InputError class="mt-2" :message="form.errors.pengucapan" />
                 </div>
                 <div class="flex flex-row flex-wrap gap-2">
                     <Button type="submit" :text="add ? 'Tambah' : 'Simpan'" bg-color="primary" text-color="white"
