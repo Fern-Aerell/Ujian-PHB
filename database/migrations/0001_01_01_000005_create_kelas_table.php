@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('bilangan')->unique();
             $table->string('romawi')->unique();
+            $table->string('pengucapan')->unique();
             $table->timestamps();
         });
     }
