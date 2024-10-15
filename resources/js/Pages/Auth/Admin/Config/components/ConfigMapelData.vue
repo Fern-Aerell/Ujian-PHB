@@ -14,6 +14,7 @@ const mapelsRef = ref<any[]>([]);
 const availableTags = [
   ...props.kelas.map((kelas) => kelas.bilangan.toString()),
   ...props.kelas.map((kelas) => kelas.romawi),
+  ...props.kelas.map((kelas) => kelas.pengucapan),
   ...props.kelas_kategoris.map((kelas_kategori) => kelas_kategori.kependekan),
   ...props.kelas_kategoris.map((kelas_kategori) => kelas_kategori.kepanjangan),
 ];
