@@ -34,6 +34,7 @@ function logout() {
             <ExamTimeCard/>
         </template>
         <template #mid>
+            <SidebarHrefMenu text="Development" :href="route('dev')" method="get" as="button" :active="route().current('dev')"/>
             <SidebarHrefMenu text="Dashboard" :href="route('dashboard')" method="get" as="button" :active="route().current('dashboard')"/>
             <SidebarHrefMenu :text="$page.props.config.activity_type" :href="route('activity')" method="get" as="button" :active="route().current('activity')"/>
             <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="User List" :href="route('user.list')" method="get" as="button" :active="route().current('user.list')"/>
