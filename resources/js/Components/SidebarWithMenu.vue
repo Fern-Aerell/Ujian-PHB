@@ -37,7 +37,7 @@ function logout() {
             <SidebarHrefMenu text="Development" :href="route('dev')" method="get" as="button" :active="route().current('dev')"/>
             <SidebarHrefMenu text="Dashboard" :href="route('dashboard')" method="get" as="button" :active="route().current('dashboard')"/>
             <SidebarHrefMenu :text="$page.props.config.activity_type" :href="route('activity')" method="get" as="button" :active="route().current('activity')"/>
-            <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="User List" :href="route('user.list')" method="get" as="button" :active="route().current('user.list')"/>
+            <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="Users" :href="route('user.list')" method="get" as="button" :active="route().current('user.list')"/>
             <SidebarHrefMenu v-if="$page.props.auth.user.type === 'admin'" text="Config" :href="route('config')" method="get" as="button" :active="route().current('config')"/>
             <SidebarHrefMenu text="Account" :href="route('account.edit')" method="get" as="button" :active="route().current('account.edit')"/>
         </template>

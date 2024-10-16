@@ -24,11 +24,11 @@ const props = defineProps<{
     <AuthLayout title="Config">
         <ConfigExamScheduleData />
         <ConfigExamTimeData />
-        <ConfigSchoolData />
-        <ConfigActivityData />
-        <ConfigSliderData />
         <ConfigKelasData :kelas="props.kelas" />
         <ConfigKelasKategoriData :kelas_kategoris="props.kelas_kategoris" />
         <ConfigMapelData :kelas="props.kelas" :kelas_kategoris="props.kelas_kategoris" :mapels="props.mapels" />
+        <ConfigActivityData />
+        <ConfigSliderData />
+        <ConfigSchoolData />
     </AuthLayout>
 </template>

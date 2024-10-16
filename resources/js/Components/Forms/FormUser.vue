@@ -122,7 +122,7 @@ const props = defineProps<{
         </div>
 
         <div class="mt-4">
-            <InputLabel for="password_confirmation" value="Confirm Password" class="required" />
+            <InputLabel for="password_confirmation" value="Konfirmasi Password" class="required" />
 
             <TextInput
                 id="password_confirmation"

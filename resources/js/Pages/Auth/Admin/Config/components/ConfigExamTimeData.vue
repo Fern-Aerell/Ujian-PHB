@@ -28,7 +28,7 @@ const formatExamTime = computed(() => {
 
 const submit = () => {
   if (!isExamTimeValid.value) {
-    failedAlert('waktu ujian tidak valid. Tidak dapat menyimpan data.');
+    failedAlert(`waktu ${usePage().props.config.activity_type.toLowerCase()} tidak valid. Tidak dapat menyimpan data.`);
     return;
   }
   form.post(route('config.exam_time_data.update'), {
@@ -36,7 +36,7 @@ const submit = () => {
       failedAlert(error.message);
     },
     onSuccess: () => {
-      successAlert('Data waktu ujian berhasil diubah');
+      successAlert(`Data waktu ${usePage().props.config.activity_type.toLowerCase()} berhasil diubah`);
     }
   });
 };
@@ -46,26 +46,26 @@ const submit = () => {
 <template>
   <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md">
     <header>
-      <h2 class="text-lg font-medium text-gray-900">Data waktu ujian</h2>
+      <h2 class="text-lg font-medium text-gray-900">Data waktu {{ $page.props.config.activity_type.toLowerCase() }}</h2>
 
       <p class="mt-1 text-sm text-gray-600">
-        Perbarui informasi mengenai waktu pelaksanaan ujian untuk memastikan keakuratan jadwal dan kelancaran proses ujian.
+        Perbarui informasi mengenai waktu pelaksanaan {{ $page.props.config.activity_type.toLowerCase() }} untuk memastikan keakuratan jadwal dan kelancaran proses {{ $page.props.config.activity_type.toLowerCase() }}.
       </p>
     </header>
     <br>
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <InputLabel for="exam_time" class="required" value="Exam Time" />
+        <InputLabel for="exam_time" class="required" :value="`Waktu ${$page.props.config.activity_type}`" />
         <div class="flex flex-row gap-2 items-center">
           <input v-model="form.exam_time_start" type="time" name="exam_time_start" id="exam_time_start"
             class="flex-1 border-gray-300">
-          <p class="flex-1">Start</p>
+          <p class="flex-1">Mulai</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_start" />
         <div class="flex flex-row gap-2 items-center">
           <input v-model="form.exam_time_end" type="time" name="exam_time_end" id="exam_time_end"
             class="flex-1 border-gray-300">
-          <p class="flex-1">End</p>
+          <p class="flex-1">Selesai</p>
         </div>
         <InputError class="mt-2" :message="form.errors.exam_time_end" />
         <div :class="['flex flex-col gap-1 p-3',
@@ -80,10 +80,10 @@ const submit = () => {
             }}
           </h1>
           <p v-if="!isExamTimeValid">
-            Waktu ujian tidak valid. Waktu mulai harus lebih awal dari waktu selesai.
+            Waktu {{ $page.props.config.activity_type.toLowerCase() }} tidak valid. Waktu mulai harus lebih awal dari waktu selesai.
           </p>
           <p v-else>
-            Ujian akan berlangsung dari <strong>{{ formatExamTime }}</strong>
+            {{ $page.props.config.activity_type }} akan berlangsung dari <strong>{{ formatExamTime }}</strong>
           </p>
         </div>
       </div>

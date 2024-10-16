@@ -144,14 +144,14 @@ onUnmounted(() => {
         <p class="text-[15px]"
             v-if="examStatus === Status.None || examStatus === Status.Holiday || examStatus === Status.Finished || examStatus === Status.FutureExam">
             {{
-                examStatus === Status.None ? 'Tidak ada ujian saat ini.' :
-                    examStatus === Status.Holiday ? 'Ujian libur saat ini.' :
-                        examStatus === Status.Finished ? 'Ujian telah selesai.' :
-                            `Ujian akan dimulai pada ${examDate}`
+                examStatus === Status.None ? `Tidak ada ${$page.props.config.activity_type.toLowerCase()} saat ini.` :
+                    examStatus === Status.Holiday ? `${$page.props.config.activity_type} libur saat ini.` :
+                        examStatus === Status.Finished ? `${$page.props.config.activity_type} telah selesai.` :
+                            `${$page.props.config.activity_type} akan dimulai pada ${examDate}`
             }}
         </p>
         <template v-else-if="examStatus === Status.StartingSoon || examStatus === Status.OnGoing">
-            <p class="text-[15px] font-bold">{{ examStatus === Status.StartingSoon ? 'Ujian akan dimulai pada:' : 'Ujian akan berakhir pada: ' }}</p>
+            <p class="text-[15px] font-bold">{{ examStatus === Status.StartingSoon ? `${$page.props.config.activity_type} akan dimulai pada:` : `${$page.props.config.activity_type} akan berakhir pada: ` }}</p>
             <p class="text-[15px]">{{ examDate }}</p>
             <p class="text-[15px]">{{ examTimeRemaining }}</p>
         </template>

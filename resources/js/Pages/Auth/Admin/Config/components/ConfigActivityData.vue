@@ -62,19 +62,19 @@ const formatSchoolYear = computed(() => {
     <br>
     <div class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <InputLabel for="activity_type" class="required" value="Activity type" />
+        <InputLabel for="activity_type" class="required" value="Jenis Aktifitas" />
         <TextInput type="text" name="activity_type" id="activity_type" v-model="form.activity_type" required
           autocomplete="activity_type" placeholder="Masukkan tipe aktifitas, contoh: ujian..." />
         <InputError class="mt-2" :message="form.errors.activity_type" />
       </div>
       <div class="flex flex-col gap-1">
-        <InputLabel for="activity_title" class="required" value="Activity title" />
+        <InputLabel for="activity_title" class="required" value="Nama Aktifitas (Lengkap)" />
         <TextInput type="text" name="activity_title" id="activity_title" v-model="form.activity_title" required
           autocomplete="activity_title" placeholder="Masukkan judul, contoh: penilaian harian bulanan..." />
         <InputError class="mt-2" :message="form.errors.activity_title" />
       </div>
       <div class="flex flex-col gap-1">
-        <InputLabel for="activity_title_abbreviation" class="required" value="Activity title abbreviation" />
+        <InputLabel for="activity_title_abbreviation" class="required" value="Nama Aktifitas (Singkatan)" />
         <TextInput type="text" name="activity_title_abbreviation" id="activity_title_abbreviation"
           v-model="form.activity_title_abbreviation" required autocomplete="activity_title_abbreviation"
           placeholder="Masukkan singkatan judul, contoh: phb..." />

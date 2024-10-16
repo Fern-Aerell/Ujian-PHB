@@ -31,7 +31,7 @@ const submit = () => {
 </script>
 
 <template>
-    <CustomHead title="Add User" />
+    <CustomHead title="Tambah User" />
     <BasicLayout title="Tambah User">
         <FormUser for-admin :form="form" :submit="submit" submit-text-button="Tambahkan"/>
     </BasicLayout>

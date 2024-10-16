@@ -34,8 +34,8 @@ async function deleteUser(username: string, id: number) {
 </script>
 
 <template>
-    <CustomHead title="User List" />
-    <AuthLayout title="User List">
+    <CustomHead title="Users" />
+    <AuthLayout title="Users">
         <div class="flex flex-col gap-3 bg-white p-5 rounded-md w-full">
             <div class="flex flex-col md:flex-row justify-between mb-4 gap-4">
                 <!-- Add User Button -->
@@ -71,12 +71,12 @@ async function deleteUser(username: string, id: number) {
                     <thead class="bg-gray-100">
                         <tr>
                             <th class="px-4 py-2 text-left">No</th>
-                            <th class="px-4 py-2 text-left">Photo</th>
-                            <th class="px-4 py-2 text-left">Name</th>
+                            <th class="px-4 py-2 text-left">Icon</th>
+                            <th class="px-4 py-2 text-left">Nama</th>
                             <th class="px-4 py-2 text-left">Username</th>
                             <th class="px-4 py-2 text-left">Tipe Akun</th>
                             <th class="px-4 py-2 text-left">Email</th>
-                            <th class="px-4 py-2 text-left">Actions</th>
+                            <th class="px-4 py-2 text-left">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,8 +89,7 @@ async function deleteUser(username: string, id: number) {
                             <td class="px-4 py-2">{{ user.name }}</td>
                             <td class="px-4 py-2">{{ user.username }}</td>
                             <td class="px-4 py-2">{{ user.type }}</td>
-                            <td class="px-4 py-2">{{ user.email ? `${user.email} ${user.email_verified_at ? '✅' : '⚠️'}`
-                                : 'Tidak ada' }}</td>
+                            <td :title="!user.email ? 'User belum memiliki email.' : user.email_verified_at ? `Email sudah di verifikasi pada ${new Date(user.email_verified_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Email belum di verifikasi.'" class="px-4 py-2">{{ user.email ? `${user.email} ${user.email_verified_at ? '✅' : '⚠️'}` : 'Tidak ada' }}</td>
                             <td class="px-4 py-2">
                                 <div class="flex flex-col sm:flex-row gap-2">
                                     <Button @click="$inertia.get(route('user.edit', user.id))" text="Edit"
