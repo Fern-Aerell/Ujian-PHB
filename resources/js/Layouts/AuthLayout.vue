@@ -3,7 +3,7 @@ import SidebarWithMenu from '@/Components/SidebarWithMenu.vue';
 import more_png from '../../assets/icons/more.webp';
 import enquire from 'enquire.js';
 import MagicGrid from 'magic-grid';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { h, onMounted, onUnmounted, ref } from 'vue';
 
 const props = defineProps<{
     title: string;
@@ -95,9 +95,12 @@ onUnmounted(() => {
                 </div>
             </div>
             <!-- CONTENT -->
-             <div class="overflow-auto" :class="props.class" ref="gridContainer">
+             <div class="overflow-auto" :class="[props.class, {'w-full !h-full': gridContainer && gridContainer.children.length > 0}]" ref="gridContainer">
                 <slot/>
-             </div>
+            </div>
+            <div v-if="gridContainer && gridContainer.children.length == 0" class="flex justify-center items-center w-full h-full">
+                <h1 class="opacity-20 font-semibold">Kosong</h1>
+            </div>
         </div>
     </div>
 </template>
