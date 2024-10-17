@@ -1,7 +1,5 @@
 import './bootstrap';
 import '../css/app.css';
-import "quill/dist/quill.core.css";
-import 'quill/dist/quill.snow.css';
 
 // import function to register Swiper custom elements
 import { register } from 'swiper/element/bundle';

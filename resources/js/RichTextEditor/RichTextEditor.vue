@@ -5,6 +5,9 @@ import ToggleButton from './components/ToggleButton.vue';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Underline from '@tiptap/extension-underline';
+import SuperScript from '@tiptap/extension-superscript';
+import Subscript from '@tiptap/extension-subscript';
+import Highlight from '@tiptap/extension-highlight';
 import { ref } from 'vue';
 
 const isPreview = ref(false);
@@ -15,6 +18,9 @@ const editor = useEditor({
             placeholder: 'Silahkan tulis soal disini...',
         }),
         Underline,
+        SuperScript,
+        Subscript,
+        Highlight
     ],
     editorProps: {
         attributes: {
@@ -41,6 +47,8 @@ function boldToggle() {if(editor.value) editor.value.chain().focus().toggleBold(
 function italicToggle() {if(editor.value) editor.value.chain().focus().toggleItalic().run();}
 function underlineToggle() {if(editor.value) editor.value.chain().focus().toggleUnderline().run();}
 function strikeToggle() {if(editor.value) editor.value.chain().focus().toggleStrike().run();}
+function superScriptToggle() {if(editor.value) editor.value.chain().focus().toggleSuperscript().run();}
+function subscriptToggle() {if(editor.value) editor.value.chain().focus().toggleSubscript().run();}
 
 </script>
 
@@ -53,6 +61,8 @@ function strikeToggle() {if(editor.value) editor.value.chain().focus().toggleStr
                 <ToggleButton :click="italicToggle" :active="editor.isActive('italic')" class="italic" title="Italic" >I</ToggleButton>
                 <ToggleButton :click="underlineToggle" :active="editor.isActive('underline')" class="underline" title="Underline" >U</ToggleButton>
                 <ToggleButton :click="strikeToggle" :active="editor.isActive('strike')" class="line-through" title="Strike" >S</ToggleButton>
+                <ToggleButton :click="superScriptToggle" :active="editor.isActive('superscript')" title="Superscript" >X<sup>2</sup></ToggleButton>
+                <ToggleButton :click="subscriptToggle" :active="editor.isActive('subscript')" title="Subscript" >X<sub>2</sub></ToggleButton>
             </div>
         </div>
         <EditorContent :editor="editor" />
