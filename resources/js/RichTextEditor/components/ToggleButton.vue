@@ -7,10 +7,9 @@ const props = defineProps<{
 
 <template>
     <button @click="props.click" :class="[
-        'px-3 rounded-md hover:bg-gray-100 font-bold w-[25px] text-center flex justify-center items-center',
+        'px-3 rounded-md hover:bg-slate-300 font-bold w-[30px] text-center flex justify-center items-center',
         {
-            'bg-gray-200': props.active,
-            'bg-white': !props.active,
+            'bg-slate-300': props.active
         }
     ]"><slot/></button>
 </template>

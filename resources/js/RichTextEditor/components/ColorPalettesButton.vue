@@ -4,18 +4,12 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 const props = defineProps<{
     defaultColor?: string
     class?: string;
+    palettes: string[][]
     changeColor?: (colorCode: string) => void;
 }>();
 
-const palettes = [
-    ['#4A4A4A', '#FFFFFF', '#D32F2F', '#FFA000', '#FBC02D'],
-    ['#388E3C','#8BC34A','#1976D2','#81D4FA','#B0BEC5'],
-    ['#FFB74D','#FFD54F','#FF7043','#A1887F','#BCAAA4'],
-    ['#E0E0E0','#B2EBF2','#F0F4C3','#FFABAB','#FFE57F']
-];
-
 const showPalette = ref(false);
-const colorPaletteSelect = ref(props.defaultColor ? props.defaultColor : palettes[0][0]);
+const colorPaletteSelect = ref(props.defaultColor ? props.defaultColor : props.palettes[0][0]);
 
 // Toggle function
 function click() {
@@ -49,12 +43,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <button :id="`toggle-button-${props.class}`" @click="click" class="flex flex-col hover:bg-gray-100 justify-center items-center w-[25px] px-3 relative">
+    <button :id="`toggle-button-${props.class}`" @click="click" class="flex flex-col px-3 rounded-md hover:bg-slate-300 font-bold w-[30px] text-center justify-center items-center relative">
         <span :class="props.class"><slot/></span>
-        <div class="w-[15px] h-[4px]" :style="{ backgroundColor: colorPaletteSelect }"></div>
-        <div v-if="showPalette" :id="`palette-${props.class}`" class="absolute p-2 bg-white shadow-inner top-[30px] left-0 flex flex-col gap-1">
+        <div class="w-[20px] h-[5px]" :style="{ backgroundColor: colorPaletteSelect }"></div>
+        <div v-if="showPalette && palettes.length > 0" :id="`palette-${props.class}`" class="absolute p-2 bg-white shadow-lg top-[30px] left-0 flex flex-col gap-1 rounded-md">
             <div v-for="(palette, index) in palettes" :key="index" class="flex flex-row gap-1">
-                <button v-for="(color, index) in palette" :key="index" @click="setColorPaletteSelect(color)" class="w-[15px] h-[15px]" :style="{ backgroundColor: color }"></button>
+                <button v-for="(color, index) in palette" :key="index" @click="setColorPaletteSelect(color)" class="w-[20px] h-[20px] border hover:border-slate-400" :class="{'border-black': color == colorPaletteSelect}" :style="{ backgroundColor: color }"></button>
             </div>
         </div>
     </button>
