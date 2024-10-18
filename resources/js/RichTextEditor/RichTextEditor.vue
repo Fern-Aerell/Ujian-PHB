@@ -8,6 +8,9 @@ import Underline from '@tiptap/extension-underline';
 import SuperScript from '@tiptap/extension-superscript';
 import Subscript from '@tiptap/extension-subscript';
 import Highlight from '@tiptap/extension-highlight';
+import TextColorButton from './components/TextColorButton.vue';
+import TextStyle from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
 import { ref } from 'vue';
 
 const isPreview = ref(false);
@@ -20,7 +23,9 @@ const editor = useEditor({
         Underline,
         SuperScript,
         Subscript,
-        Highlight
+        Highlight,
+        TextStyle,
+        Color,
     ],
     editorProps: {
         attributes: {
@@ -50,6 +55,9 @@ function strikeToggle() {if(editor.value) editor.value.chain().focus().toggleStr
 function superScriptToggle() {if(editor.value) editor.value.chain().focus().toggleSuperscript().run();}
 function subscriptToggle() {if(editor.value) editor.value.chain().focus().toggleSubscript().run();}
 
+// CHANGE TEXT COLOR
+function changeColor(codeColor: string) {if(editor.value) editor.value.chain().focus().setColor(codeColor).run();}
+
 </script>
 
 <template>
@@ -63,6 +71,7 @@ function subscriptToggle() {if(editor.value) editor.value.chain().focus().toggle
                 <ToggleButton :click="strikeToggle" :active="editor.isActive('strike')" class="line-through" title="Strike" >S</ToggleButton>
                 <ToggleButton :click="superScriptToggle" :active="editor.isActive('superscript')" title="Superscript" >X<sup>2</sup></ToggleButton>
                 <ToggleButton :click="subscriptToggle" :active="editor.isActive('subscript')" title="Subscript" >X<sub>2</sub></ToggleButton>
+                <TextColorButton :change-color="changeColor" />
             </div>
         </div>
         <EditorContent :editor="editor" />
