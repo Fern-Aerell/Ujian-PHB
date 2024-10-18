@@ -400,7 +400,7 @@ class ConfigController extends Controller
                 'required',
                 'string',
                 Rule::unique(Mapel::class)->ignore($id),
-                'regex:/^([A-Z][a-z]*\s*)+$/',
+                'regex:/^[A-Z][a-zA-Z0-9&\s]*$/',
             ],
             'kependekan' => [
                 'required',
