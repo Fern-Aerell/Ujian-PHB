@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-    active: boolean;
+    active?: boolean;
     click: (event: MouseEvent) => void;
 }>();
 </script>
@@ -11,5 +11,5 @@ const props = defineProps<{
         {
             'bg-slate-300': props.active
         }
-    ]"><slot/></button>
+    ]"><span><slot/></span></button>
 </template>

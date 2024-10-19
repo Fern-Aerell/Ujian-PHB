@@ -8,6 +8,7 @@
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.3",
+        "@tiptap/extension-code-block-lowlight": "^2.8.0",
         "@tiptap/extension-color": "^2.8.0",
         "@tiptap/extension-highlight": "^2.8.0",
         "@tiptap/extension-placeholder": "^2.8.0",
@@ -27,6 +28,7 @@
         "enquire.js": "^2.1.6",
         "laravel-echo": "^1.16.1",
         "laravel-vite-plugin": "^1.0",
+        "lowlight": "^3.1.0",
         "magic-grid": "^3.4.7",
         "postcss": "^8.4.31",
         "pusher-js": "^8.4.0-rc2",
