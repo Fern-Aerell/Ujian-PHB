@@ -20,7 +20,7 @@ import Bold from '@/Components/Svgs/Bold.vue';
 import Italic from '@/Components/Svgs/Italic.vue';
 import UnderlineSvg from '@/Components/Svgs/Underline.vue';
 import Strike from '@/Components/Svgs/Strike.vue';
-import SuperScriptSvg from '@/Components/Svgs/Superscript.vue';
+import SuperScriptSvg from '@/Components/Svgs/SuperScript.vue';
 import SubScriptSvg from '@/Components/Svgs/SubScript.vue';
 import { ref } from 'vue';
 
