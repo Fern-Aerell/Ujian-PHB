@@ -43,5 +43,4 @@ const props = defineProps<{
 .shadow-box {
     box-shadow: 0 4px 50px 10px rgba(0, 0, 0, 0.25);
 }
-
 </style>

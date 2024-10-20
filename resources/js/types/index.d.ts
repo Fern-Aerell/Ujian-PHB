@@ -76,3 +76,9 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         userTypes: string[];
     };
 };
+
+export enum AnswerType {
+    objektif = 'objektif',
+    objektifKompleks = 'objektif_kompleks',
+    isian = 'isian',
+}

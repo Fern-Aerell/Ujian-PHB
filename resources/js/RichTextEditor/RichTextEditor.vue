@@ -2,7 +2,6 @@
 import 'highlight.js/styles/github-dark.min.css';
 import { EditorContent, useEditor } from '@tiptap/vue-3'
 
-import Button from '@/Components/Buttons/Button.vue';
 import ToggleButton from './components/ToggleButton.vue';
 import ToolbarContainer from './components/ToolbarContainer.vue';
 
@@ -16,8 +15,8 @@ import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import TabExtension from './TiptapExtensions/TabExtension';
-import ImageResize from 'tiptap-extension-resize-image';
 import TextAlign from '@tiptap/extension-text-align';
+import ImageResize from 'tiptap-extension-resize-image';
 
 import ColorPalettesButton from './components/ColorPalettesButton.vue';
 import PaintBucket from '@/Components/Svgs/PaintBucket.vue';
@@ -45,13 +44,16 @@ import TextAlignRight from '@/Components/Svgs/TextAlignRight.vue';
 import TextAlignJustify from '@/Components/Svgs/TextAlignJustify.vue';
 
 import { createLowlight, all } from 'lowlight';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Swal from 'sweetalert2';
 
-const lowlight = createLowlight(all);
+const props = defineProps<{
+    preview?: boolean;
+}>();
 
+const model = defineModel<string>('modelValue');
+const lowlight = createLowlight(all);
 const codeBlockLanguageSelected = ref('plaintext');
-const isPreview = ref(false);
 const editor = useEditor({
     extensions: [
         StarterKit.configure({
@@ -78,13 +80,13 @@ const editor = useEditor({
           defaultLanguage: 'plaintext',
         }),
         TabExtension,
-        ImageResize.configure({
-            inline: true,
-            allowBase64: true
-        }),
         TextAlign.configure({
           types: ['heading', 'paragraph'],
         }),
+        ImageResize.configure({
+            allowBase64: true,
+            inline: true,
+        })
     ],
     editorProps: {
         attributes: {
@@ -94,7 +96,8 @@ const editor = useEditor({
     },
     injectCSS: false,
     autofocus: true,
-    editable: true,
+    editable: !props.preview,
+    content: model.value
 })
 
 const colorPalettes = [
@@ -103,16 +106,6 @@ const colorPalettes = [
     ['#FFB74D', '#FFD54F', '#FF7043', '#A1887F', '#BCAAA4', '#4DB6AC', '#5C6BC0', '#EC407A'],
     ['#E0E0E0', '#B2EBF2', '#F0F4C3', '#FFCCBC', '#FFE57F', '#C5E1A5', '#D1C4E9', '#FFAB91']
 ];
-
-function previewToggle() {
-    if(!editor.value) return;
-    isPreview.value = !isPreview.value;
-    if(isPreview.value) {
-        editor.value.setEditable(false);
-        return;
-    }
-    editor.value.setEditable(true);
-}
 
 function boldToggle() {if(editor.value) editor.value.chain().focus().toggleBold().run();}
 function italicToggle() {if(editor.value) editor.value.chain().focus().toggleItalic().run();}
@@ -159,7 +152,12 @@ async function addImageButton() {
             inputPlaceholder: "Masukkan url gambar",
             showCancelButton: true,
         });
-        if(url) editor.value.chain().focus().setImage({ src: url}).run();
+        if(!url) return;
+        editor.value.chain().focus().setImage({
+            src: url,
+            alt: 'image',
+            title: 'image',
+        }).run();
     }else if(imageSource == 'file') {
         const { value: file } = await Swal.fire({
             title: "Masukkan file gambar",
@@ -174,7 +172,11 @@ async function addImageButton() {
         const reader = new FileReader();
         reader.onload = (e) => {
             if(!e.target || !e.target.result || !editor.value) return;
-            editor.value.chain().focus().setImage({ src: e.target.result.toString()}).run();
+            editor.value.chain().focus().setImage({
+                src: e.target.result.toString(),
+                alt: 'image',
+                title: 'image',
+            }).run();
         };
         reader.readAsDataURL(file);
     }
@@ -182,61 +184,96 @@ async function addImageButton() {
 
 function changeTextColor(codeColor: string) {if(editor.value) editor.value.chain().focus().setColor(codeColor).run();}
 function changeBackgroundColor(codeColor: string) {if(editor.value) editor.value.chain().focus().toggleHighlight({color: codeColor}).run();}
+
+watch(() => props.preview, (preview) => {
+    if(!editor.value) return;
+    editor.value.setEditable(!preview);
+    if(!preview) {
+        editor.value.setOptions({
+            editorProps: {
+                attributes: {
+                    class: 'focus:outline-none border border-gray-300 rounded-md p-3 whitespace-pre-wrap overflow-hidden',
+                    spellcheck: 'false'
+                }
+            }
+        })
+    }else{
+        editor.value.setOptions({
+            editorProps: {
+                attributes: {
+                    class: 'focus:outline-none whitespace-pre-wrap overflow-hidden',
+                    spellcheck: 'false'
+                }
+            }
+        })
+    }
+});
+
+watch(model, (newValue) => {
+    if(!editor.value || !newValue) return;
+    if (editor.value.getHTML() !== newValue) {
+        editor.value.commands.setContent(newValue);
+    }
+});
+
+onMounted(() => {
+    if(!editor.value) return;
+    editor.value.on('update', () => {
+        model.value = editor.value?.getHTML();
+    });
+});
 </script>
 
 <template>
     <div v-if="editor" class="flex flex-col gap-2">
-        <div class="flex flex-row flex-wrap gap-1 w-fit">
-            <Button @click="previewToggle" :text="isPreview ? 'Preview' : 'Editor'" bg-color="primary" text-color="white" class="!w-fit px-5 rounded-md" />
-            <div v-if="!isPreview" class="flex flex-row flex-wrap-reverse gap-1 w-fit">
-                <ToolbarContainer>
-                    <ToggleButton :click="boldToggle" :active="editor.isActive('bold')" title="Tebalkan"><Bold width="20px" height="20px" /></ToggleButton>
-                    <ToggleButton :click="italicToggle" :active="editor.isActive('italic')" title="Miringkan" ><Italic width="18px" height="18px" /></ToggleButton>
-                    <ToggleButton :click="underlineToggle" :active="editor.isActive('underline')" title="Garis bawah" ><UnderlineSvg width="24px" height="24px" /></ToggleButton>
-                    <ToggleButton :click="strikeToggle" :active="editor.isActive('strike')" title="Coret" ><Strike width="20px" height="20px" /></ToggleButton>
-                </ToolbarContainer>
+        <div v-if="!props.preview" class="flex flex-row flex-wrap-reverse gap-1 w-fit">
+            <ToolbarContainer>
+                <ToggleButton :click="boldToggle" :active="editor.isActive('bold')" title="Tebalkan"><Bold width="20px" height="20px" /></ToggleButton>
+                <ToggleButton :click="italicToggle" :active="editor.isActive('italic')" title="Miringkan" ><Italic width="18px" height="18px" /></ToggleButton>
+                <ToggleButton :click="underlineToggle" :active="editor.isActive('underline')" title="Garis bawah" ><UnderlineSvg width="24px" height="24px" /></ToggleButton>
+                <ToggleButton :click="strikeToggle" :active="editor.isActive('strike')" title="Coret" ><Strike width="20px" height="20px" /></ToggleButton>
+            </ToolbarContainer>
 
-                <ToolbarContainer>
-                    <ToggleButton :click="() => headingToggle(1)" :active="editor.isActive('heading', { level: 1 })" title="Heading 1" ><H1 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(2)" :active="editor.isActive('heading', { level: 2 })" title="Heading 2" ><H2 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(3)" :active="editor.isActive('heading', { level: 3 })" title="Heading 3" ><H3 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(4)" :active="editor.isActive('heading', { level: 4 })" title="Heading 4" ><H4 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(5)" :active="editor.isActive('heading', { level: 5 })" title="Heading 5" ><H5 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(6)" :active="editor.isActive('heading', { level: 6 })" title="Heading 6" ><H6 width="20px" height="20px"/></ToggleButton>
-                </ToolbarContainer>
+            <ToolbarContainer>
+                <ToggleButton :click="() => headingToggle(1)" :active="editor.isActive('heading', { level: 1 })" title="Heading 1" ><H1 width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="() => headingToggle(2)" :active="editor.isActive('heading', { level: 2 })" title="Heading 2" ><H2 width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="() => headingToggle(3)" :active="editor.isActive('heading', { level: 3 })" title="Heading 3" ><H3 width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="() => headingToggle(4)" :active="editor.isActive('heading', { level: 4 })" title="Heading 4" ><H4 width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="() => headingToggle(5)" :active="editor.isActive('heading', { level: 5 })" title="Heading 5" ><H5 width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="() => headingToggle(6)" :active="editor.isActive('heading', { level: 6 })" title="Heading 6" ><H6 width="20px" height="20px"/></ToggleButton>
+            </ToolbarContainer>
 
-                <ToolbarContainer>
-                    <ToggleButton :click="textAlignLeftToggle" title="Teks Kiri" :active="editor.isActive({ textAlign: 'left' })" ><TextAlignLeft width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="textAlignCenterToggle" title="Teks Tengah" :active="editor.isActive({ textAlign: 'center' })" ><TextAlignCenter width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="textAlignRightToggle" title="Teks Kanan" :active="editor.isActive({ textAlign: 'right' })" ><TextAlignRight width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="textAlignJustifyToggle" title="Teks Justify" :active="editor.isActive({ textAlign: 'justify' })" ><TextAlignJustify width="20px" height="20px"/></ToggleButton>
-                </ToolbarContainer>
+            <ToolbarContainer>
+                <ToggleButton :click="textAlignLeftToggle" title="Teks Kiri" :active="editor.isActive({ textAlign: 'left' })" ><TextAlignLeft width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="textAlignCenterToggle" title="Teks Tengah" :active="editor.isActive({ textAlign: 'center' })" ><TextAlignCenter width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="textAlignRightToggle" title="Teks Kanan" :active="editor.isActive({ textAlign: 'right' })" ><TextAlignRight width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="textAlignJustifyToggle" title="Teks Justify" :active="editor.isActive({ textAlign: 'justify' })" ><TextAlignJustify width="20px" height="20px"/></ToggleButton>
+            </ToolbarContainer>
 
-                <ToolbarContainer>
-                    <ToggleButton :click="superScriptToggle" :active="editor.isActive('superscript')" title="Atas" ><SuperScriptSvg width="25px" height="25px"/></ToggleButton>
-                    <ToggleButton :click="subscriptToggle" :active="editor.isActive('subscript')" title="Bawah" ><SubScriptSvg width="25px" height="25px"/></ToggleButton>
-                </ToolbarContainer>
+            <ToolbarContainer>
+                <ToggleButton :click="superScriptToggle" :active="editor.isActive('superscript')" title="Atas" ><SuperScriptSvg width="25px" height="25px"/></ToggleButton>
+                <ToggleButton :click="subscriptToggle" :active="editor.isActive('subscript')" title="Bawah" ><SubScriptSvg width="25px" height="25px"/></ToggleButton>
+            </ToolbarContainer>
 
-                <ToolbarContainer>
-                    <ColorPalettesButton :palettes="colorPalettes" :change-color="changeTextColor" class="leading-4 text-lg" title="Warna teks">A</ColorPalettesButton>
-                    <ColorPalettesButton :palettes="colorPalettes" default-color="#FFFFFF" :change-color="changeBackgroundColor" title="Warna latar belakang teks"><PaintBucket width="20px" height="20px"/></ColorPalettesButton>
-                </ToolbarContainer>
+            <ToolbarContainer>
+                <ColorPalettesButton :palettes="colorPalettes" :change-color="changeTextColor" class="leading-4 text-lg" title="Warna teks">A</ColorPalettesButton>
+                <ColorPalettesButton :palettes="colorPalettes" default-color="#FFFFFF" :change-color="changeBackgroundColor" title="Warna latar belakang teks"><PaintBucket width="20px" height="20px"/></ColorPalettesButton>
+            </ToolbarContainer>
 
-                <ToolbarContainer>
-                    <ToggleButton :click="blockQuoteToggle" :active="editor.isActive('blockquote')" title="Kutipan" ><BlockQuote width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="bulletListToggle" :active="editor.isActive('bulletList')" title="Daftar dengan titik" ><UnOrderedList width="25px" height="25px"/></ToggleButton>
-                    <ToggleButton :click="orderedListToggle" :active="editor.isActive('orderedList')" title="Daftar dengan angka" ><OrderedList width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="horizontalRuleToggle" title="Garis" ><HorizontalRule width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="addImageButton" title="Gambar" ><ImageSvg width="20px" height="20px"/></ToggleButton>
-                </ToolbarContainer>
+            <ToolbarContainer>
+                <ToggleButton :click="blockQuoteToggle" :active="editor.isActive('blockquote')" title="Kutipan" ><BlockQuote width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="bulletListToggle" :active="editor.isActive('bulletList')" title="Daftar dengan titik" ><UnOrderedList width="25px" height="25px"/></ToggleButton>
+                <ToggleButton :click="orderedListToggle" :active="editor.isActive('orderedList')" title="Daftar dengan angka" ><OrderedList width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="horizontalRuleToggle" title="Garis" ><HorizontalRule width="20px" height="20px"/></ToggleButton>
+                <ToggleButton :click="addImageButton" title="Gambar" ><ImageSvg width="20px" height="20px"/></ToggleButton>
+            </ToolbarContainer>
 
-                <ToolbarContainer>
-                    <ToggleButton :click="codeBlockToggle" :active="editor.isActive('codeBlock')" title="Blok kode" ><CodeSvg width="20px" height="20px"/></ToggleButton>
-                    <select @change="codeBlockToggle" v-model="codeBlockLanguageSelected" class="p-0 pl-3 pr-9 rounded-lg">
-                        <option v-for="(language, index) in lowlight.listLanguages()" :selected="language == codeBlockLanguageSelected" :key="index" :value="language">{{ language }}</option>
-                    </select>
-                </ToolbarContainer>
-            </div>
+            <ToolbarContainer>
+                <ToggleButton :click="codeBlockToggle" :active="editor.isActive('codeBlock')" title="Blok kode" ><CodeSvg width="20px" height="20px"/></ToggleButton>
+                <select @change="codeBlockToggle" v-model="codeBlockLanguageSelected" class="p-0 pl-3 pr-9 rounded-lg">
+                    <option v-for="(language, index) in lowlight.listLanguages()" :selected="language == codeBlockLanguageSelected" :key="index" :value="language">{{ language }}</option>
+                </select>
+            </ToolbarContainer>
         </div>
         <EditorContent :editor="editor" />
     </div>
@@ -342,30 +379,11 @@ function changeBackgroundColor(codeColor: string) {if(editor.value) editor.value
 
 .tiptap img {
     display: block;
-    height: auto;
-    margin: 1.5rem 0;
+    height: 100%;
     max-width: 100%;
 }
 
 .tiptap img &.ProseMirror-selectednode {
     outline: 3px solid purple;
-}
-
-/* Youtube embed */
-div[data-youtube-video] {
-    cursor: move;
-    padding-right: 1.5rem;
-}
-div[data-youtube-video] iframe {
-    border: 0.5rem solid var(--black-contrast);
-    display: block;
-    min-height: 200px;
-    min-width: 200px;
-    outline: 0px solid transparent;
-}
-
-div[data-youtube-video] &.ProseMirror-selectednode iframe {
-    outline: 3px solid var(--purple);
-    transition: outline 0.15s;
 }
 </style>
