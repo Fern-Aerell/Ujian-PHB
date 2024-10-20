@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
     active?: boolean;
-    click: (event: MouseEvent) => void;
+    click?: (event: MouseEvent) => void;
 }>();
 </script>
 

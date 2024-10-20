@@ -16,6 +16,8 @@ import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import TabExtension from './TiptapExtensions/TabExtension';
+import ImageResize from 'tiptap-extension-resize-image';
+import TextAlign from '@tiptap/extension-text-align';
 
 import ColorPalettesButton from './components/ColorPalettesButton.vue';
 import PaintBucket from '@/Components/Svgs/PaintBucket.vue';
@@ -36,9 +38,15 @@ import H4 from '@/Components/Svgs/H4.vue';
 import H5 from '@/Components/Svgs/H5.vue';
 import H6 from '@/Components/Svgs/H6.vue';
 import HorizontalRule from '@/Components/Svgs/HorizontalRule.vue';
+import ImageSvg from '@/Components/Svgs/Image.vue';
+import TextAlignCenter from '@/Components/Svgs/TextAlignCenter.vue';
+import TextAlignLeft from '@/Components/Svgs/TextAlignLeft.vue';
+import TextAlignRight from '@/Components/Svgs/TextAlignRight.vue';
+import TextAlignJustify from '@/Components/Svgs/TextAlignJustify.vue';
 
 import { createLowlight, all } from 'lowlight';
 import { onMounted, ref } from 'vue';
+import Swal from 'sweetalert2';
 
 const lowlight = createLowlight(all);
 
@@ -51,7 +59,7 @@ const editor = useEditor({
                 keepMarks: true,
                 keepAttributes: true,
             },
-            codeBlock: false
+            codeBlock: false,
         }),
         Placeholder.configure({
             placeholder: 'Silahkan tulis soal disini...',
@@ -69,12 +77,20 @@ const editor = useEditor({
           languageClassPrefix: 'language-',
           defaultLanguage: 'plaintext',
         }),
-        TabExtension
+        TabExtension,
+        ImageResize.configure({
+            inline: true,
+            allowBase64: true
+        }),
+        TextAlign.configure({
+          types: ['heading', 'paragraph'],
+        }),
     ],
     editorProps: {
         attributes: {
             class: 'focus:outline-none border border-gray-300 rounded-md p-3 whitespace-pre-wrap overflow-hidden',
-        }
+            spellcheck: 'false'
+        },
     },
     injectCSS: false,
     autofocus: true,
@@ -110,53 +126,112 @@ function orderedListToggle() {if(editor.value) editor.value.chain().focus().togg
 function codeBlockToggle() {if(editor.value) editor.value.chain().focus().toggleCodeBlock({language: codeBlockLanguageSelected.value}).run();}
 function headingToggle(level: 1|2|3|4|5|6) {if(editor.value) editor.value.chain().focus().toggleHeading({level: level}).run();}
 function horizontalRuleToggle() {if(editor.value) editor.value.chain().focus().setHorizontalRule().run();}
+function textAlignLeftToggle() {if(editor.value) editor.value.chain().focus().setTextAlign('left').run();}
+function textAlignCenterToggle() {if(editor.value) editor.value.chain().focus().setTextAlign('center').run();}
+function textAlignRightToggle() {if(editor.value) editor.value.chain().focus().setTextAlign('right').run();}
+function textAlignJustifyToggle() {if(editor.value) editor.value.chain().focus().setTextAlign('justify').run();}
+async function addImageButton() {
+    if(!editor.value) return;
+    const { value: imageSource } = await Swal.fire({
+        title: "Pilih sumber gambar",
+        input: "select",
+        inputOptions: {
+            url: "Dari URL",
+            file: "Dari File",
+        },
+        inputPlaceholder: "Pilih sumber",
+        showCancelButton: true,
+        inputValidator: (value) => {
+            return new Promise((resolve) => {
+                if (value) {
+                    resolve();
+                } else {
+                    resolve("Pilih sumber gambar nya terlebih dahulu.");
+                }
+            });
+        }
+    });
+
+    if(imageSource == 'url') {
+        const { value: url } = await Swal.fire({
+            input: "url",
+            inputLabel: "URL Gambar",
+            inputPlaceholder: "Masukkan url gambar",
+            showCancelButton: true,
+        });
+        if(url) editor.value.chain().focus().setImage({ src: url}).run();
+    }else if(imageSource == 'file') {
+        const { value: file } = await Swal.fire({
+            title: "Masukkan file gambar",
+            input: "file",
+            showCancelButton: true,
+            inputAttributes: {
+                "accept": "image/*",
+                "aria-label": "Masukkan file gambar"
+            }
+        });
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if(!e.target || !e.target.result || !editor.value) return;
+            editor.value.chain().focus().setImage({ src: e.target.result.toString()}).run();
+        };
+        reader.readAsDataURL(file);
+    }
+}
 
 function changeTextColor(codeColor: string) {if(editor.value) editor.value.chain().focus().setColor(codeColor).run();}
 function changeBackgroundColor(codeColor: string) {if(editor.value) editor.value.chain().focus().toggleHighlight({color: codeColor}).run();}
-
-onMounted(() => {
-    console.log(lowlight.listLanguages());
-});
 </script>
 
 <template>
     <div v-if="editor" class="flex flex-col gap-2">
         <div class="flex flex-row flex-wrap gap-1 w-fit">
             <Button @click="previewToggle" :text="isPreview ? 'Preview' : 'Editor'" bg-color="primary" text-color="white" class="!w-fit px-5 rounded-md" />
-            <div v-if="!isPreview" class="flex flex-row flex-wrap gap-1 w-fit">
+            <div v-if="!isPreview" class="flex flex-row flex-wrap-reverse gap-1 w-fit">
                 <ToolbarContainer>
-                    <ToggleButton :click="boldToggle" :active="editor.isActive('bold')" title="Tebalkan (Ctrl + B)"><Bold width="20px" height="20px" /></ToggleButton>
-                    <ToggleButton :click="italicToggle" :active="editor.isActive('italic')" title="Miringkan  (Ctrl + I)" ><Italic width="18px" height="18px" /></ToggleButton>
-                    <ToggleButton :click="underlineToggle" :active="editor.isActive('underline')" title="Garis bawah  (Ctrl + U)" ><UnderlineSvg width="24px" height="24px" /></ToggleButton>
-                    <ToggleButton :click="strikeToggle" :active="editor.isActive('strike')" title="Coret  (Ctrl + Shift + S)" ><Strike width="20px" height="20px" /></ToggleButton>
+                    <ToggleButton :click="boldToggle" :active="editor.isActive('bold')" title="Tebalkan"><Bold width="20px" height="20px" /></ToggleButton>
+                    <ToggleButton :click="italicToggle" :active="editor.isActive('italic')" title="Miringkan" ><Italic width="18px" height="18px" /></ToggleButton>
+                    <ToggleButton :click="underlineToggle" :active="editor.isActive('underline')" title="Garis bawah" ><UnderlineSvg width="24px" height="24px" /></ToggleButton>
+                    <ToggleButton :click="strikeToggle" :active="editor.isActive('strike')" title="Coret" ><Strike width="20px" height="20px" /></ToggleButton>
                 </ToolbarContainer>
 
                 <ToolbarContainer>
-                    <ToggleButton :click="superScriptToggle" :active="editor.isActive('superscript')" title="Atas (Ctrl + .)" ><SuperScriptSvg width="25px" height="25px"/></ToggleButton>
-                    <ToggleButton :click="subscriptToggle" :active="editor.isActive('subscript')" title="Bawah (Ctrl + ,)" ><SubScriptSvg width="25px" height="25px"/></ToggleButton>
+                    <ToggleButton :click="() => headingToggle(1)" :active="editor.isActive('heading', { level: 1 })" title="Heading 1" ><H1 width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="() => headingToggle(2)" :active="editor.isActive('heading', { level: 2 })" title="Heading 2" ><H2 width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="() => headingToggle(3)" :active="editor.isActive('heading', { level: 3 })" title="Heading 3" ><H3 width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="() => headingToggle(4)" :active="editor.isActive('heading', { level: 4 })" title="Heading 4" ><H4 width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="() => headingToggle(5)" :active="editor.isActive('heading', { level: 5 })" title="Heading 5" ><H5 width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="() => headingToggle(6)" :active="editor.isActive('heading', { level: 6 })" title="Heading 6" ><H6 width="20px" height="20px"/></ToggleButton>
+                </ToolbarContainer>
+
+                <ToolbarContainer>
+                    <ToggleButton :click="textAlignLeftToggle" title="Teks Kiri" :active="editor.isActive({ textAlign: 'left' })" ><TextAlignLeft width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="textAlignCenterToggle" title="Teks Tengah" :active="editor.isActive({ textAlign: 'center' })" ><TextAlignCenter width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="textAlignRightToggle" title="Teks Kanan" :active="editor.isActive({ textAlign: 'right' })" ><TextAlignRight width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="textAlignJustifyToggle" title="Teks Justify" :active="editor.isActive({ textAlign: 'justify' })" ><TextAlignJustify width="20px" height="20px"/></ToggleButton>
+                </ToolbarContainer>
+
+                <ToolbarContainer>
+                    <ToggleButton :click="superScriptToggle" :active="editor.isActive('superscript')" title="Atas" ><SuperScriptSvg width="25px" height="25px"/></ToggleButton>
+                    <ToggleButton :click="subscriptToggle" :active="editor.isActive('subscript')" title="Bawah" ><SubScriptSvg width="25px" height="25px"/></ToggleButton>
                 </ToolbarContainer>
 
                 <ToolbarContainer>
                     <ColorPalettesButton :palettes="colorPalettes" :change-color="changeTextColor" class="leading-4 text-lg" title="Warna teks">A</ColorPalettesButton>
-                    <ColorPalettesButton :palettes="colorPalettes" default-color="#FFFFFF" :change-color="changeBackgroundColor" title="Warna latar belakang teks (Ctrl + Shift + H)"><PaintBucket width="20px" height="20px"/></ColorPalettesButton>
+                    <ColorPalettesButton :palettes="colorPalettes" default-color="#FFFFFF" :change-color="changeBackgroundColor" title="Warna latar belakang teks"><PaintBucket width="20px" height="20px"/></ColorPalettesButton>
                 </ToolbarContainer>
 
                 <ToolbarContainer>
-                    <ToggleButton :click="blockQuoteToggle" :active="editor.isActive('blockquote')" title="Kutipan (Ctrl + Shift + B)" ><BlockQuote width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="bulletListToggle" :active="editor.isActive('bulletList')" title="Daftar dengan titik (Ctrl + Shift + 8)" ><UnOrderedList width="25px" height="25px"/></ToggleButton>
-                    <ToggleButton :click="orderedListToggle" :active="editor.isActive('orderedList')" title="Daftar dengan angka (Ctrl + Shift + 7)" ><OrderedList width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="blockQuoteToggle" :active="editor.isActive('blockquote')" title="Kutipan" ><BlockQuote width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="bulletListToggle" :active="editor.isActive('bulletList')" title="Daftar dengan titik" ><UnOrderedList width="25px" height="25px"/></ToggleButton>
+                    <ToggleButton :click="orderedListToggle" :active="editor.isActive('orderedList')" title="Daftar dengan angka" ><OrderedList width="20px" height="20px"/></ToggleButton>
                     <ToggleButton :click="horizontalRuleToggle" title="Garis" ><HorizontalRule width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="addImageButton" title="Gambar" ><ImageSvg width="20px" height="20px"/></ToggleButton>
                 </ToolbarContainer>
+
                 <ToolbarContainer>
-                    <ToggleButton :click="() => headingToggle(1)" :active="editor.isActive('heading', { level: 1 })" title="Heading 1 (Ctrl + Alt + 1)" ><H1 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(2)" :active="editor.isActive('heading', { level: 2 })" title="Heading 2 (Ctrl + Alt + 2)" ><H2 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(3)" :active="editor.isActive('heading', { level: 3 })" title="Heading 3 (Ctrl + Alt + 3)" ><H3 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(4)" :active="editor.isActive('heading', { level: 4 })" title="Heading 4 (Ctrl + Alt + 4)" ><H4 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(5)" :active="editor.isActive('heading', { level: 5 })" title="Heading 5 (Ctrl + Alt + 5)" ><H5 width="20px" height="20px"/></ToggleButton>
-                    <ToggleButton :click="() => headingToggle(6)" :active="editor.isActive('heading', { level: 6 })" title="Heading 6 (Ctrl + Alt + 6)" ><H6 width="20px" height="20px"/></ToggleButton>
-                </ToolbarContainer>
-                <ToolbarContainer>
-                    <ToggleButton :click="codeBlockToggle" :active="editor.isActive('codeBlock')" title="Blok kode (Ctrl + Alt + C)" ><CodeSvg width="20px" height="20px"/></ToggleButton>
+                    <ToggleButton :click="codeBlockToggle" :active="editor.isActive('codeBlock')" title="Blok kode" ><CodeSvg width="20px" height="20px"/></ToggleButton>
                     <select @change="codeBlockToggle" v-model="codeBlockLanguageSelected" class="p-0 pl-3 pr-9 rounded-lg">
                         <option v-for="(language, index) in lowlight.listLanguages()" :selected="language == codeBlockLanguageSelected" :key="index" :value="language">{{ language }}</option>
                     </select>
@@ -215,12 +290,16 @@ onMounted(() => {
     font-family: 'JetBrainsMono', monospace;
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
+    overflow-x: auto; /* Menambahkan scroll horizontal jika diperlukan */
 }
+
 .tiptap pre code {
     background: none;
     color: inherit;
     font-size: 0.8rem;
     padding: 0;
+    white-space: pre; /* Memastikan teks tidak dibungkus */
+    display: inline-block; /* Memungkinkan penggulangan horizontal */
 }
 /* Heading styles */
 .tiptap h1,
@@ -230,14 +309,7 @@ onMounted(() => {
 .tiptap h5,
 .tiptap h6 {
     line-height: 1.1;
-    margin-top: 2.5rem;
     text-wrap: pretty;
-}
-
-.tiptap h1,
-.tiptap h2 {
-    margin-top: 3.5rem;
-    margin-bottom: 1.5rem;
 }
 
 .tiptap h1 {
@@ -262,9 +334,38 @@ onMounted(() => {
     border: none;
     border-top: 1px solid gray;
     cursor: pointer;
-    margin: 2rem 0;
+    margin: 1rem 0;
 }
 .tiptap hr &.ProseMirror-selectednode {
     border-top: 1px solid purple;
+}
+
+.tiptap img {
+    display: block;
+    height: auto;
+    margin: 1.5rem 0;
+    max-width: 100%;
+}
+
+.tiptap img &.ProseMirror-selectednode {
+    outline: 3px solid purple;
+}
+
+/* Youtube embed */
+div[data-youtube-video] {
+    cursor: move;
+    padding-right: 1.5rem;
+}
+div[data-youtube-video] iframe {
+    border: 0.5rem solid var(--black-contrast);
+    display: block;
+    min-height: 200px;
+    min-width: 200px;
+    outline: 0px solid transparent;
+}
+
+div[data-youtube-video] &.ProseMirror-selectednode iframe {
+    outline: 3px solid var(--purple);
+    transition: outline 0.15s;
 }
 </style>
