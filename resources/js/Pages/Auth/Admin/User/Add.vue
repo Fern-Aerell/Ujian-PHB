@@ -33,6 +33,8 @@ const submit = () => {
 <template>
     <CustomHead title="Tambah User" />
     <AuthLayout title="Tambah User">
-        <FormUser for-admin :form="form" :submit="submit" submit-text-button="Tambahkan"/>
+        <div class="flex flex-col w-full sm:w-[450px] bg-white p-5 h-fit rounded-md">
+            <FormUser for-admin :form="form" :submit="submit" submit-text-button="Tambahkan"/>
+        </div>
     </AuthLayout>
 </template>

@@ -49,7 +49,7 @@ enquire.register("screen and (min-width: 1024px)", {
                 </div>
             </div>
             <!-- CONTENT -->
-            <div ref="contentContainer" class="overflow-auto" :class="props.class">
+            <div ref="contentContainer" class="overflow-auto w-full h-full" :class="props.class">
                 <slot/>
             </div>
         </div>

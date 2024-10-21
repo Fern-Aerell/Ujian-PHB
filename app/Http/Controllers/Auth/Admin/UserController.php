@@ -48,7 +48,7 @@ class UserController extends Controller
 
         $user_list = $query->paginate($max, ['*'], 'page', $page);
 
-        return Inertia::render('Auth/Admin/User/List', [
+        return Inertia::render('Auth/Admin/Users/Users', [
             'user_list' => $user_list
         ]);
     }

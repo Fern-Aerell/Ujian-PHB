@@ -1,0 +1,57 @@
+<script setup lang="ts">
+import { router, usePage } from '@inertiajs/vue3';
+import Button from '@/Components/Buttons/Button.vue';
+
+// Dapatkan URL dari context halaman
+const { url } = usePage()
+
+// Definisikan tipe untuk event
+const handleInput = (event: Event) => {
+    const target = event.target as HTMLInputElement | null;
+    const value = target?.value;
+    if (value !== undefined) {
+        router.get(url, { search: value }, { preserveState: true, replace: true });
+    }
+}
+
+// Definisikan tipe untuk parameter event dan type
+const handleSelectChange = (event: Event) => {
+    const target = event.target as HTMLSelectElement | null;
+    const value = target?.value;
+    if (value !== undefined) {
+        router.get(url, { type: value }, { preserveState: true, replace: true });
+    }
+}
+</script>
+
+<template>
+    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4">
+
+        <!-- Add User Button -->
+        <div class="w-full md:w-auto">
+            <Button @click="$inertia.get(route('user.add'))" text="Tambah User" text-color="white"
+                bg-color="primary" class="w-full md:w-fit px-4 py-2" />
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="flex flex-col md:flex-row w-full md:w-auto gap-2">
+            <input type="text" placeholder="Cari user..." class="w-full md:w-48 lg:w-64 px-3 py-2 border"
+                @input="handleInput">
+            <select class="w-full md:w-32 px-3 py-2 border"
+                @change="handleSelectChange">
+                <option value="semua">Semua</option>
+                <option value="murid">Murid</option>
+                <option value="guru">Guru</option>
+                <option value="admin">Admin</option>
+            </select>
+            <select class="w-full md:w-40 px-3 py-2 border"
+                @change="handleSelectChange">
+                <option value="10">10 per page</option>
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+            </select>
+        </div>
+        
+    </div>
+</template>

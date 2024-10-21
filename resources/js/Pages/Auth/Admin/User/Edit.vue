@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BasicLayout from '@/Layouts/BasicLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { useForm } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { User } from '@/types';
@@ -37,7 +37,9 @@ const submit = () => {
 
 <template>
     <CustomHead title="Edit User" />
-    <BasicLayout title="Edit User">
-        <FormUser for-admin show-email-info :form="form" :submit="submit" submit-text-button="Simpan"/>
-    </BasicLayout>
+    <AuthLayout title="Edit User">
+        <div class="flex flex-col w-full sm:w-[450px] bg-white p-5 h-fit rounded-md">
+            <FormUser for-admin show-email-info :form="form" :submit="submit" submit-text-button="Simpan"/>
+        </div>
+    </AuthLayout>
 </template>

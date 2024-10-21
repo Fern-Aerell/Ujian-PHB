@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CustomHead from '@/Components/CustomHead.vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
+import Button from '@/Components/Buttons/Button.vue';
 import ConfigExamScheduleData from './components/ConfigExamScheduleData.vue';
 import ConfigExamTimeData from './components/ConfigExamTimeData.vue';
 import ConfigSchoolData from './components/ConfigSchoolData.vue';
@@ -35,25 +36,36 @@ const menuSelected = ref<Menus>(Menus.JADWAL);
 <template>
     <CustomHead title="Config" />
     <AuthLayout title="Config" class="flex flex-col gap-3">
-        <div class="flex flex-row gap-3">
-            <button 
+        <swiper-container
+            :slides-per-view="'auto'"
+            :space-between="10"
+            :mousewheel="true"
+            :free-mode="false"
+            class="w-full"
+        >
+            <swiper-slide
                 v-for="(menu, index) in Menus"
-                @click="menuSelected = menu" 
                 :key="index"
-                class="py-2 px-5 font-semibold flex-shrink-0"
-                :class="{
-                    'bg-slate-300 text-black': menuSelected != menu,
-                    'bg-slate-500 text-white': menuSelected == menu,
-                }"
-            >{{ menu.split('_').map((menu) => `${menu[0].toUpperCase()}${menu.substring(1, menu.length)}`).join(' ') }}</button>
+                class="!w-fit"
+            >
+                <Button
+                    @click="menuSelected = menu" 
+                    :text="menu.split('_').map((menu) => `${menu[0].toUpperCase()}${menu.substring(1, menu.length)}`).join(' ')"
+                    :text-color="menuSelected == menu ? 'white' : 'black'"
+                    :bg-color="menuSelected == menu ? 'primary' : 'grey'"
+                    class="!h-fit flex-shrink-0 px-5"
+                />
+            </swiper-slide>
+        </swiper-container>
+        <div class="flex flex-row gap-3 overflow-auto h-full">
+            <ConfigExamScheduleData v-if="menuSelected == Menus.JADWAL" />
+            <ConfigExamTimeData v-else-if="menuSelected == Menus.WAKTU" />
+            <ConfigKelasData v-else-if="menuSelected == Menus.KELAS" :kelas="props.kelas" />
+            <ConfigKelasKategoriData v-else-if="menuSelected == Menus.KELAS_KATEGORI" :kelas_kategoris="props.kelas_kategoris" />
+            <ConfigMapelData v-else-if="menuSelected == Menus.MAPEL" :kelas="props.kelas" :kelas_kategoris="props.kelas_kategoris" :mapels="props.mapels" />
+            <ConfigActivityData v-else-if="menuSelected == Menus.AKTIFITAS"/>
+            <ConfigSliderData v-else-if="menuSelected == Menus.SLIDER"/>
+            <ConfigSchoolData v-else-if="menuSelected == Menus.DATA_SEKOLAH"/>
         </div>
-        <ConfigExamScheduleData v-if="menuSelected == Menus.JADWAL" />
-        <ConfigExamTimeData v-else-if="menuSelected == Menus.WAKTU" />
-        <ConfigKelasData v-else-if="menuSelected == Menus.KELAS" :kelas="props.kelas" />
-        <ConfigKelasKategoriData v-else-if="menuSelected == Menus.KELAS_KATEGORI" :kelas_kategoris="props.kelas_kategoris" />
-        <ConfigMapelData v-else-if="menuSelected == Menus.MAPEL" :kelas="props.kelas" :kelas_kategoris="props.kelas_kategoris" :mapels="props.mapels" />
-        <ConfigActivityData v-else-if="menuSelected == Menus.AKTIFITAS"/>
-        <ConfigSliderData v-else-if="menuSelected == Menus.SLIDER"/>
-        <ConfigSchoolData v-else-if="menuSelected == Menus.DATA_SEKOLAH"/>
     </AuthLayout>
 </template>
