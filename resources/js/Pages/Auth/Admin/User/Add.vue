@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import BasicLayout from '@/Layouts/BasicLayout.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import { useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import FormUser from '@/Components/Forms/FormUser.vue';
@@ -32,7 +32,7 @@ const submit = () => {
 
 <template>
     <CustomHead title="Tambah User" />
-    <BasicLayout title="Tambah User">
+    <AuthLayout title="Tambah User">
         <FormUser for-admin :form="form" :submit="submit" submit-text-button="Tambahkan"/>
-    </BasicLayout>
+    </AuthLayout>
 </template>

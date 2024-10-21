@@ -44,7 +44,7 @@ const submit = () => {
 </script>
 
 <template>
-  <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-fit rounded-md">
+  <form @submit.prevent="submit" class="flex flex-col bg-white p-5 w-full sm:w-[450px] h-full rounded-md">
     <header>
       <h2 class="text-lg font-medium text-gray-900">Data waktu {{ $page.props.config.activity_type.toLowerCase() }}</h2>
 

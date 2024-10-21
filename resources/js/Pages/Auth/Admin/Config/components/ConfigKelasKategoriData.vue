@@ -44,7 +44,7 @@ function callbackKembali() {
     </header>
     <br>
     <div class="flex flex-col" >
-      <Button v-if="!isAdd && canAdd" @click="tambahKelasKategori" type="button" text="Tambah Mapel" bg-color="primary" text-color="white" />
+      <Button v-if="!isAdd && canAdd" @click="tambahKelasKategori" type="button" text="Tambah Kelas Kategori" bg-color="primary" text-color="white" />
       <KelasKategori
         v-if="!isAdd"
         v-for="(kelasKategori, index) in props.kelas_kategoris"

@@ -13,7 +13,7 @@ defineProps<{
 <template>
     <CustomHead title="Account" />
 
-    <AuthLayout title="Account">
+    <AuthLayout title="Account" class="flex flex-row flex-wrap gap-3">
         <UpdateAccountInformationForm />
         <DeleteUserForm />
     </AuthLayout>
