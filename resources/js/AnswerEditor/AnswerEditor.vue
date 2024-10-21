@@ -108,7 +108,7 @@ function deleteAnswer(index: number) {
     <div class="flex flex-col">
         <InputLabel v-if="!props.preview" value="Tipe Jawaban" class="required" />
         <div v-if="!props.preview" class="flex flex-row flex-wrap gap-2 items-center mt-2">
-            <select @change="answerTypeChange" name="answer_type" id="answer_type" class="w-fit">
+            <select @change="answerTypeChange" :value="answerType" name="answer_type" id="answer_type" class="w-fit">
                 <option :value="AnswerType.objektif" selected>Objektif</option>
                 <option :value="AnswerType.objektifKompleks">Objektif kompleks</option>
                 <option :value="AnswerType.isian">Isian</option>
@@ -116,15 +116,15 @@ function deleteAnswer(index: number) {
             <Button @click="addAnswer" text="Tambah jawaban" bg-color="primary" text-color="white" class="!w-fit h-fit px-5" />
         </div>
         <div class="flex flex-col gap-5 mt-3">
+            <textarea v-if="props.preview && answerType == AnswerType.isian" rows="1" :placeholder="`Masukkan jawaban... ${answers.map((answer) => answer.content).join(', ')}`"></textarea>
             <div v-for="(answer, index) in answers" class="flex gap-3" :class="{'flex-col': !preview}">
-                <div class="flex flex-row gap-2 items-center">
+                <div class="flex flex-row gap-2" :class="{'items-start translate-y-[4.5px]': preview, 'items-center': !preview}">
                     <input @change="answerObjektifChange" v-if="answerType == AnswerType.objektif" type="radio" name="answer" :id="`${index}`">
                     <input v-model="answer.correct" v-if="answerType == AnswerType.objektifKompleks" type="checkbox" name="answer" :id="`${index}`">
                     <h1 v-if="!preview">Jawaban Ke-{{ index + 1 }}</h1>
                 </div>
                 <textarea v-if="!props.preview && answerType == AnswerType.isian" v-model="answer.content" name="answer" rows="1"></textarea>
                 <RichTextEditor v-if="!props.preview && (answerType == AnswerType.objektif || answerType == AnswerType.objektifKompleks)" v-model="answer.content"/>
-                <p v-if="props.preview && answerType == AnswerType.isian" class="w-full whitespace-pre-wrap m-0 p-0">{{ answer.content }}</p>
                 <p v-if="props.preview && answerType != AnswerType.isian" class="w-full" v-html="answer.content"></p>
                 <Button v-if="!props.preview" @click="deleteAnswer(index)" text="Hapus" bg-color="danger" text-color="white" class="!w-fit px-5" />
             </div>
