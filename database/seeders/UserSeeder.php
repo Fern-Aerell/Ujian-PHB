@@ -36,9 +36,9 @@ class UserSeeder extends Seeder
             ],
             [
                 'type' => UserType::MURID,
-                'name' => 'Fufufafa',
-                'username' => 'fufufafa',
-                'email' => 'fufufafa@gmail.com',
+                'name' => 'Niko Nikonik',
+                'username' => 'niko',
+                'email' => 'niko@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Crypt::encryptString('12345678'),
             ],
@@ -52,9 +52,9 @@ class UserSeeder extends Seeder
             ],
             [
                 'type' => UserType::GURU,
-                'name' => 'Mulyono',
-                'username' => 'mulyono',
-                'email' => 'mulyono@gmail.com',
+                'name' => 'Gianto',
+                'username' => 'gianto',
+                'email' => 'gianto@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Crypt::encryptString('12345678'),
             ]

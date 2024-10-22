@@ -11,7 +11,7 @@ import ConfigKelasData from './components/ConfigKelasData.vue';
 import ConfigKelasKategoriData from './components/ConfigKelasKategoriData.vue';
 import ConfigMapelData from './components/ConfigMapelData.vue';
 import { Kelas, KelasKategori, Mapel } from '@/types';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref, computed } from 'vue';
 
 enum Menus {
     JADWAL = 'jadwal',
@@ -30,7 +30,38 @@ const props = defineProps<{
     mapels: Mapel[],
 }>();
 
-const menuSelected = ref<Menus>(Menus.JADWAL);
+const menuSelected = ref<Menus>(getMenuFromHash() ?? Menus.JADWAL);
+
+function getHashFromMenu(menu: Menus): string {
+    return `#${menu}`;
+}
+
+function getMenuFromHash(): Menus | undefined {
+    return Object.values(Menus).find((menu) => menu === window.location.hash.substring(1));
+}
+
+function updateHash() {
+    menuSelected.value = getMenuFromHash() ?? Menus.JADWAL;
+}
+
+function menuClick(menu: Menus) {
+    window.location.hash = getHashFromMenu(menu);
+}
+
+onMounted(() => {
+    window.addEventListener('hashchange', updateHash);
+    updateHash(); // Update initial value on mount
+});
+
+onUnmounted(() => {
+    window.removeEventListener('hashchange', updateHash);
+});
+
+// Computed property to generate button text
+const getButtonText = (menu: Menus) => {
+    return menu.split('_').map(part => `${part[0].toUpperCase()}${part.substring(1)}`).join(' ');
+};
+
 </script>
 
 <template>
@@ -44,28 +75,37 @@ const menuSelected = ref<Menus>(Menus.JADWAL);
             class="w-full"
         >
             <swiper-slide
-                v-for="(menu, index) in Menus"
+                v-for="(menu, index) in Object.values(Menus)"
                 :key="index"
                 class="!w-fit"
             >
                 <Button
-                    @click="menuSelected = menu" 
-                    :text="menu.split('_').map((menu) => `${menu[0].toUpperCase()}${menu.substring(1, menu.length)}`).join(' ')"
-                    :text-color="menuSelected == menu ? 'white' : 'black'"
-                    :bg-color="menuSelected == menu ? 'primary' : 'grey'"
+                    @click="menuClick(menu)"
+                    :text="getButtonText(menu)"
+                    :text-color="menuSelected === menu ? 'white' : 'black'"
+                    :bg-color="menuSelected === menu ? 'primary' : 'grey'"
                     class="!h-fit flex-shrink-0 px-5"
                 />
             </swiper-slide>
         </swiper-container>
         <div class="flex flex-row gap-3 overflow-auto h-full">
-            <ConfigExamScheduleData v-if="menuSelected == Menus.JADWAL" />
-            <ConfigExamTimeData v-else-if="menuSelected == Menus.WAKTU" />
-            <ConfigKelasData v-else-if="menuSelected == Menus.KELAS" :kelas="props.kelas" />
-            <ConfigKelasKategoriData v-else-if="menuSelected == Menus.KELAS_KATEGORI" :kelas_kategoris="props.kelas_kategoris" />
-            <ConfigMapelData v-else-if="menuSelected == Menus.MAPEL" :kelas="props.kelas" :kelas_kategoris="props.kelas_kategoris" :mapels="props.mapels" />
-            <ConfigActivityData v-else-if="menuSelected == Menus.AKTIFITAS"/>
-            <ConfigSliderData v-else-if="menuSelected == Menus.SLIDER"/>
-            <ConfigSchoolData v-else-if="menuSelected == Menus.DATA_SEKOLAH"/>
+            <component
+                :is="{
+                    [Menus.JADWAL]: ConfigExamScheduleData,
+                    [Menus.WAKTU]: ConfigExamTimeData,
+                    [Menus.KELAS]: ConfigKelasData,
+                    [Menus.KELAS_KATEGORI]: ConfigKelasKategoriData,
+                    [Menus.MAPEL]: ConfigMapelData,
+                    [Menus.AKTIFITAS]: ConfigActivityData,
+                    [Menus.SLIDER]: ConfigSliderData,
+                    [Menus.DATA_SEKOLAH]: ConfigSchoolData
+                }[menuSelected]"
+                v-bind="{
+                    kelas: props.kelas,
+                    kelas_kategoris: props.kelas_kategoris,
+                    mapels: props.mapels
+                }"
+            />
         </div>
     </AuthLayout>
 </template>

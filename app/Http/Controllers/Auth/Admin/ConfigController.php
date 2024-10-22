@@ -382,14 +382,8 @@ class ConfigController extends Controller
                 'regex:/^([A-Z][a-z]*\s*)+$/',
             ],
             'kependekan' => 'required|string|uppercase|unique:' . Mapel::class,
-            'tags' => 'required|array',
-            'tags.*' => 'string|distinct'
         ]);
-
-        $mapel = new Mapel($request->only(['kepanjangan', 'kependekan']));
-        $mapel->tags = json_encode($request->tags);
-        $mapel->save();
-
+        Mapel::create($request->all());
         return redirect()->back();
     }
 
@@ -407,15 +401,12 @@ class ConfigController extends Controller
                 'string',
                 'uppercase',
                 Rule::unique(Mapel::class)->ignore($id),
-            ],
-            'tags' => 'required|array',
-            'tags.*' => 'string|distinct'
+            ]
         ]);
 
         $mapel = Mapel::find($id);
         if (!$mapel) return abort(404, 'Mapel tidak ditemukan');
-        $mapel->update($request->only(['kepanjangan', 'kependekan']));
-        $mapel->tags = json_encode($request->tags);
+        $mapel->update($request->all());
         $mapel->save();
         return redirect()->back();
     }

@@ -11,7 +11,6 @@ class Mapel extends Model
 
     protected $fillable = [
         'kepanjangan',
-        'kependekan',
-        'tags',
+        'kependekan'
     ];
 }

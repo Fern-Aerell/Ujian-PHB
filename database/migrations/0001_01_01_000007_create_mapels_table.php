@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('kepanjangan')->unique();
             $table->string('kependekan')->unique();
-            $table->json('tags')->nullable();
             $table->timestamps();
         });
     }

@@ -11,13 +11,6 @@ const props = defineProps<{
 }>();
 
 const mapelsRef = ref<any[]>([]);
-const availableTags = [
-  ...props.kelas.map((kelas) => kelas.bilangan.toString()),
-  ...props.kelas.map((kelas) => kelas.romawi),
-  ...props.kelas.map((kelas) => kelas.pengucapan),
-  ...props.kelas_kategoris.map((kelas_kategori) => kelas_kategori.kependekan),
-  ...props.kelas_kategoris.map((kelas_kategori) => kelas_kategori.kepanjangan),
-];
 const isAdd = ref(false);
 const canAdd = ref(true);
 
@@ -60,7 +53,6 @@ function callbackKembali() {
         :key="index"
         editable
         :mapel="mapel"
-        :available-tags="availableTags"
         :ref="(element) => {if(element) mapelsRef.push(element)}"
         :callback-edit-mode="callbackEditMode"
         :callback-kembali="callbackKembali"
@@ -68,7 +60,6 @@ function callbackKembali() {
       <Mapel 
         v-if="isAdd"
         add
-        :available-tags="availableTags"
         :ref="(element) => {if(element) mapelsRef.push(element)}"
         :callback-kembali="callbackKembali"
       />

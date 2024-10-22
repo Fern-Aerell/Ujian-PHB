@@ -24,5 +24,5 @@ function getPhotoProfileWithType(type: string = usePage().props.auth.user.type) 
 </script>
 
 <template>
-    <img :src="getPhotoProfileWithType(props.type)" alt="profile picture" class="w-[45px] h-[45px] rounded-[10px] outline outline-1">
+    <img :src="getPhotoProfileWithType(props.type)" alt="profile picture" class="max-w-[45px] max-h-[45px] rounded-[10px] outline outline-1">
 </template>

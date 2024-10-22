@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import Tag from './Tag.vue';
-import Tags from './Tags.vue';
 import Button from '@/Components/Buttons/Button.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -13,7 +11,6 @@ import { Mapel } from '@/types';
 
 const props = defineProps<{
     mapel?: Mapel;
-    availableTags?: string[];
     editable?: boolean;
     add?: boolean;
     callbackEditMode?: () => void;
@@ -22,22 +19,11 @@ const props = defineProps<{
 
 const isEdit = ref(false);
 const isHide = ref(false);
-const selectedTag = ref('');
 
 const form = useForm({
     kepanjangan: props.mapel?.kepanjangan ?? '',
-    kependekan: props.mapel?.kependekan ?? '',
-    tags: props.mapel ? JSON.parse(props.mapel.tags) as string[] : []
+    kependekan: props.mapel?.kependekan ?? ''
 });
-
-function addSelectedTag() {
-    if(props.availableTags?.includes(selectedTag.value) && !form.tags.includes(selectedTag.value)) form.tags.push(selectedTag.value);
-}
-
-function reset() {
-    form.reset();
-    selectedTag.value = '';
-}
 
 function hapus(id: number) {
   Swal.fire(
@@ -73,7 +59,7 @@ function tambah() {
       failedAlert(error.message);
     },
     onSuccess: () => {
-      reset();
+      form.reset();
       successAlert('Mapel berhasil ditambahkan, halaman akan direfresh untuk melihat perubahan.', () => window.location.reload());
     },
   });
@@ -99,7 +85,6 @@ function kembali() {
         if(props.mapel) {
             form.kepanjangan = props.mapel.kepanjangan;
             form.kependekan = props.mapel.kependekan;
-            form.tags = JSON.parse(props.mapel.tags);
         }
       }
     }
@@ -128,9 +113,6 @@ defineExpose({isHide});
                 <span class="truncate">{{ form.kependekan }} ({{ form.kepanjangan }})</span>
                 <button @click="if(props.callbackEditMode) props.callbackEditMode();isEdit = true;isHide = false;" v-if="props.editable" type="button" class="bg-gray-500 hover:bg-gray-600 font-bold px-3 py-1 text-white">Edit</button>
             </div>
-            <Tags v-if="form.tags.length > 0">
-                <Tag v-for="(tag, index) in form.tags" :key="index">{{ tag }}</Tag>
-            </Tags>
         </template>
         <!-- EDIT MODE -->
         <template v-else>
@@ -147,21 +129,6 @@ defineExpose({isHide});
                         autocomplete="kepanjangan" placeholder="Masukkan kepanjangan jurusan" />
                     <InputError class="mt-2" :message="form.errors.kepanjangan" />
                 </div>
-                <div class="flex flex-col gap-1">
-                    <InputLabel for="tags" class="required" value="Tags" />
-                    <Tags>
-                        <template v-if="form.tags.length > 0">
-                            <Tag v-for="(tag, index) in form.tags" @delete="form.tags.splice(form.tags.findIndex((tagInForm) => tagInForm == tag),1)" :key="index" deleteable>{{ tag }}</Tag>
-                        </template>
-                        <template v-else>
-                            <p class="opacity-50">Tidak ada tag.</p>
-                        </template>
-                    </Tags>
-                    <InputError class="mt-2" :message="form.errors.tags" />
-                </div>
-                <select v-if="props.availableTags" v-model="selectedTag" name="availableTags" id="availableTags" class="w-full" @change="addSelectedTag">
-                    <option v-for="(tag, index) in props.availableTags.filter((tag) => !form.tags.includes(tag))" :key="index" :value="tag">{{ tag }}</option>
-                </select>
                 <div class="flex flex-row flex-wrap gap-2">
                     <Button type="submit" :text="add ? 'Tambah' : 'Simpan'" bg-color="primary" text-color="white" class="!w-fit px-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
                     <Button @click="kembali" type="button" text="Kembali" bg-color="grey" text-color="black" class="!w-fit px-6" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
