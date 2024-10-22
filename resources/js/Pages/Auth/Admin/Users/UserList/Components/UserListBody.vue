@@ -33,7 +33,7 @@ async function deleteUser(username: string, id: number) {
 </script>
 
 <template>
-    <div class="overflow-x-auto">
+    <div class="flex flex-col gap-3 bg-white p-5 rounded-md w-full overflow-x-auto">
         <table class="min-w-full bg-white shadow-md overflow-hidden text-nowrap">
             <thead class="bg-gray-100">
                 <tr>

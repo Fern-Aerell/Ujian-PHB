@@ -11,7 +11,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div v-if="!props.hidden" class="flex flex-col sm:flex-row justify-between items-center gap-4">
+    <div v-if="!props.hidden" class="bg-white p-5 rounded-md w-full flex flex-col sm:flex-row justify-between items-center gap-4">
         <div class="text-center sm:text-left">
             Halaman {{ props.current_page }} dari {{ props.last_page }}
         </div>
