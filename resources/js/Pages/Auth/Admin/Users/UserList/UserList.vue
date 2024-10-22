@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import CustomHead from '@/Components/CustomHead.vue';
+import AuthLayout from '@/Layouts/AuthLayout.vue';
 import UserListHeader from './Components/UserListHeader.vue';
 import UserListBody from './Components/UserListBody.vue';
 import UserListFooter from './Components/UserListFooter.vue';
@@ -10,7 +12,8 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="flex flex-col gap-3">
+    <CustomHead title="List User" />
+    <AuthLayout title="List User" class="flex flex-col gap-3">
         <!-- HEADER -->
         <UserListHeader/>
 
@@ -24,5 +27,5 @@ const props = defineProps<{
             :next_page_url="props.value.next_page_url"
             :prev_page_url="props.value.prev_page_url"
         />
-    </div>
+    </AuthLayout>
 </template>

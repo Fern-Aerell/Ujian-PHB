@@ -50,7 +50,14 @@ enquire.register("screen and (min-width: 1024px)", {
             </div>
             <!-- CONTENT -->
             <div ref="contentContainer" class="overflow-auto w-full h-full" :class="props.class">
-                <slot/>
+                <template v-if="$slots.default">
+                    <slot/>
+                </template>
+                <template v-else>
+                    <div class="flex justify-center items-center w-full h-full">
+                        <p class="text-xl opacity-20 font-semibold">Tidak ada {{ props.title }}</p>
+                    </div>
+                </template>
             </div>
         </div>
     </div>

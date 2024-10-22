@@ -48,14 +48,14 @@ class UserController extends Controller
 
         $user_list = $query->paginate($max, ['*'], 'page', $page);
 
-        return Inertia::render('Auth/Admin/Users/Users', [
-            'user_list' => $user_list
+        return Inertia::render('Auth/Admin/Users/UserList/UserList', [
+            'value' => $user_list
         ]);
     }
 
     public function add(): Response
     {
-        return Inertia::render('Auth/Admin/User/Add');
+        return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor');
     }
 
     public function store(Request $request): RedirectResponse
@@ -71,6 +71,7 @@ class UserController extends Controller
                 'unique:' . User::class,
                 new NoWhitespace
             ],
+            'email_verified_at' => 'nullable|date',
             'email' => 'email|nullable|unique:' . User::class,
             'password' => ['required', 'confirmed', new Password],
         ]);
@@ -80,6 +81,7 @@ class UserController extends Controller
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email ? $request->email : null,
+            'email_verified_at' => $request->email_verified_at,
             'password' => Crypt::encryptString($request->password),
         ]);
 
@@ -96,7 +98,7 @@ class UserController extends Controller
             return abort(404, 'User tidak ditemukan');
         }
 
-        return Inertia::render('Auth/Admin/User/Edit', [
+        return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor', [
             'user' => [
                 'id' => $user->id,
                 'type' => $user->type,
@@ -149,6 +151,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->back();
+        return redirect(route('user.list'));
     }
 }

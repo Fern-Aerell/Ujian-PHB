@@ -10,6 +10,17 @@ export interface User {
     password: string;
 }
 
+export interface UserForm {
+    name: string;
+    username: string;
+    type: string;
+    email: string;
+    email_verified_at: string;
+    password: string;
+    password_confirmation: string
+    extended: [],
+}
+
 export interface PaginationLink {
     url: string | null;
     label: string;

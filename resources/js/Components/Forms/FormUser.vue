@@ -28,18 +28,14 @@ const props = defineProps<{
 
 <template>
     <form @submit.prevent="submit">
-        <div>
+        <div >
+            
             <InputLabel for="type" value="Tipe Akun" class="required" />
             <br>
 
-            <select :disabled="props.disableType" id="type" v-model="form.type" required autofocus class="block w-full border-gray-300">
-                <template v-if="props.disableType">
-                    <option :value="form.type">{{ form.type }}</option>
-                </template>
-                <template v-else>
-                    <option v-for="(userType, index) in $page.props.auth.userTypes" :key="index" :value="userType">{{ userType }}</option>
-                </template>
-            </select>
+            <div class="block w-full border-gray-300 border p-3">
+                <p>{{ form.type }}</p>
+            </div>
 
             <InputError class="mt-2" :message="form.errors.type" />
         </div>

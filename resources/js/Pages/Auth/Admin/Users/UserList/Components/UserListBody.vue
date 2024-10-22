@@ -1,34 +1,12 @@
 <script setup lang="ts">
-import { failedAlert, successAlert } from '@/alert';
 import PhotoProfile from '@/Components/PhotoProfile.vue';
 import Button from '@/Components/Buttons/Button.vue';
 import { User } from '@/types';
-import { router } from '@inertiajs/vue3';
-import Swal from 'sweetalert2';
+import { deleteUser } from '../../user_utils';
 
 const props = defineProps<{
     value?: User[]
 }>();
-
-async function deleteUser(username: string, id: number) {
-    const result = await Swal.fire({
-        title: `Yakin hapus user ${username}?`,
-        showCancelButton: true,
-        confirmButtonText: "Hapus",
-        cancelButtonText: "Batal",
-        confirmButtonColor: "#dc2626",
-    });
-    if (result.isConfirmed) {
-        router.delete(route('user.delete', { id }), {
-            onError: (error) => {
-                failedAlert(error.message);
-            },
-            onSuccess: () => {
-                successAlert('User berhasil dihapus');
-            },
-        });
-    }
-}
 
 </script>
 
