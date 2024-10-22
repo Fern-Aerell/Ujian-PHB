@@ -18,8 +18,10 @@
 
 Ujian PHB (Penilaian Harian Bulanan) adalah ujian yang di lakukan setiap bulan di sekolah saya SMK PGRI, dikarenakan ujian nya masih menggunakan google form, saya berinisiatif untuk membuat versi website nya saat magang di Garuda Cyber Institute, saya belum tau apakah ada lagi sekolah lain yang menggunakan sistem seperti ini, tetapi website ini saya rancang dan saya buat agar bisa digunakan untuk semua sekolah.
 
-## Desain
+- [Timeline](https://1drv.ms/x/c/c88885589ac6456f/ESZZIvSD_qdJoPkkFh5b-SgBkpI-xt9yw5KX-Q7bJoxCgA?e=TDnWrv)
 - [Figma](https://www.figma.com/design/fvzpKDitjFP5J5NcBRDYGl/Ujian-PHB?node-id=0-1&t=0whqHiDn4pRJKLWa-1)
+- [Usecase](https://raw.githubusercontent.com/Fern-Aerell/Ujian-PHB/refs/heads/main/rancangan/usecase/usecase.png)
+- [ERD](https://raw.githubusercontent.com/Fern-Aerell/Ujian-PHB/3172dc168032c2b67e4e44ee43d18b6edee6fbfe/rancangan/erd/erd.svg)
 
 ## Pembimbing
 - **[Khairul Amri CM]()**
