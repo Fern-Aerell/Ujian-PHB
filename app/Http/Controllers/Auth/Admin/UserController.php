@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Auth\Admin;
 
+use App\Enums\UserType as EnumsUserType;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
+use App\Models\Guru;
+use App\Models\Murid;
 use App\Models\User;
 use App\Rules\NoWhitespace;
 use App\Rules\Password;
@@ -85,6 +89,25 @@ class UserController extends Controller
             'password' => Crypt::encryptString($request->password),
         ]);
 
+        if(EnumsUserType::from($request->type) == EnumsUserType::ADMIN)
+        {
+            Admin::create([
+                'user_id' => $user->id
+            ]);
+        }
+        else if(EnumsUserType::from($request->type) == EnumsUserType::GURU)
+        {
+            Guru::create([
+                'user_id' => $user->id
+            ]);
+        }
+        else if(EnumsUserType::from($request->type) == EnumsUserType::MURID)
+        {
+            Murid::create([
+                'user_id' => $user->id
+            ]);
+        }
+
         event(new Registered($user));
 
         return redirect(route('user.list'));
@@ -126,6 +149,44 @@ class UserController extends Controller
             'email' => ['email', 'nullable', Rule::unique(User::class)->ignore($user->id)],
             'password' => ['required', 'confirmed', new Password],
         ]);
+
+        if($user->type != $request->type)
+        {
+            if($user->type == EnumsUserType::ADMIN)
+            {
+                $admin = Admin::where('user_id', $user->id)->first();
+                $admin->delete();
+            }
+            else if($user->type == EnumsUserType::GURU)
+            {
+                $guru = Guru::where('user_id', $user->id)->first();
+                $guru->delete();
+            }
+            else if($user->type == EnumsUserType::MURID)
+            {
+                $murid = Murid::where('user_id', $user->id)->first();
+                $murid->delete();
+            }
+
+            if(EnumsUserType::from($request->type) == EnumsUserType::ADMIN)
+            {
+                Admin::create([
+                    'user_id' => $user->id
+                ]);
+            }
+            else if(EnumsUserType::from($request->type) == EnumsUserType::GURU)
+            {
+                Guru::create([
+                    'user_id' => $user->id
+                ]);
+            }
+            else if(EnumsUserType::from($request->type) == EnumsUserType::MURID)
+            {
+                Murid::create([
+                    'user_id' => $user->id
+                ]);
+            }
+        }
 
         $user->update([
             'type' => $request->type,

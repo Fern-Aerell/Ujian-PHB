@@ -18,7 +18,6 @@ export interface UserForm {
     email_verified_at: string;
     password: string;
     password_confirmation: string
-    extended: [],
 }
 
 export interface PaginationLink {

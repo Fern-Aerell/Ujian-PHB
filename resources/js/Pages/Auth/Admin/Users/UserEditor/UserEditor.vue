@@ -11,11 +11,14 @@ import { User, UserForm } from '@/types';
 import { useForm } from '@inertiajs/vue3';
 import { deleteUser } from '../user_utils';
 import { failedAlert, successAlert } from '@/alert';
+import Swal from 'sweetalert2';
+import { ref } from 'vue';
 
 const props = defineProps<{
     user?: User
 }>();
 
+const alreadyShowInfoIfChangeUserType = ref(false);
 const title = props.user ? 'Edit User' : 'Tambah User';
 
 const form = useForm<UserForm>(
@@ -27,7 +30,6 @@ const form = useForm<UserForm>(
         email_verified_at: props.user ? props.user.email_verified_at : '',
         password: props.user ? props.user.password : '',
         password_confirmation: props.user ? props.user.password : '',
-        extended: [],
     }
 );
 
@@ -44,13 +46,26 @@ function submit() {
         }
     });
 };
+
+function UserTypeChange() {
+    if (alreadyShowInfoIfChangeUserType.value || !props.user || form.type === props.user.type) return;
+    Swal.fire({
+        title: "Pemberitahuan!",
+        text: `Data ${props.user.type} pada pengguna ini akan dihapus saat disimpan jika kamu mengubah tipenya menjadi ${form.type}.`,
+        icon: "warning",
+        showCancelButton: false,
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Ya"
+    });
+    alreadyShowInfoIfChangeUserType.value = true;
+}
 </script>
 
 <template>
     <CustomHead :title="title" />
     <AuthLayout :title="title" class="flex flex-col gap-3">
         <div class="flex flex-row bg-white p-5 justify-between">
-            <UserEditorUserTypeSelector v-model="form.type" />
+            <UserEditorUserTypeSelector @change="alreadyShowInfoIfChangeUserType ? undefined : UserTypeChange()" v-model="form.type" />
             <div class="flex flex-row gap-3">
                 <Button type="submit" @click="submit" :text="props.user ? 'Simpan' : 'Tambahkan'" bg-color="primary" text-color="white" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
                 <Button type="button" v-if="props.user" @click="deleteUser(props.user.name, props.user.id)" text="Hapus" bg-color="danger" text-color="white" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
