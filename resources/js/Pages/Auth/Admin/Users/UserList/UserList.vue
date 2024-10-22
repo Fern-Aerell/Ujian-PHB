@@ -10,7 +10,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="flex flex-col gap-3 bg-white p-5 rounded-md w-full">
+    <div class="flex flex-col gap-3">
         <!-- HEADER -->
         <UserListHeader/>
 
