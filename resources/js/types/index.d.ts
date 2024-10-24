@@ -1,31 +1,30 @@
 export interface ObjectWithId {
-    id: number;
+    id?: number;
 }
 
-export interface User {
-    id: number;
-    name: string;
-    username: string;
-    type: string;
-    email: string;
-    email_verified_at: string;
-    created_at: string;
-    updated_at: string;
-    password: string;
+export interface TimeStamp {
+    created_at?: string;
+    updated_at?: string;
 }
 
-export interface UserForm {
-    name: string;
-    username: string;
-    type: string;
-    email: string;
-    email_verified_at: string;
-    password: string;
-    password_confirmation: string
+export interface User extends ObjectWithId, TimeStamp {
+    name?: string;
+    username?: string;
+    type?: string;
+    email?: string;
+    email_verified_at?: string;
+    password?: string;
 }
+
+export interface PasswordConfirmation {
+    password_confirmation?: string
+}
+
+export interface UserForm extends User, PasswordConfirmation, MuridForm {}
 
 export interface MuridForm {
-
+    kelas?: number,
+    kelas_kategori?: number
 }
 
 export interface PaginationLink {

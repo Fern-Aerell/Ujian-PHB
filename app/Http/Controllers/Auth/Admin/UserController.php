@@ -6,6 +6,8 @@ use App\Enums\UserType as EnumsUserType;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\KelasKategori;
 use App\Models\Murid;
 use App\Models\User;
 use App\Rules\NoWhitespace;
@@ -59,7 +61,10 @@ class UserController extends Controller
 
     public function add(): Response
     {
-        return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor');
+        return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor', [
+            'kelas' => Kelas::all(),
+            'kelas_kategori' => KelasKategori::all()
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -130,7 +135,9 @@ class UserController extends Controller
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at,
                 'password' => Crypt::decryptString($user->password),
-            ]
+            ],
+            'kelas' => Kelas::all(),
+            'kelas_kategori' => KelasKategori::all()
         ]);
     }
 

@@ -7,7 +7,8 @@ import CustomHead from '@/Components/CustomHead.vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import UserEditorUserTypeSelector from './Components/UserEditorUserTypeSelector.vue';
 import UserEditorForm from './Components/UserEditorForm.vue';
-import { User, UserForm } from '@/types';
+import UserEditorMuridForm from './Components/UserEditorMuridForm.vue';
+import { Kelas, KelasKategori, MuridForm, User, UserForm } from '@/types';
 import { useForm } from '@inertiajs/vue3';
 import { deleteUser } from '../user_utils';
 import { failedAlert, successAlert } from '@/alert';
@@ -15,7 +16,9 @@ import Swal from 'sweetalert2';
 import { ref } from 'vue';
 
 const props = defineProps<{
-    user?: User
+    user?: User,
+    kelas: Kelas[],
+    kelas_kategori: KelasKategori[]
 }>();
 
 const alreadyShowInfoIfChangeUserType = ref(false);
@@ -32,6 +35,11 @@ const form = useForm<UserForm>(
         password_confirmation: props.user ? props.user.password : '',
     }
 );
+
+const muridForm = useForm<MuridForm>({
+    kelas: 0,
+    kelas_kategori: 0
+});
 
 function submit() {
     form.post(props.user ? route('user.update', props.user.id) : route('user.store'), {
@@ -68,7 +76,7 @@ function UserTypeChange() {
             <UserEditorUserTypeSelector @change="alreadyShowInfoIfChangeUserType ? undefined : UserTypeChange()" v-model="form.type" />
             <div class="flex flex-row gap-3">
                 <Button type="submit" @click="submit" :text="props.user ? 'Simpan' : 'Tambahkan'" bg-color="primary" text-color="white" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
-                <Button type="button" v-if="props.user" @click="deleteUser(props.user.name, props.user.id)" text="Hapus" bg-color="danger" text-color="white" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
+                <Button type="button" v-if="props.user" @click="deleteUser(props.user.name!, props.user.id!)" text="Hapus" bg-color="danger" text-color="white" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
                 <Button type="button" @click="$inertia.get(route('user.list'))" text="Kembali" bg-color="grey" text-color="black" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />
             </div>
         </div>
@@ -82,6 +90,9 @@ function UserTypeChange() {
             <InputError v-if="!$page.props.auth.userTypes.includes(form.type)" message="Silahkan pilih tipe user terlebih dahulu." />
         </div>
 
-        <UserEditorForm v-if="$page.props.auth.userTypes.includes(form.type)" v-model="form" />
+        <div class="flex flex-row flex-wrap gap-3">
+            <UserEditorForm v-if="$page.props.auth.userTypes.includes(form.type)" v-model="form" />
+            <UserEditorMuridForm v-if="form.type === 'murid'" :kelas="props.kelas" :kelas_kategori="props.kelas_kategori" v-model="muridForm" />
+        </div>
     </AuthLayout>
 </template>
