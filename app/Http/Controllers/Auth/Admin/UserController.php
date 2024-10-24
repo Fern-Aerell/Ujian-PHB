@@ -152,17 +152,17 @@ class UserController extends Controller
 
         if($user->type != $request->type)
         {
-            if($user->type == EnumsUserType::ADMIN)
+            if($user->isAdmin())
             {
                 $admin = Admin::where('user_id', $user->id)->first();
                 $admin->delete();
             }
-            else if($user->type == EnumsUserType::GURU)
+            else if($user->isGuru())
             {
                 $guru = Guru::where('user_id', $user->id)->first();
                 $guru->delete();
             }
-            else if($user->type == EnumsUserType::MURID)
+            else if($user->isMurid())
             {
                 $murid = Murid::where('user_id', $user->id)->first();
                 $murid->delete();

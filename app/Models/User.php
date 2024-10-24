@@ -50,5 +50,30 @@ class User extends Authenticatable implements MustVerifyEmail
     public function resetPasswordToken() {
         return $this->hasOne(PasswordResetToken::class, 'email', 'email');
     }
+
+    public function admin() {
+        return $this->hasOne(Admin::class, 'user_id', 'id');
+    }
+
+    public function guru() {
+        return $this->hasOne(Guru::class, 'user_id', 'id');
+    }
+
+    public function murid() {
+        return $this->hasOne(Murid::class, 'user_id', 'id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->type == UserType::ADMIN;
+    }
+
+    public function isGuru() {
+        return $this->type == UserType::GURU;
+    }
+
+    public function isMurid() {
+        return $this->type == UserType::MURID;
+    }
     
 }
