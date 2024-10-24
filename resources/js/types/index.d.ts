@@ -1,3 +1,7 @@
+export interface ObjectWithId {
+    id: number;
+}
+
 export interface User {
     id: number;
     name: string;
@@ -18,6 +22,10 @@ export interface UserForm {
     email_verified_at: string;
     password: string;
     password_confirmation: string
+}
+
+export interface MuridForm {
+
 }
 
 export interface PaginationLink {
