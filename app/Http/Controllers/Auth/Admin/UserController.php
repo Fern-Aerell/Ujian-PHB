@@ -120,7 +120,6 @@ class UserController extends Controller
 
                         if ($exists) {
                             $fail("Informasi guru mapel {$mapel->kependekan}, kelas kategori {$kelasKategori->kependekan}, dan kelas {$kelas->bilangan}, sudah digunakan pada guru lain.");
-
                         }
                     }
                 },
@@ -139,7 +138,13 @@ class UserController extends Controller
             'password' => Crypt::encryptString($request->password),
         ]);
 
-        if (EnumsUserType::from($request->type) === EnumsUserType::GURU) {
+        if (EnumsUserType::from($request->type) === EnumsUserType::ADMIN) {
+            // Membuat entri baru di tabel 'admin'
+            $admin = Admin::create([
+                'user_id' => $user->id,
+            ]);
+
+        } else if (EnumsUserType::from($request->type) === EnumsUserType::GURU) {
             // Membuat entri baru di tabel 'guru'
             $guru = Guru::create([
                 'user_id' => $user->id,
@@ -154,7 +159,7 @@ class UserController extends Controller
                     'kelas_id' => $item['kelas_id'],
                 ]);
             }
-        }else if (EnumsUserType::from($request->type) === EnumsUserType::MURID) {
+        } else if (EnumsUserType::from($request->type) === EnumsUserType::MURID) {
             Murid::create([
                 'user_id' => $user->id,
                 'kelas_id' => $request->murid_kelas_id,
@@ -169,11 +174,11 @@ class UserController extends Controller
 
     public function edit(Request $request, string $id)
     {
-        if(Auth::user()->id == $id) {
+        if (Auth::user()->id == $id) {
             return abort(404, 'Tidak dapat mengedit diri sendiri.');
         }
 
-        $user = User::with(['murid', 'admin', 'guru'])->find($id);
+        $user = User::with(['murid', 'admin', 'guru.guruMapelKelasKategoriKelas'])->find($id);
 
         if (!$user) {
             return abort(404, 'User tidak ditemukan');
@@ -228,15 +233,37 @@ class UserController extends Controller
                 EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
                 'int'
             ],
-        ]);
+            // Guru
+            'guru_mapel_kelas_kategori_kelas' => [
+                EnumsUserType::from($request->type) === EnumsUserType::GURU ? 'required' : 'nullable',
+                'array',
+                'min:1',
+                function ($attribute, $value, $fail) use ($user) {
+                    if($user->guru == null) return;
+                    foreach ($value as $item) {
+                        // Mengambil nama mapel dari tabel mapel
+                        $mapel = Mapel::find($item['mapel_id']);
+                        // Mengambil nama kelas kategori dari tabel kelas kategori
+                        $kelasKategori = KelasKategori::find($item['kelas_kategori_id']);
+                        // Mengambil nama kelas dari tabel kelas
+                        $kelas = Kelas::find($item['kelas_id']);
 
-        $user->update([
-            'type' => $request->type,
-            'name' => $request->name,
-            'username' => $request->username,
-            'email' => $request->email,
-            'email_verified_at' => $user->email != $request->email ? null : $request->email_verified_at,
-            'password' => Crypt::encryptString($request->password),
+                        // Cek apakah entri sudah ada untuk mapel, kelas kategori, dan kelas yang sama, tetapi untuk guru yang berbeda
+                        $exists = GuruMapelKelasKategoriKelas::where('mapel_id', $item['mapel_id'])
+                            ->where('kelas_kategori_id', $item['kelas_kategori_id'])
+                            ->where('kelas_id', $item['kelas_id'])
+                            ->where('guru_id', '!=', $user->guru->id) // Pastikan ID guru berbeda
+                            ->exists();
+
+                        if ($exists) {
+                            $fail("Informasi guru mapel {$mapel->kependekan}, kelas kategori {$kelasKategori->kependekan}, dan kelas {$kelas->bilangan}, sudah digunakan pada guru lain.");
+                        }
+                    }
+                },
+            ],
+            'guru_mapel_kelas_kategori_kelas.*.mapel_id' => 'required|integer',
+            'guru_mapel_kelas_kategori_kelas.*.kelas_kategori_id' => 'required|integer',
+            'guru_mapel_kelas_kategori_kelas.*.kelas_id' => 'required|integer',
         ]);
 
         if ($user->type != EnumsUserType::from($request->type)) {
@@ -250,18 +277,92 @@ class UserController extends Controller
                 $murid = Murid::where('user_id', $user->id)->first();
                 $murid->delete();
             }
-
         }
 
-        if ($user->isMurid()) {
+        $user->update([
+            'type' => $request->type,
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'email_verified_at' => $user->email != $request->email ? null : $request->email_verified_at,
+            'password' => Crypt::encryptString($request->password),
+        ]);
+
+        if($user->isAdmin()) {
+            $admin = $user->admin;
+            if ($admin == null) {
+                $admin = Admin::create([
+                    'user_id' => $user->id
+                ]);
+            } else {
+                $admin->update([]);
+            }
+        }else if ($user->isGuru()) {
+            $guru = $user->guru;
+
+            // Jika guru belum ada, buat baru
+            if ($guru == null) {
+                $guru = Guru::create([
+                    'user_id' => $user->id
+                ]);
+            } else {
+                // Jika guru sudah ada, update jika perlu (dapat diisi dengan data yang relevan)
+                $guru->update([]); // Update dengan data yang relevan jika perlu
+            }
+
+            // Ambil semua entri lama untuk guru ini
+            $existingEntries = GuruMapelKelasKategoriKelas::where('guru_id', $guru->id)->get();
+
+            // Siapkan array untuk menyimpan data baru
+            $newEntries = [];
+
+            // Proses data baru dari request
+            foreach ($request->guru_mapel_kelas_kategori_kelas as $item) {
+                // Cek apakah entri sudah ada
+                $exists = $existingEntries->first(function ($entry) use ($item) {
+                    return $entry->mapel_id == $item['mapel_id'] &&
+                        $entry->kelas_kategori_id == $item['kelas_kategori_id'] &&
+                        $entry->kelas_id == $item['kelas_id'];
+                });
+
+                // Jika tidak ada, tambahkan ke array data baru
+                if (!$exists) {
+                    $newEntries[] = [
+                        'guru_id' => $guru->id,
+                        'mapel_id' => $item['mapel_id'],
+                        'kelas_kategori_id' => $item['kelas_kategori_id'],
+                        'kelas_id' => $item['kelas_id'],
+                    ];
+                }
+            }
+
+            // Hapus entri lama yang tidak ada di request
+            foreach ($existingEntries as $existing) {
+                $existsInRequest = collect($request->guru_mapel_kelas_kategori_kelas)->first(function ($item) use ($existing) {
+                    return $item['mapel_id'] == $existing->mapel_id &&
+                        $item['kelas_kategori_id'] == $existing->kelas_kategori_id &&
+                        $item['kelas_id'] == $existing->kelas_id;
+                });
+
+                if (!$existsInRequest) {
+                    // Hapus entri lama
+                    $existing->delete();
+                }
+            }
+
+            // Buat entri baru
+            foreach ($newEntries as $entry) {
+                GuruMapelKelasKategoriKelas::create($entry);
+            }
+        } else if ($user->isMurid()) {
             $murid = $user->murid;
-            if($murid == null) {
+            if ($murid == null) {
                 Murid::create([
                     'user_id' => $user->id,
                     'kelas_id' => $request->murid_kelas_id,
                     'kelas_kategori_id' => $request->murid_kelas_kategori_id,
                 ]);
-            }else{
+            } else {
                 $murid->update([
                     'kelas_id' => $request->murid_kelas_id,
                     'kelas_kategori_id' => $request->murid_kelas_kategori_id,

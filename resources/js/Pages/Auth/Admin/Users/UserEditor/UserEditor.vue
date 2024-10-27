@@ -38,7 +38,7 @@ const form = useForm<IUserForm>({
     murid_kelas_id: props.user && props.user.murid ? props.user.murid.kelas_id : null,
     murid_kelas_kategori_id: props.user && props.user.murid ? props.user.murid.kelas_kategori_id : null,
     // Guru
-    guru_mapel_kelas_kategori_kelas: null
+    guru_mapel_kelas_kategori_kelas: props.user && props.user.guru ? props.user.guru.guru_mapel_kelas_kategori_kelas : null
 });
 
 function formReset() {
@@ -52,7 +52,7 @@ function submit() {
             failedAlert(error.message);
         },
         onFinish: () => {
-            formReset();
+            if(!props.user) formReset();
         },
         onSuccess: () => {
             successAlert(props.user ? 'Data user berhasil diubah!' : 'User berhasil ditambahkan');

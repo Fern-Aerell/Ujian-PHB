@@ -35,7 +35,7 @@ export interface IMuridTable {
 }
 
 export interface IGuruTable {
-
+    guru_mapel_kelas_kategori_kelas: IGuruMapelKelasKategoriKelasTable[]
 }
 
 export interface IThreeUserTypeData {
