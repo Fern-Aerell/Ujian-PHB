@@ -44,8 +44,20 @@ const props = defineProps<{
                     <td :title="!user.email ? 'User belum memiliki email.' : user.email_verified_at ? `Email sudah di verifikasi pada ${new Date(user.email_verified_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Email belum di verifikasi.'"
                         class="px-4 py-2">{{ user.email ? `${user.email} ${user.email_verified_at ? '✅' : '⚠️'}` :
                             'Tidak ada' }}</td>
-                    <td v-if="type == EUserType.MURID && user.murid" class="px-4 py-2">{{ props.kelasData.find((value) => value.id == user.murid?.kelas_id)?.bilangan }}</td>
-                    <td v-if="type == EUserType.MURID && user.murid" class="px-4 py-2">{{ props.kelasKategoriData.find((value) => value.id == user.murid?.kelas_kategori_id)?.kependekan }}</td>
+                    <td 
+                        v-if="type == EUserType.MURID && user.murid" 
+                        class="px-4 py-2" 
+                        :title="`${props.kelasData.find((value) => value.id == user.murid?.kelas_id)?.romawi} (${props.kelasData.find((value) => value.id == user.murid?.kelas_id)?.pengucapan})`"
+                    >
+                        {{ props.kelasData.find((value) => value.id == user.murid?.kelas_id)?.bilangan }}
+                    </td>
+                    <td 
+                        v-if="type == EUserType.MURID && user.murid" 
+                        class="px-4 py-2"
+                        :title="`(${props.kelasKategoriData.find((value) => value.id == user.murid?.kelas_kategori_id)?.kepanjangan})`"
+                    >
+                        {{ props.kelasKategoriData.find((value) => value.id == user.murid?.kelas_kategori_id)?.kependekan }}
+                    </td>
                     <td class="px-4 py-2">
                         <div class="flex flex-col sm:flex-row gap-2">
                             <Button @click="$inertia.get(route('user.edit', user.id))" text="Edit"
