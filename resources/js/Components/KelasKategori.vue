@@ -7,10 +7,13 @@ import InputError from '@/Components/InputError.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { failedAlert, successAlert } from '@/alert';
-import { IKelasKategoriTableWithId } from '@/types';
 
 const props = defineProps<{
-    kelasKategori?: IKelasKategoriTableWithId;
+    kelasKategori?: {
+      id: number;
+      kepanjangan: string;
+      kependekan: string;
+    };
     editable?: boolean;
     add?: boolean;
     callbackEditMode?: () => void;

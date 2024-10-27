@@ -2,54 +2,42 @@
 import Button from '@/Components/Buttons/Button.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
-import { IGuruMapelKelasKategoriKelasTable, IGuruMapelKelasKategoriKelasTableCanNull, IKelasKategoriTableWithId, IKelasTableWithId, IMapelTableWithId, IUserForm } from '@/types/index.d';
 import { InertiaForm, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { ref } from 'vue';
 import { successAlert } from '@/alert';
+import { IGuruMapelKelasKategoriKelas, IKelas, IKelasKategori, IMapel, IUserEditorForm } from '@/types';
 
-const model = defineModel<InertiaForm<IUserForm>>({required: true});
+const model = defineModel<InertiaForm<IUserEditorForm>>({required: true});
 
 const props = defineProps<{
-  mapelData: IMapelTableWithId[];
-  kelasKategoriData: IKelasKategoriTableWithId[];
-  kelasData: IKelasTableWithId[]
+  mapelData: IMapel[];
+  kelasKategoriData: IKelasKategori[];
+  kelasData: IKelas[]
 }>();
 
-const form = useForm<IGuruMapelKelasKategoriKelasTableCanNull>({
-  kelas_id: null,
-  kelas_kategori_id: null,
-  mapel_id: null
+const form = useForm<IGuruMapelKelasKategoriKelas>({
+  kelas: props.kelasData[0],
+  kelas_kategori: props.kelasKategoriData[0],
+  mapel: props.mapelData[0],
 });
 
 const isAdd = ref(false);
 const isEdit = ref(false);
 const editIndex = ref<number|null>(null);
 
-function getMapelWithId(id: number) {
-  return props.mapelData.find(mapel => mapel.id == id);
-}
-
-function getKelasKategoriWithId(id: number) {
-  return props.kelasKategoriData.find(kelas_kategori => kelas_kategori.id == id);
-}
-
-function getKelasWithId(id: number) {
-  return props.kelasData.find(kelas => kelas.id == id);
-}
-
 function formHasErrors() {
-    const fields: Record<keyof IGuruMapelKelasKategoriKelasTableCanNull, string> = {
-        mapel_id: 'Mapel harus di isi.',
-        kelas_kategori_id: 'Kelas kategori harus di isi.',
-        kelas_id: 'Kelas harus di isi.',
+    const fields: Record<keyof IGuruMapelKelasKategoriKelas, string> = {
+        mapel: 'Mapel harus di isi.',
+        kelas_kategori: 'Kelas kategori harus di isi.',
+        kelas: 'Kelas harus di isi.',
     };
 
     let hasError = false;
 
     for (const field in fields) {
         if (fields.hasOwnProperty(field)) {
-            const key = field as keyof IGuruMapelKelasKategoriKelasTableCanNull;
+            const key = field as keyof IGuruMapelKelasKategoriKelas;
             if (form[key] == null) {
                 form.setError(key, fields[key]);
                 hasError = true;
@@ -63,12 +51,12 @@ function formHasErrors() {
 }
 
 function formReset() {
-  form.kelas_id = null;
-  form.kelas_kategori_id = null;
-  form.mapel_id = null;
-  form.errors.kelas_id = undefined;
-  form.errors.kelas_kategori_id = undefined;
-  form.errors.mapel_id = undefined;
+  form.kelas = props.kelasData[0];
+  form.kelas_kategori = props.kelasKategoriData[0];
+  form.mapel = props.mapelData[0];
+  form.errors.kelas = undefined;
+  form.errors.kelas_kategori = undefined;
+  form.errors.mapel = undefined;
 }
 
 function tambah() {
@@ -76,15 +64,19 @@ function tambah() {
     model.value.guru_mapel_kelas_kategori_kelas = [];
   }
   if(formHasErrors()) return;
-  const newData: IGuruMapelKelasKategoriKelasTable = {
-    kelas_id: form.kelas_id!,
-    kelas_kategori_id: form.kelas_kategori_id!,
-    mapel_id: form.mapel_id!
-  };
-  if(model.value.guru_mapel_kelas_kategori_kelas.find((data) => data.kelas_id == newData.kelas_id && data.kelas_kategori_id == newData.kelas_kategori_id && data.mapel_id == newData.mapel_id ) != undefined) {
-    form.errors.kelas_id = 'Informasi guru ini sudah ditambahkan.';
+  if(model.value.guru_mapel_kelas_kategori_kelas.find(
+    (data) => 
+    data.kelas.id == form.kelas.id && 
+    data.kelas_kategori.id == form.kelas_kategori.id && 
+    data.mapel.id == form.mapel.id ) != undefined
+  ) {
+    form.errors.kelas = 'Informasi guru ini sudah ditambahkan.';
   }else{
-    model.value.guru_mapel_kelas_kategori_kelas.push(newData);
+    model.value.guru_mapel_kelas_kategori_kelas.push({
+      kelas: form.kelas,
+      kelas_kategori: form.kelas_kategori,
+      mapel: form.mapel
+    });
     isAdd.value = false;
     formReset();
     successAlert(`Informasi guru berhasil ditambahkan.`);
@@ -145,9 +137,9 @@ function simpan() {
   if(!model.value.guru_mapel_kelas_kategori_kelas) return;
   if(formHasErrors()) return;
   if(editIndex.value == null) return;
-  model.value.guru_mapel_kelas_kategori_kelas[editIndex.value].kelas_id = form.kelas_id!;
-  model.value.guru_mapel_kelas_kategori_kelas[editIndex.value].kelas_kategori_id = form.kelas_kategori_id!;
-  model.value.guru_mapel_kelas_kategori_kelas[editIndex.value].mapel_id = form.mapel_id!;
+  model.value.guru_mapel_kelas_kategori_kelas[editIndex.value].kelas = form.kelas;
+  model.value.guru_mapel_kelas_kategori_kelas[editIndex.value].kelas_kategori = form.kelas_kategori;
+  model.value.guru_mapel_kelas_kategori_kelas[editIndex.value].mapel = form.mapel;
   isEdit.value = false;
   formReset();
   successAlert(`Informasi guru berhasil disimpan.`);
@@ -159,9 +151,9 @@ function edit(index: number) {
   isEdit.value = true;
   editIndex.value = index;
   const data = model.value.guru_mapel_kelas_kategori_kelas[editIndex.value];
-  form.kelas_id = data.kelas_id;
-  form.kelas_kategori_id = data.kelas_kategori_id;
-  form.mapel_id = data.mapel_id;
+  form.kelas = data.kelas;
+  form.kelas_kategori = data.kelas_kategori;
+  form.mapel = data.mapel;
 }
 
 </script>
@@ -187,9 +179,9 @@ function edit(index: number) {
         />
         <div v-for="(data, index) in model.guru_mapel_kelas_kategori_kelas" :key="index" class="flex flex-row p-3 border-gray-300 border w-full justify-between items-start">
           <div class="flex flex-col">
-            <p>{{ getMapelWithId(data.mapel_id)?.kependekan }} ({{ getMapelWithId(data.mapel_id)?.kepanjangan }})</p>
-            <p>{{ getKelasKategoriWithId(data.kelas_kategori_id)?.kependekan }} ({{ getKelasKategoriWithId(data.kelas_kategori_id)?.kepanjangan }})</p>
-            <p>{{ getKelasWithId(data.kelas_id)?.bilangan }}/{{ getKelasWithId(data.kelas_id)?.romawi }} ({{ getKelasWithId(data.kelas_id)?.pengucapan }})</p>
+            <p :title="`(${data.mapel.kepanjangan})`"><strong>Mapel:</strong> {{ data.mapel.kependekan }}</p>
+            <p :title="`(${data.kelas_kategori.kepanjangan})`"><strong>Kelas kategori:</strong> {{ data.kelas_kategori.kependekan }}</p>
+            <p :title="`${data.kelas.romawi} (${data.kelas.pengucapan})`"><strong>Kelas:</strong> {{ data.kelas.bilangan }}</p>
           </div>
           <button @click="edit(index)" type="button" class="bg-gray-500 hover:bg-gray-600 font-bold px-3 py-1 text-white">Edit</button>
         </div>
@@ -200,24 +192,24 @@ function edit(index: number) {
         <div class="flex flex-col gap-3">
           <div class="flex flex-col gap-1 flex-1">
             <InputLabel for="mapel" class="required" value="Mapel" />
-            <select name="mapel" id="mapel" v-model="form.mapel_id">
-              <option v-for="(mapel, index) in props.mapelData" :key="index" :value="mapel.id">{{ mapel.kependekan }} ({{ mapel.kepanjangan }})</option>
+            <select name="mapel" id="mapel" v-model="form.mapel">
+              <option v-for="(mapel, index) in props.mapelData" :key="index" :value="mapel">{{ mapel.kependekan }} ({{ mapel.kepanjangan }})</option>
             </select>
-            <InputError :message="form.errors.mapel_id" />
+            <InputError :message="form.errors.mapel" />
           </div>
           <div class="flex flex-col gap-1 flex-1">
               <InputLabel for="kelas_kategori" class="required" value="Kelas Kategori" />
-              <select name="kelas_kategori" id="kelas_kategori" v-model="form.kelas_kategori_id">
-                <option v-for="(kelas_kategori, index) in props.kelasKategoriData" :key="index" :value="kelas_kategori.id">{{ kelas_kategori.kependekan }} ({{ kelas_kategori.kepanjangan }})</option>
+              <select name="kelas_kategori" id="kelas_kategori" v-model="form.kelas_kategori">
+                <option v-for="(kelas_kategori, index) in props.kelasKategoriData" :key="index" :value="kelas_kategori">{{ kelas_kategori.kependekan }} ({{ kelas_kategori.kepanjangan }})</option>
               </select>
-              <InputError :message="form.errors.kelas_kategori_id" />
+              <InputError :message="form.errors.kelas_kategori" />
           </div>
           <div class="flex flex-col gap-1 flex-1">
               <InputLabel for="kelas" class="required" value="Kelas" />
-              <select name="kelas" id="kelas" v-model="form.kelas_id">
-                <option v-for="(kelas, index) in props.kelasData" :key="index" :value="kelas.id">{{ kelas.bilangan }}/{{ kelas.romawi }} ({{ kelas.pengucapan }})</option>
+              <select name="kelas" id="kelas" v-model="form.kelas">
+                <option v-for="(kelas, index) in props.kelasData" :key="index" :value="kelas">{{ kelas.bilangan }}/{{ kelas.romawi }} ({{ kelas.pengucapan }})</option>
               </select>
-              <InputError :message="form.errors.kelas_id" />
+              <InputError :message="form.errors.kelas" />
           </div>
           <div class="flex flex-row gap-3">
             <template v-if="isAdd">

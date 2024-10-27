@@ -6,26 +6,27 @@ import UserEditorUserTypeSelector from './Components/UserEditorUserTypeSelector.
 import UserEditorForm from './Components/UserEditorForm.vue';
 import UserEditorMuridForm from './Components/UserEditorMuridForm.vue';
 import UserEditorGuruMapelKelasKategoriKelasForm from './Components/UserEditorGuruMapelKelasKategoriKelasForm.vue';
-import { IUserTableWithIdThreeUserTypeDataAndTimeStamp, IUserForm, EUserType, IUserMuridForm, IKelasTableWithId, IKelasKategoriTableWithId, IMapelTableWithId } from '@/types/index.d';
+import { EUserType } from '@/types/enum.d';
 import { useForm } from '@inertiajs/vue3';
 import { deleteUser } from '../user_utils';
 import { failedAlert, successAlert } from '@/alert';
 import Swal from 'sweetalert2';
 import { ref } from 'vue';
+import { IKelas, IKelasKategori, IMapel, IUser, IUserEditorForm } from '@/types';
 
 const props = defineProps<{
     // Info Data
-    mapelData: IMapelTableWithId[];
-    kelasData: IKelasTableWithId[];
-    kelasKategoriData: IKelasKategoriTableWithId[];
+    mapelData: IMapel[];
+    kelasData: IKelas[];
+    kelasKategoriData: IKelasKategori[];
     // User Data
-    user?: IUserTableWithIdThreeUserTypeDataAndTimeStamp;
+    user?: IUser;
 }>();
 
 const alreadyShowInfoIfChangeUserType = ref(false);
 const title = props.user ? 'Edit User' : 'Tambah User';
 
-const form = useForm<IUserForm>({
+const form = useForm<IUserEditorForm>({
     // User
     type: props.user ? props.user.type : EUserType.MURID,
     name: props.user ? props.user.name : '',
@@ -35,8 +36,8 @@ const form = useForm<IUserForm>({
     password: props.user ? props.user.password : '',
     password_confirmation: props.user ? props.user.password : '',
     // Murid
-    murid_kelas_id: props.user && props.user.murid ? props.user.murid.kelas_id : null,
-    murid_kelas_kategori_id: props.user && props.user.murid ? props.user.murid.kelas_kategori_id : null,
+    murid_kelas_id: props.user && props.user.murid ? props.user.murid.kelas.id : null,
+    murid_kelas_kategori_id: props.user && props.user.murid ? props.user.murid.kelas_kategori.id : null,
     // Guru
     guru_mapel_kelas_kategori_kelas: props.user && props.user.guru ? props.user.guru.guru_mapel_kelas_kategori_kelas : null
 });
@@ -77,7 +78,7 @@ function UserTypeChange() {
 <template>
     <CustomHead :title="title" />
     <AuthLayout :title="title" class="flex flex-col gap-3">
-        <div class="flex flex-row bg-white p-5 justify-between">
+        <div class="flex flex-row flex-wrap gap-3 bg-white p-5 justify-between">
             <UserEditorUserTypeSelector @change="!alreadyShowInfoIfChangeUserType ? UserTypeChange() : undefined" v-model="form.type" />
             <div class="flex flex-row gap-3">
                 <Button type="submit" @click="submit" :text="props.user ? 'Simpan' : 'Tambahkan'" bg-color="primary" text-color="white" class="px-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" />

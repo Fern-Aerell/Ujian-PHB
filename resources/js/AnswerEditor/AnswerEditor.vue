@@ -2,7 +2,7 @@
 import InputLabel from '@/Components/InputLabel.vue';
 import Button from '@/Components/Buttons/Button.vue';
 import RichTextEditor from '@/RichTextEditor/RichTextEditor.vue';
-import { EAnswerType } from '@/types/index.d';
+import { EAnswerType } from '@/types/enum.d';
 import { ref } from 'vue';
 import Swal from 'sweetalert2';
 

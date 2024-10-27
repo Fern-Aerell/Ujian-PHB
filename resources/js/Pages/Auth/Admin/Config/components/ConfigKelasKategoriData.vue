@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import Button from '@/Components/Buttons/Button.vue';
 import KelasKategori from '@/Components/KelasKategori.vue';
-import { IKelasKategoriTableWithId as KelasKategoriType } from '@/types';
 import { ref } from 'vue';
 
 const props = defineProps<{
-  kelas_kategoris: KelasKategoriType[],
+  kelas_kategoris: {
+    id: number;
+    kepanjangan: string;
+    kependekan: string;
+  }[],
 }>();
 
 const kelasKategoriRefs = ref<any[]>([]);

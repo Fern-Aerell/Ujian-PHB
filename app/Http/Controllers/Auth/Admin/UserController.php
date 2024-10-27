@@ -35,7 +35,14 @@ class UserController extends Controller
         $type = $request->input('type');
         $search = $request->input('search');
 
-        $query = User::query()->where('id', '!=', Auth::user()->id)->with(['murid', 'admin', 'guru']); // Eager loading relasi murid, admin, dan guru
+        $query = User::query()->where('id', '!=', Auth::user()->id)->with([
+            'murid.kelas',
+            'murid.kelasKategori',
+            'admin', 
+            'guru.guruMapelKelasKategoriKelas.kelas',
+            'guru.guruMapelKelasKategoriKelas.kelasKategori',
+            'guru.guruMapelKelasKategoriKelas.mapel',
+        ]); // Eager loading relasi murid, admin, dan guru
 
         if ($type && $type != 'all' && $type != 'semua') {
             $query->where('type', $type);
@@ -107,15 +114,15 @@ class UserController extends Controller
                 function ($attribute, $value, $fail) {
                     foreach ($value as $item) {
                         // Mengambil nama mapel dari tabel mapel
-                        $mapel = Mapel::find($item['mapel_id']);
+                        $mapel = Mapel::find($item['mapel']['id']);
                         // Mengambil nama kelas kategori dari tabel kelas kategori
-                        $kelasKategori = KelasKategori::find($item['kelas_kategori_id']);
+                        $kelasKategori = KelasKategori::find($item['kelas_kategori']['id']);
                         // Mengambil nama kelas dari tabel kelas
-                        $kelas = Kelas::find($item['kelas_id']);
+                        $kelas = Kelas::find($item['kelas']['id']);
 
-                        $exists = GuruMapelKelasKategoriKelas::where('mapel_id', $item['mapel_id'])
-                            ->where('kelas_kategori_id', $item['kelas_kategori_id'])
-                            ->where('kelas_id', $item['kelas_id'])
+                        $exists = GuruMapelKelasKategoriKelas::where('mapel_id', $item['mapel']['id'])
+                            ->where('kelas_kategori_id', $item['kelas_kategori']['id'])
+                            ->where('kelas_id', $item['kelas']['id'])
                             ->exists();
 
                         if ($exists) {
@@ -123,10 +130,7 @@ class UserController extends Controller
                         }
                     }
                 },
-            ],
-            'guru_mapel_kelas_kategori_kelas.*.mapel_id' => 'required|integer',
-            'guru_mapel_kelas_kategori_kelas.*.kelas_kategori_id' => 'required|integer',
-            'guru_mapel_kelas_kategori_kelas.*.kelas_id' => 'required|integer',
+            ]
         ]);
 
         $user = User::create([
@@ -154,9 +158,9 @@ class UserController extends Controller
             foreach ($request->guru_mapel_kelas_kategori_kelas as $item) {
                 GuruMapelKelasKategoriKelas::create([
                     'guru_id' => $guru->id, // ID guru yang baru dibuat
-                    'mapel_id' => $item['mapel_id'],
-                    'kelas_kategori_id' => $item['kelas_kategori_id'],
-                    'kelas_id' => $item['kelas_id'],
+                    'mapel_id' => $item['mapel']['id'],
+                    'kelas_kategori_id' => $item['kelas_kategori']['id'],
+                    'kelas_id' => $item['kelas']['id'],
                 ]);
             }
         } else if (EnumsUserType::from($request->type) === EnumsUserType::MURID) {
@@ -178,7 +182,14 @@ class UserController extends Controller
             return abort(404, 'Tidak dapat mengedit diri sendiri.');
         }
 
-        $user = User::with(['murid', 'admin', 'guru.guruMapelKelasKategoriKelas'])->find($id);
+        $user = User::with([
+            'murid.kelas',
+            'murid.kelasKategori',
+            'admin', 
+            'guru.guruMapelKelasKategoriKelas.kelas',
+            'guru.guruMapelKelasKategoriKelas.kelasKategori',
+            'guru.guruMapelKelasKategoriKelas.mapel',
+        ])->find($id);
 
         if (!$user) {
             return abort(404, 'User tidak ditemukan');
@@ -242,16 +253,16 @@ class UserController extends Controller
                     if($user->guru == null) return;
                     foreach ($value as $item) {
                         // Mengambil nama mapel dari tabel mapel
-                        $mapel = Mapel::find($item['mapel_id']);
+                        $mapel = Mapel::find($item['mapel']['id']);
                         // Mengambil nama kelas kategori dari tabel kelas kategori
-                        $kelasKategori = KelasKategori::find($item['kelas_kategori_id']);
+                        $kelasKategori = KelasKategori::find($item['kelas_kategori']['id']);
                         // Mengambil nama kelas dari tabel kelas
-                        $kelas = Kelas::find($item['kelas_id']);
+                        $kelas = Kelas::find($item['kelas']['id']);
 
                         // Cek apakah entri sudah ada untuk mapel, kelas kategori, dan kelas yang sama, tetapi untuk guru yang berbeda
-                        $exists = GuruMapelKelasKategoriKelas::where('mapel_id', $item['mapel_id'])
-                            ->where('kelas_kategori_id', $item['kelas_kategori_id'])
-                            ->where('kelas_id', $item['kelas_id'])
+                        $exists = GuruMapelKelasKategoriKelas::where('mapel_id', $item['mapel']['id'])
+                            ->where('kelas_kategori_id', $item['kelas_kategori']['id'])
+                            ->where('kelas_id', $item['kelas']['id'])
                             ->where('guru_id', '!=', $user->guru->id) // Pastikan ID guru berbeda
                             ->exists();
 
@@ -260,10 +271,7 @@ class UserController extends Controller
                         }
                     }
                 },
-            ],
-            'guru_mapel_kelas_kategori_kelas.*.mapel_id' => 'required|integer',
-            'guru_mapel_kelas_kategori_kelas.*.kelas_kategori_id' => 'required|integer',
-            'guru_mapel_kelas_kategori_kelas.*.kelas_id' => 'required|integer',
+            ]
         ]);
 
         if ($user->type != EnumsUserType::from($request->type)) {
@@ -320,18 +328,18 @@ class UserController extends Controller
             foreach ($request->guru_mapel_kelas_kategori_kelas as $item) {
                 // Cek apakah entri sudah ada
                 $exists = $existingEntries->first(function ($entry) use ($item) {
-                    return $entry->mapel_id == $item['mapel_id'] &&
-                        $entry->kelas_kategori_id == $item['kelas_kategori_id'] &&
-                        $entry->kelas_id == $item['kelas_id'];
+                    return $entry->mapel_id == $item['mapel']['id'] &&
+                        $entry->kelas_kategori_id == $item['kelas_kategori']['id'] &&
+                        $entry->kelas_id == $item['kelas']['id'];
                 });
 
                 // Jika tidak ada, tambahkan ke array data baru
                 if (!$exists) {
                     $newEntries[] = [
                         'guru_id' => $guru->id,
-                        'mapel_id' => $item['mapel_id'],
-                        'kelas_kategori_id' => $item['kelas_kategori_id'],
-                        'kelas_id' => $item['kelas_id'],
+                        'mapel_id' => $item['mapel']['id'],
+                        'kelas_kategori_id' => $item['kelas_kategori']['id'],
+                        'kelas_id' => $item['kelas']['id'],
                     ];
                 }
             }
@@ -339,9 +347,9 @@ class UserController extends Controller
             // Hapus entri lama yang tidak ada di request
             foreach ($existingEntries as $existing) {
                 $existsInRequest = collect($request->guru_mapel_kelas_kategori_kelas)->first(function ($item) use ($existing) {
-                    return $item['mapel_id'] == $existing->mapel_id &&
-                        $item['kelas_kategori_id'] == $existing->kelas_kategori_id &&
-                        $item['kelas_id'] == $existing->kelas_id;
+                    return $item['mapel']['id'] == $existing->mapel_id &&
+                        $item['kelas_kategori']['id'] == $existing->kelas_kategori_id &&
+                        $item['kelas']['id'] == $existing->kelas_id;
                 });
 
                 if (!$existsInRequest) {

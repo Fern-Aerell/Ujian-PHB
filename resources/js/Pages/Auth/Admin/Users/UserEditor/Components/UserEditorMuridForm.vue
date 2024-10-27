@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
-import { IKelasKategoriTableWithId, IKelasTableWithId, IUserMuridForm, IUserForm } from '@/types';
 import { InertiaForm } from '@inertiajs/vue3';
+import { IKelas, IKelasKategori, IUserEditorForm } from '@/types';
 
 const props = defineProps<{
-    kelas_data: IKelasTableWithId[],
-    kelas_kategori_data: IKelasKategoriTableWithId[]
+    kelas_data: IKelas[],
+    kelas_kategori_data: IKelasKategori[]
 }>();
 
-const model = defineModel<InertiaForm<IUserForm>>({required: true});
+const model = defineModel<InertiaForm<IUserEditorForm>>({required: true});
 </script>
 
 <template>

@@ -2,8 +2,6 @@
 import { router, usePage } from '@inertiajs/vue3';
 import Button from '@/Components/Buttons/Button.vue';
 
-const type = defineModel<string>();
-
 // Dapatkan URL dari context halaman
 const { url } = usePage()
 
@@ -42,7 +40,7 @@ const handleSelectChange = (event: Event, query: 'type' | 'max') => {
         <div class="flex flex-col md:flex-row w-full md:w-auto gap-2">
             <input type="text" placeholder="Cari user..." class="w-full md:w-48 lg:w-64 px-3 py-2 border"
                 @input="handleInput">
-            <select class="w-full md:w-32 px-3 py-2 border" v-model="type"
+            <select class="w-full md:w-32 px-3 py-2 border"
                 @change="handleSelectChange($event, 'type')">
                 <option value="semua">Semua</option>
                 <option value="murid">Murid</option>

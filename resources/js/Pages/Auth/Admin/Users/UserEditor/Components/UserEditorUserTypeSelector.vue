@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { EUserType } from '@/types/index.d';
+import { EUserType } from '@/types/enum.d';
 
 const model = defineModel<EUserType>({required: true});
 </script>

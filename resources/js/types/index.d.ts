@@ -1,87 +1,48 @@
-import { InertiaForm } from "@inertiajs/vue3";
+import { IIdTable } from "./table";
+import { EUserType } from "./enum";
 
-export enum EUserType {
-    ADMIN = 'admin',
-    GURU = 'guru',
-    MURID = 'murid',
-}
-
-export interface IObjectWithId {
-    id: number;
-}
-
-export interface ITimeStamps {
-    created_at: string;
-    updated_at: string;
-}
-
-export interface IPasswordConfirmation {
-    password_confirmation: string
-}
-
-export interface IUserTable {
+export interface IUser extends IIdTable {
+    type: EUserType;
     name: string;
     username: string;
-    type: EUserType;
     email: string;
     email_verified_at: string;
     password: string;
+    admin: IAdmin | null;
+    guru: IGuru | null;
+    murid: IMurid | null;
 }
 
-export interface IMuridTable {
-    user_id: number,
-    kelas_id: number,
-    kelas_kategori_id: number
+export interface IKepanjanganAndKependekan {
+    kepanjangan: string;
+    kependekan: string;
 }
 
-export interface IGuruTable {
-    guru_mapel_kelas_kategori_kelas: IGuruMapelKelasKategoriKelasTable[]
+export interface IMapel extends IIdTable, IKepanjanganAndKependekan {}
+
+export interface IKelasKategori extends IIdTable, IKepanjanganAndKependekan {}
+
+export interface IKelas extends IIdTable {
+    bilangan: number;
+    romawi: string;
+    pengucapan: string;
 }
 
-export interface IThreeUserTypeData {
-    admin: {} | null,
-    guru: IGuruTable | null,
-    murid: IMuridTable | null,
+export interface IAdmin {}
+
+export interface IGuru {
+    guru_mapel_kelas_kategori_kelas: IGuruMapelKelasKategoriKelas[];
 }
 
-export interface IUserTableWithIdThreeUserTypeDataAndTimeStamp extends IUserTable, IObjectWithId, IThreeUserTypeData, ITimeStamps {}
-
-export interface IUserForm extends IUserTable, IPasswordConfirmation {
-    // Murid
-    murid_kelas_id: number | null,
-    murid_kelas_kategori_id: number | null
-    // Guru
-    guru_mapel_kelas_kategori_kelas: IGuruMapelKelasKategoriKelasTable[] | null
+export interface IGuruMapelKelasKategoriKelas {
+    mapel: IMapel;
+    kelas_kategori: IKelasKategori;
+    kelas: IKelas;
 }
 
-export interface IMuridTableWithId extends IObjectWithId, IMuridTable {}
-
-export interface IAdminForm {}
-
-export interface IGuruForm {}
-
-export interface IUserMuridForm extends IMuridTable {}
-
-export interface IPaginationLink {
-    url: string | null;
-    label: string;
-    active: boolean;
-}
-
-export interface IUserListResponse {
-    current_page: number;
-    data: IUserTableWithIdThreeUserTypeDataAndTimeStamp[];
-    first_page_url: string;
-    from: number;
-    last_page: number;
-    last_page_url: string;
-    links: IPaginationLink[];
-    next_page_url: string | null;
-    path: string;
-    per_page: number;
-    prev_page_url: string | null;
-    to: number;
-    total: number;
+export interface IMurid {
+    kelas: IKelas;
+    kelas_kategori: IKelasKategori;
 }
 
 export interface IConfig {
@@ -101,50 +62,41 @@ export interface IConfig {
     slider_images: string;
 }
 
-export interface IKepanjanganAndKependekan {
-    kepanjangan: string;
-    kependekan: string;
+export interface IUserListResponse {
+    current_page: number;
+    data: IUser[];
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: IPaginationLink[];
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number;
+    total: number;
 }
 
-export interface IKelasTable {
-    bilangan: number;
-    romawi: string;
-    pengucapan: string;
-}
-
-export interface IKelasKategoriTable extends IKepanjanganAndKependekan {}
-
-export interface IMapelTable extends IKepanjanganAndKependekan {}
-
-export interface IKelasTableWithId extends IObjectWithId, IKelasTable {}
-
-export interface IKelasKategoriTableWithId extends IObjectWithId, IKelasKategoriTable {}
-
-export interface IMapelTableWithId extends IObjectWithId, IMapelTable {}
-
-export interface IGuruMapelKelasKategoriKelasTable {
-    mapel_id: number;
-    kelas_kategori_id: number;
-    kelas_id: number;
-}
-
-export interface IGuruMapelKelasKategoriKelasTableCanNull {
-    mapel_id: number | null;
-    kelas_kategori_id: number | null;
-    kelas_id: number | null;
-}
-
-export interface IGuruMapelKelasKategoriKelasTableWithId extends IObjectWithId, IGuruMapelKelasKategoriKelasTable {}
-
-export enum EAnswerType {
-    objektif = 'objektif',
-    objektifKompleks = 'objektif_kompleks',
-    isian = 'isian',
+export interface IUserEditorForm {
+    // User
+    type: EUserType,
+    name: string,
+    username: string,
+    email: string,
+    email_verified_at: string,
+    password: string,
+    password_confirmation: string,
+    // Murid
+    murid_kelas_id: null | number,
+    murid_kelas_kategori_id: null | number,
+    // Guru
+    guru_mapel_kelas_kategori_kelas: null | IGuruMapelKelasKategoriKelas[]
 }
 
 export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     config: IConfig;
     auth: {
-        user: IUserTableWithIdThreeUserTypeDataAndTimeStamp;
+        user: IUser;
     };
 };

@@ -10,8 +10,7 @@ import ConfigSliderData from './components/ConfigSliderData.vue';
 import ConfigKelasData from './components/ConfigKelasData.vue';
 import ConfigKelasKategoriData from './components/ConfigKelasKategoriData.vue';
 import ConfigMapelData from './components/ConfigMapelData.vue';
-import { IKelasTableWithId, IKelasKategoriTableWithId, IMapelTableWithId } from '@/types';
-import { onMounted, onUnmounted, ref, computed } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 enum Menus {
     JADWAL = 'jadwal',
@@ -25,9 +24,22 @@ enum Menus {
 }
 
 const props = defineProps<{
-    kelas: IKelasTableWithId[],
-    kelas_kategoris: IKelasKategoriTableWithId[],
-    mapels: IMapelTableWithId[],
+    kelas: {
+        id: number;
+        bilangan: number;
+        romawi: string;
+        pengucapan: string;
+    }[],
+    kelas_kategoris: {
+        id: number;
+        kepanjangan: string;
+        kependekan: string;
+    }[],
+    mapels: {
+        id: number;
+        kepanjangan: string;
+        kependekan: string;
+    }[],
 }>();
 
 const menuSelected = ref<Menus>(getMenuFromHash() ?? Menus.JADWAL);

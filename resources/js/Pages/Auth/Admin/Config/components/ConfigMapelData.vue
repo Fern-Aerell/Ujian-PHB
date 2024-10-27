@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import Button from '@/Components/Buttons/Button.vue';
 import Mapel from '@/Components/Mapel.vue';
-import { IMapelTableWithId as MapelType } from '@/types';
 import { ref } from 'vue';
 
 const props = defineProps<{
-  mapels: MapelType[]
+  mapels: {
+    id: number;
+    kepanjangan: string;
+    kependekan: string;
+  }[]
 }>();
 
 const mapelsRef = ref<any[]>([]);

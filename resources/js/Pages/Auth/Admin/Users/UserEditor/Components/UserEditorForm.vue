@@ -3,11 +3,11 @@ import Button from '@/Components/Buttons/Button.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
-import { IUserForm } from '@/types';
 import { InertiaForm } from '@inertiajs/vue3';
 import { getCurrentDateTimeString, stringFormatDate } from '@/utils';
+import { IUserEditorForm } from '@/types';
 
-const model = defineModel<InertiaForm<IUserForm>>({required: true});
+const model = defineModel<InertiaForm<IUserEditorForm>>({required: true});
 
 function skipVerifikasi() {
     model.value.email_verified_at = getCurrentDateTimeString();
