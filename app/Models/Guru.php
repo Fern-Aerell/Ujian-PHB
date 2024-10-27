@@ -17,4 +17,10 @@ class Guru extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    // Relasi ke GuruMapelKelasKategoriKelas
+    public function guruMapelKelasKategoriKelas()
+    {
+        return $this->hasMany(GuruMapelKelasKategoriKelas::class, 'guru_id', 'id');
+    }
 }

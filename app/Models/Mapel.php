@@ -13,4 +13,10 @@ class Mapel extends Model
         'kepanjangan',
         'kependekan'
     ];
+
+     // Relasi ke GuruMapelKelasKategoriKelas
+     public function guruMapelKelasKategoriKelas()
+     {
+         return $this->hasMany(GuruMapelKelasKategoriKelas::class, 'mapel_id', 'id');
+     }
 }

@@ -19,4 +19,10 @@ class Kelas extends Model
     {
         return $this->hasMany(Murid::class, 'kelas_id', 'id');
     }
+
+    // Relasi ke GuruMapelKelasKategoriKelas
+    public function guruMapelKelasKategoriKelas()
+    {
+        return $this->hasMany(GuruMapelKelasKategoriKelas::class, 'kelas_id', 'id');
+    }
 }
