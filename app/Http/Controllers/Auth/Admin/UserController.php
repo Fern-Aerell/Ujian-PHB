@@ -6,8 +6,10 @@ use App\Enums\UserType as EnumsUserType;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Guru;
+use App\Models\GuruMapelKelasKategoriKelas;
 use App\Models\Kelas;
 use App\Models\KelasKategori;
+use App\Models\Mapel;
 use App\Models\Murid;
 use App\Models\User;
 use App\Rules\NoWhitespace;
@@ -54,6 +56,7 @@ class UserController extends Controller
 
         return Inertia::render('Auth/Admin/Users/UserList/UserList', [
             // Info Data
+            'mapelData' => Mapel::all(),
             'kelasData' => Kelas::all(),
             'kelasKategoriData' => KelasKategori::all(),
             // 
@@ -65,12 +68,13 @@ class UserController extends Controller
     {
         return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor', [
             // Info Data
+            'mapelData' => Mapel::all(),
             'kelasData' => Kelas::all(),
             'kelasKategoriData' => KelasKategori::all(),
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'type' => ['required', 'string', new UserType],
@@ -86,6 +90,7 @@ class UserController extends Controller
             'email_verified_at' => 'nullable|date',
             'email' => 'email|nullable|unique:' . User::class,
             'password' => ['required', 'confirmed', new Password],
+            // Murid
             'murid_kelas_id' => [
                 EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
                 'int'
@@ -94,6 +99,35 @@ class UserController extends Controller
                 EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
                 'int'
             ],
+            // Guru
+            'guru_mapel_kelas_kategori_kelas' => [
+                EnumsUserType::from($request->type) === EnumsUserType::GURU ? 'required' : 'nullable',
+                'array',
+                'min:1',
+                function ($attribute, $value, $fail) {
+                    foreach ($value as $item) {
+                        // Mengambil nama mapel dari tabel mapel
+                        $mapel = Mapel::find($item['mapel_id']);
+                        // Mengambil nama kelas kategori dari tabel kelas kategori
+                        $kelasKategori = KelasKategori::find($item['kelas_kategori_id']);
+                        // Mengambil nama kelas dari tabel kelas
+                        $kelas = Kelas::find($item['kelas_id']);
+
+                        $exists = GuruMapelKelasKategoriKelas::where('mapel_id', $item['mapel_id'])
+                            ->where('kelas_kategori_id', $item['kelas_kategori_id'])
+                            ->where('kelas_id', $item['kelas_id'])
+                            ->exists();
+
+                        if ($exists) {
+                            $fail("Informasi guru mapel {$mapel->kependekan}, kelas kategori {$kelasKategori->kependekan}, dan kelas {$kelas->bilangan}, sudah digunakan pada guru lain.");
+
+                        }
+                    }
+                },
+            ],
+            'guru_mapel_kelas_kategori_kelas.*.mapel_id' => 'required|integer',
+            'guru_mapel_kelas_kategori_kelas.*.kelas_kategori_id' => 'required|integer',
+            'guru_mapel_kelas_kategori_kelas.*.kelas_id' => 'required|integer',
         ]);
 
         $user = User::create([
@@ -105,7 +139,22 @@ class UserController extends Controller
             'password' => Crypt::encryptString($request->password),
         ]);
 
-        if (EnumsUserType::from($request->type) === EnumsUserType::MURID) {
+        if (EnumsUserType::from($request->type) === EnumsUserType::GURU) {
+            // Membuat entri baru di tabel 'guru'
+            $guru = Guru::create([
+                'user_id' => $user->id,
+            ]);
+
+            // Mengolah data dari 'guru_mapel_kelas_kategori_kelas' setelah validasi
+            foreach ($request->guru_mapel_kelas_kategori_kelas as $item) {
+                GuruMapelKelasKategoriKelas::create([
+                    'guru_id' => $guru->id, // ID guru yang baru dibuat
+                    'mapel_id' => $item['mapel_id'],
+                    'kelas_kategori_id' => $item['kelas_kategori_id'],
+                    'kelas_id' => $item['kelas_id'],
+                ]);
+            }
+        }else if (EnumsUserType::from($request->type) === EnumsUserType::MURID) {
             Murid::create([
                 'user_id' => $user->id,
                 'kelas_id' => $request->murid_kelas_id,
@@ -132,6 +181,7 @@ class UserController extends Controller
 
         return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor', [
             // Info Data
+            'mapelData' => Mapel::all(),
             'kelasData' => Kelas::all(),
             'kelasKategoriData' => KelasKategori::all(),
             // User Data

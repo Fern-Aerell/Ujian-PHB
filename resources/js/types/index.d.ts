@@ -34,17 +34,24 @@ export interface IMuridTable {
     kelas_kategori_id: number
 }
 
+export interface IGuruTable {
+
+}
+
 export interface IThreeUserTypeData {
     admin: {} | null,
-    guru: {} | null,
+    guru: IGuruTable | null,
     murid: IMuridTable | null,
 }
 
 export interface IUserTableWithIdThreeUserTypeDataAndTimeStamp extends IUserTable, IObjectWithId, IThreeUserTypeData, ITimeStamps {}
 
 export interface IUserForm extends IUserTable, IPasswordConfirmation {
+    // Murid
     murid_kelas_id: number | null,
     murid_kelas_kategori_id: number | null
+    // Guru
+    guru_mapel_kelas_kategori_kelas: IGuruMapelKelasKategoriKelasTable[] | null
 }
 
 export interface IMuridTableWithId extends IObjectWithId, IMuridTable {}
@@ -115,11 +122,19 @@ export interface IKelasKategoriTableWithId extends IObjectWithId, IKelasKategori
 
 export interface IMapelTableWithId extends IObjectWithId, IMapelTable {}
 
-export interface IGuruMapelKelasKategoriKelasTable extends IObjectWithId {
-    mapel: IMapelTable;
-    kelas_kategori: IKelasKategoriTable;
-    kelas: IKelasTable;
+export interface IGuruMapelKelasKategoriKelasTable {
+    mapel_id: number;
+    kelas_kategori_id: number;
+    kelas_id: number;
 }
+
+export interface IGuruMapelKelasKategoriKelasTableCanNull {
+    mapel_id: number | null;
+    kelas_kategori_id: number | null;
+    kelas_id: number | null;
+}
+
+export interface IGuruMapelKelasKategoriKelasTableWithId extends IObjectWithId, IGuruMapelKelasKategoriKelasTable {}
 
 export enum EAnswerType {
     objektif = 'objektif',

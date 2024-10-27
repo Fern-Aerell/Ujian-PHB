@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('kelas_kategori_id')->constrained()->cascadeOnDelete();
             $table->foreignId('kelas_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+
+            $table->unique(['mapel_id', 'kelas_kategori_id', 'kelas_id'], 'three_unique_data');
         });
     }
 

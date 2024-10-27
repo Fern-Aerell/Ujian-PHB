@@ -5,7 +5,8 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 import UserEditorUserTypeSelector from './Components/UserEditorUserTypeSelector.vue';
 import UserEditorForm from './Components/UserEditorForm.vue';
 import UserEditorMuridForm from './Components/UserEditorMuridForm.vue';
-import { IUserTableWithIdThreeUserTypeDataAndTimeStamp, IUserForm, EUserType, IUserMuridForm, IKelasTableWithId, IKelasKategoriTableWithId } from '@/types/index.d';
+import UserEditorGuruMapelKelasKategoriKelasForm from './Components/UserEditorGuruMapelKelasKategoriKelasForm.vue';
+import { IUserTableWithIdThreeUserTypeDataAndTimeStamp, IUserForm, EUserType, IUserMuridForm, IKelasTableWithId, IKelasKategoriTableWithId, IMapelTableWithId } from '@/types/index.d';
 import { useForm } from '@inertiajs/vue3';
 import { deleteUser } from '../user_utils';
 import { failedAlert, successAlert } from '@/alert';
@@ -14,10 +15,11 @@ import { ref } from 'vue';
 
 const props = defineProps<{
     // Info Data
-    kelasData: IKelasTableWithId[]
-    kelasKategoriData: IKelasKategoriTableWithId[]
+    mapelData: IMapelTableWithId[];
+    kelasData: IKelasTableWithId[];
+    kelasKategoriData: IKelasKategoriTableWithId[];
     // User Data
-    user?: IUserTableWithIdThreeUserTypeDataAndTimeStamp,
+    user?: IUserTableWithIdThreeUserTypeDataAndTimeStamp;
 }>();
 
 const alreadyShowInfoIfChangeUserType = ref(false);
@@ -34,8 +36,9 @@ const form = useForm<IUserForm>({
     password_confirmation: props.user ? props.user.password : '',
     // Murid
     murid_kelas_id: props.user && props.user.murid ? props.user.murid.kelas_id : null,
-    murid_kelas_kategori_id: props.user && props.user.murid ? props.user.murid.kelas_kategori_id : null
+    murid_kelas_kategori_id: props.user && props.user.murid ? props.user.murid.kelas_kategori_id : null,
     // Guru
+    guru_mapel_kelas_kategori_kelas: null
 });
 
 function formReset() {
@@ -84,8 +87,25 @@ function UserTypeChange() {
         </div>
 
         <div class="flex flex-row gap-3 flex-wrap">
+            <!-- GENERAL -->
             <UserEditorForm v-model="form" />
-            <UserEditorMuridForm v-if="form.type === EUserType.MURID" :kelas_data="props.kelasData" :kelas_kategori_data="props.kelasKategoriData" v-model="form" />
+            <!-- MURID -->
+            <template v-if="form.type === EUserType.MURID">
+                <UserEditorMuridForm 
+                    :kelas_data="props.kelasData" 
+                    :kelas_kategori_data="props.kelasKategoriData" 
+                    v-model="form" 
+                />
+            </template>
+            <!-- GURU -->
+            <template v-if="form.type === EUserType.GURU">
+                <UserEditorGuruMapelKelasKategoriKelasForm
+                    :mapel-data="props.mapelData"
+                    :kelas-data="props.kelasData"
+                    :kelas-kategori-data="props.kelasKategoriData"
+                    v-model="form"
+                />
+            </template>
         </div>
     </AuthLayout>
 </template>
