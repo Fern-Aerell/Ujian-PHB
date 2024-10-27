@@ -13,4 +13,9 @@ class KelasKategori extends Model
         'kepanjangan',
         'kependekan',
     ];
+
+    public function murid()
+    {
+        return $this->hasMany(Murid::class, 'kelas_kategori_id', 'id');
+    }
 }

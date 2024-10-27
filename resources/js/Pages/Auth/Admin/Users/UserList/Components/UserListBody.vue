@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import PhotoProfile from '@/Components/PhotoProfile.vue';
 import Button from '@/Components/Buttons/Button.vue';
-import { User } from '@/types';
+import { EUserType, IKelasKategoriTableWithId, IKelasTableWithId, IUserTableWithIdThreeUserTypeDataAndTimeStamp } from '@/types/index.d';
 import { deleteUser } from '../../user_utils';
 
+const type = defineModel<string>();
+
 const props = defineProps<{
-    value?: User[]
+    // Info Data
+    kelasData: IKelasTableWithId[]
+    kelasKategoriData: IKelasKategoriTableWithId[],
+    //
+    value?: IUserTableWithIdThreeUserTypeDataAndTimeStamp[]
 }>();
 
 </script>
@@ -21,6 +27,8 @@ const props = defineProps<{
                     <th class="px-4 py-2 text-left">Username</th>
                     <th class="px-4 py-2 text-left">Tipe Akun</th>
                     <th class="px-4 py-2 text-left">Email</th>
+                    <th v-if="type == EUserType.MURID" class="px-4 py-2 text-left">Kelas</th>
+                    <th v-if="type == EUserType.MURID" class="px-4 py-2 text-left">Kelas Kategori</th>
                     <th class="px-4 py-2 text-left">Aksi</th>
                 </tr>
             </thead>
@@ -36,6 +44,8 @@ const props = defineProps<{
                     <td :title="!user.email ? 'User belum memiliki email.' : user.email_verified_at ? `Email sudah di verifikasi pada ${new Date(user.email_verified_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'Email belum di verifikasi.'"
                         class="px-4 py-2">{{ user.email ? `${user.email} ${user.email_verified_at ? '✅' : '⚠️'}` :
                             'Tidak ada' }}</td>
+                    <td v-if="type == EUserType.MURID && user.murid" class="px-4 py-2">{{ props.kelasData.find((value) => value.id == user.murid?.kelas_id)?.bilangan }}</td>
+                    <td v-if="type == EUserType.MURID && user.murid" class="px-4 py-2">{{ props.kelasKategoriData.find((value) => value.id == user.murid?.kelas_kategori_id)?.kependekan }}</td>
                     <td class="px-4 py-2">
                         <div class="flex flex-col sm:flex-row gap-2">
                             <Button @click="$inertia.get(route('user.edit', user.id))" text="Edit"

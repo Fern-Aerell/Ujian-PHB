@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from '@/Components/Buttons/Button.vue';
 import KelasKategori from '@/Components/KelasKategori.vue';
-import { KelasKategori as KelasKategoriType } from '@/types';
+import { IKelasKategoriTableWithId as KelasKategoriType } from '@/types';
 import { ref } from 'vue';
 
 const props = defineProps<{

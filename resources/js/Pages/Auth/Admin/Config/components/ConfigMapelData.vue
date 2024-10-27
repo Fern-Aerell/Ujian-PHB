@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import Button from '@/Components/Buttons/Button.vue';
 import Mapel from '@/Components/Mapel.vue';
-import { Kelas, KelasKategori, Mapel as MapelType } from '@/types';
+import { IKelasTableWithId, IKelasKategoriTableWithId, IMapelTableWithId as MapelType } from '@/types';
 import { ref } from 'vue';
 
 const props = defineProps<{
-  kelas: Kelas[],
-  kelas_kategoris: KelasKategori[],
+  kelas: IKelasTableWithId[],
+  kelas_kategoris: IKelasKategoriTableWithId[],
   mapels: MapelType[]
 }>();
 

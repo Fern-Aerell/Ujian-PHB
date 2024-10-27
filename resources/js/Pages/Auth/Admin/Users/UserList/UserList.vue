@@ -4,21 +4,29 @@ import AuthLayout from '@/Layouts/AuthLayout.vue';
 import UserListHeader from './Components/UserListHeader.vue';
 import UserListBody from './Components/UserListBody.vue';
 import UserListFooter from './Components/UserListFooter.vue';
-import { UserListResponse } from '@/types';
+import { IKelasKategoriTableWithId, IKelasTableWithId, IUserListResponse } from '@/types/index.d';
+import { ref } from 'vue';
+
+const type = ref<string>('semua');
 
 const props = defineProps<{
-    value: UserListResponse;
+    // Info Data
+    kelasData: IKelasTableWithId[]
+    kelasKategoriData: IKelasKategoriTableWithId[],
+    // 
+    value: IUserListResponse;
 }>();
 </script>
 
 <template>
     <CustomHead title="List User" />
     <AuthLayout title="List User" class="flex flex-col gap-3">
+        <!-- <pre>{{ value }}</pre> -->
         <!-- HEADER -->
-        <UserListHeader/>
+        <UserListHeader v-model="type"/>
 
         <!-- BODY -->
-        <UserListBody :value="value.data" />
+        <UserListBody v-model="type" :value="value.data" :kelas-data="props.kelasData" :kelas-kategori-data="props.kelasKategoriData" />
 
         <!-- FOOTER -->
         <UserListFooter

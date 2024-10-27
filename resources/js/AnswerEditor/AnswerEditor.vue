@@ -2,8 +2,8 @@
 import InputLabel from '@/Components/InputLabel.vue';
 import Button from '@/Components/Buttons/Button.vue';
 import RichTextEditor from '@/RichTextEditor/RichTextEditor.vue';
-import { AnswerType } from '@/types/index.d';
-import { ref, watch } from 'vue';
+import { EAnswerType } from '@/types/index.d';
+import { ref } from 'vue';
 import Swal from 'sweetalert2';
 
 interface Answer {
@@ -15,7 +15,7 @@ const props = defineProps<{
     preview?: boolean
 }>();
 
-const answerType = ref(AnswerType.objektif);
+const answerType = ref(EAnswerType.objektif);
 const answers = ref<Answer[]>([]);
 
 function addAnswer() {
@@ -40,7 +40,7 @@ function answerObjektifChange(event: Event) {
 
 function answerTypeChange(event: Event) {
     const element = (event.target as HTMLInputElement);
-    const type = element.value as AnswerType;
+    const type = element.value as EAnswerType;
     const clear = () => {
         answers.value = [];
     };
@@ -72,7 +72,7 @@ function answerTypeChange(event: Event) {
         allowedChangeAnswerType();
         return;
     }
-    if((answerType.value == AnswerType.objektif || answerType.value == AnswerType.objektifKompleks) && type == AnswerType.isian && answers.value.filter((answer) => answer.content.length > 0).length > 0) {
+    if((answerType.value == EAnswerType.objektif || answerType.value == EAnswerType.objektifKompleks) && type == EAnswerType.isian && answers.value.filter((answer) => answer.content.length > 0).length > 0) {
         showWarning();
         return;
     }
@@ -109,23 +109,23 @@ function deleteAnswer(index: number) {
         <InputLabel v-if="!props.preview" value="Tipe Jawaban" class="required" />
         <div v-if="!props.preview" class="flex flex-row flex-wrap gap-2 items-center mt-2">
             <select @change="answerTypeChange" :value="answerType" name="answer_type" id="answer_type" class="w-fit">
-                <option :value="AnswerType.objektif" selected>Objektif</option>
-                <option :value="AnswerType.objektifKompleks">Objektif kompleks</option>
-                <option :value="AnswerType.isian">Isian</option>
+                <option :value="EAnswerType.objektif" selected>Objektif</option>
+                <option :value="EAnswerType.objektifKompleks">Objektif kompleks</option>
+                <option :value="EAnswerType.isian">Isian</option>
             </select>
             <Button @click="addAnswer" text="Tambah jawaban" bg-color="primary" text-color="white" class="!w-fit h-fit px-5" />
         </div>
         <div class="flex flex-col gap-5 mt-3">
-            <textarea v-if="props.preview && answerType == AnswerType.isian" rows="1" :placeholder="`Masukkan jawaban... ${answers.map((answer) => answer.content).join(', ')}`"></textarea>
+            <textarea v-if="props.preview && answerType == EAnswerType.isian" rows="1" :placeholder="`Masukkan jawaban... ${answers.map((answer) => answer.content).join(', ')}`"></textarea>
             <div v-for="(answer, index) in answers" class="flex gap-3" :class="{'flex-col': !preview}">
                 <div class="flex flex-row gap-2" :class="{'items-start translate-y-[4.5px]': preview, 'items-center': !preview}">
-                    <input @change="answerObjektifChange" v-if="answerType == AnswerType.objektif" type="radio" name="answer" :id="`${index}`">
-                    <input v-model="answer.correct" v-if="answerType == AnswerType.objektifKompleks" type="checkbox" name="answer" :id="`${index}`">
+                    <input @change="answerObjektifChange" v-if="answerType == EAnswerType.objektif" type="radio" name="answer" :id="`${index}`">
+                    <input v-model="answer.correct" v-if="answerType == EAnswerType.objektifKompleks" type="checkbox" name="answer" :id="`${index}`">
                     <h1 v-if="!preview">Jawaban Ke-{{ index + 1 }}</h1>
                 </div>
-                <textarea v-if="!props.preview && answerType == AnswerType.isian" v-model="answer.content" name="answer" rows="1"></textarea>
-                <RichTextEditor v-if="!props.preview && (answerType == AnswerType.objektif || answerType == AnswerType.objektifKompleks)" v-model="answer.content"/>
-                <p v-if="props.preview && answerType != AnswerType.isian" class="w-full" v-html="answer.content"></p>
+                <textarea v-if="!props.preview && answerType == EAnswerType.isian" v-model="answer.content" name="answer" rows="1"></textarea>
+                <RichTextEditor v-if="!props.preview && (answerType == EAnswerType.objektif || answerType == EAnswerType.objektifKompleks)" v-model="answer.content"/>
+                <p v-if="props.preview && answerType != EAnswerType.isian" class="w-full" v-html="answer.content"></p>
                 <Button v-if="!props.preview" @click="deleteAnswer(index)" text="Hapus" bg-color="danger" text-color="white" class="!w-fit px-5" />
             </div>
         </div>

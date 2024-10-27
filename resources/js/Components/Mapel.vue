@@ -7,10 +7,10 @@ import InputError from '@/Components/InputError.vue';
 import { router, useForm } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { failedAlert, successAlert } from '@/alert';
-import { Mapel } from '@/types';
+import { IMapelTableWithId } from '@/types';
 
 const props = defineProps<{
-    mapel?: Mapel;
+    mapel?: IMapelTableWithId;
     editable?: boolean;
     add?: boolean;
     callbackEditMode?: () => void;

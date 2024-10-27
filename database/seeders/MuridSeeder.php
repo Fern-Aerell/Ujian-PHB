@@ -15,10 +15,14 @@ class MuridSeeder extends Seeder
     {
         $muridData = [
             [
-                'user_id' => 2
+                'user_id' => 2,
+                'kelas_id' => 3,
+                'kelas_kategori_id' => 8
             ],
             [
-                'user_id' => 3
+                'user_id' => 3,
+                'kelas_id' => 3,
+                'kelas_kategori_id' => 8
             ]
         ];
         foreach($muridData as $murid)

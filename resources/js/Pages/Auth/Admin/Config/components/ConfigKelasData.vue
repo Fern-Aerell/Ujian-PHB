@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import Button from '@/Components/Buttons/Button.vue';
 import Kelas from '@/Components/Kelas.vue';
-import { Kelas as KelasType } from '@/types';
+import { IKelasTableWithId as KelasType } from '@/types';
 import { ref } from 'vue';
 
 const props = defineProps<{

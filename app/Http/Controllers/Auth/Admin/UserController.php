@@ -6,6 +6,8 @@ use App\Enums\UserType as EnumsUserType;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\KelasKategori;
 use App\Models\Murid;
 use App\Models\User;
 use App\Rules\NoWhitespace;
@@ -31,9 +33,7 @@ class UserController extends Controller
         $type = $request->input('type');
         $search = $request->input('search');
 
-        $query = User::query();
-
-        $query->where('id', '!=', Auth::user()->id);
+        $query = User::query()->where('id', '!=', Auth::user()->id)->with(['murid', 'admin', 'guru']); // Eager loading relasi murid, admin, dan guru
 
         if ($type && $type != 'all' && $type != 'semua') {
             $query->where('type', $type);
@@ -53,13 +53,21 @@ class UserController extends Controller
         $user_list = $query->paginate($max, ['*'], 'page', $page);
 
         return Inertia::render('Auth/Admin/Users/UserList/UserList', [
+            // Info Data
+            'kelasData' => Kelas::all(),
+            'kelasKategoriData' => KelasKategori::all(),
+            // 
             'value' => $user_list
         ]);
     }
 
     public function add(): Response
     {
-        return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor');
+        return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor', [
+            // Info Data
+            'kelasData' => Kelas::all(),
+            'kelasKategoriData' => KelasKategori::all(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -78,6 +86,14 @@ class UserController extends Controller
             'email_verified_at' => 'nullable|date',
             'email' => 'email|nullable|unique:' . User::class,
             'password' => ['required', 'confirmed', new Password],
+            'murid_kelas_id' => [
+                EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
+                'int'
+            ],
+            'murid_kelas_kategori_id' => [
+                EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
+                'int'
+            ],
         ]);
 
         $user = User::create([
@@ -89,22 +105,11 @@ class UserController extends Controller
             'password' => Crypt::encryptString($request->password),
         ]);
 
-        if(EnumsUserType::from($request->type) == EnumsUserType::ADMIN)
-        {
-            Admin::create([
-                'user_id' => $user->id
-            ]);
-        }
-        else if(EnumsUserType::from($request->type) == EnumsUserType::GURU)
-        {
-            Guru::create([
-                'user_id' => $user->id
-            ]);
-        }
-        else if(EnumsUserType::from($request->type) == EnumsUserType::MURID)
-        {
+        if (EnumsUserType::from($request->type) === EnumsUserType::MURID) {
             Murid::create([
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'kelas_id' => $request->murid_kelas_id,
+                'kelas_kategori_id' => $request->murid_kelas_kategori_id,
             ]);
         }
 
@@ -115,13 +120,21 @@ class UserController extends Controller
 
     public function edit(Request $request, string $id)
     {
-        $user = User::find($id);
+        if(Auth::user()->id == $id) {
+            return abort(404, 'Tidak dapat mengedit diri sendiri.');
+        }
+
+        $user = User::with(['murid', 'admin', 'guru'])->find($id);
 
         if (!$user) {
             return abort(404, 'User tidak ditemukan');
         }
 
         return Inertia::render('Auth/Admin/Users/UserEditor/UserEditor', [
+            // Info Data
+            'kelasData' => Kelas::all(),
+            'kelasKategoriData' => KelasKategori::all(),
+            // User Data
             'user' => [
                 'id' => $user->id,
                 'type' => $user->type,
@@ -130,14 +143,16 @@ class UserController extends Controller
                 'email' => $user->email,
                 'email_verified_at' => $user->email_verified_at,
                 'password' => Crypt::decryptString($user->password),
-            ]
+                'admin' => $user->admin,
+                'guru' => $user->guru,
+                'murid' => $user->murid,
+            ],
         ]);
     }
 
     public function update(Request $request, string $id)
     {
-        $user = User::find($id);
-
+        $user = User::with(['admin', 'guru', 'murid'])->find($id);
         if (!$user) {
             return abort(404, 'User tidak ditemukan');
         }
@@ -145,48 +160,25 @@ class UserController extends Controller
         $request->validate([
             'type' => ['required', 'string', new UserType],
             'name' => 'required|string|max:255',
-            'username' => ['required', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($user->id), new NoWhitespace],
+            'username' => [
+                'required',
+                'string',
+                'lowercase',
+                'max:255',
+                Rule::unique(User::class)->ignore($user->id),
+                new NoWhitespace
+            ],
             'email' => ['email', 'nullable', Rule::unique(User::class)->ignore($user->id)],
             'password' => ['required', 'confirmed', new Password],
+            'murid_kelas_id' => [
+                EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
+                'int'
+            ],
+            'murid_kelas_kategori_id' => [
+                EnumsUserType::from($request->type) === EnumsUserType::MURID ? 'required' : 'nullable',
+                'int'
+            ],
         ]);
-
-        if($user->type != $request->type)
-        {
-            if($user->isAdmin())
-            {
-                $admin = Admin::where('user_id', $user->id)->first();
-                $admin->delete();
-            }
-            else if($user->isGuru())
-            {
-                $guru = Guru::where('user_id', $user->id)->first();
-                $guru->delete();
-            }
-            else if($user->isMurid())
-            {
-                $murid = Murid::where('user_id', $user->id)->first();
-                $murid->delete();
-            }
-
-            if(EnumsUserType::from($request->type) == EnumsUserType::ADMIN)
-            {
-                Admin::create([
-                    'user_id' => $user->id
-                ]);
-            }
-            else if(EnumsUserType::from($request->type) == EnumsUserType::GURU)
-            {
-                Guru::create([
-                    'user_id' => $user->id
-                ]);
-            }
-            else if(EnumsUserType::from($request->type) == EnumsUserType::MURID)
-            {
-                Murid::create([
-                    'user_id' => $user->id
-                ]);
-            }
-        }
 
         $user->update([
             'type' => $request->type,
@@ -197,10 +189,39 @@ class UserController extends Controller
             'password' => Crypt::encryptString($request->password),
         ]);
 
-        $user->save();
+        if ($user->type != EnumsUserType::from($request->type)) {
+            if ($user->isAdmin()) {
+                $admin = Admin::where('user_id', $user->id)->first();
+                $admin->delete();
+            } else if ($user->isGuru()) {
+                $guru = Guru::where('user_id', $user->id)->first();
+                $guru->delete();
+            } else if ($user->isMurid()) {
+                $murid = Murid::where('user_id', $user->id)->first();
+                $murid->delete();
+            }
+
+        }
+
+        if ($user->isMurid()) {
+            $murid = $user->murid;
+            if($murid == null) {
+                Murid::create([
+                    'user_id' => $user->id,
+                    'kelas_id' => $request->murid_kelas_id,
+                    'kelas_kategori_id' => $request->murid_kelas_kategori_id,
+                ]);
+            }else{
+                $murid->update([
+                    'kelas_id' => $request->murid_kelas_id,
+                    'kelas_kategori_id' => $request->murid_kelas_kategori_id,
+                ]);
+            }
+        }
 
         return redirect(route('user.list'));
     }
+
 
     public function delete(Request $request, string $id)
     {

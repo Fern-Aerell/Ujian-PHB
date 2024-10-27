@@ -1,39 +1,74 @@
-export interface User {
-    id: number;
-    name: string;
-    username: string;
-    type: string;
-    email: string;
-    email_verified_at: string;
-    created_at: string;
-    updated_at: string;
-    password: string;
+import { InertiaForm } from "@inertiajs/vue3";
+
+export enum EUserType {
+    ADMIN = 'admin',
+    GURU = 'guru',
+    MURID = 'murid',
 }
 
-export interface UserForm {
-    name: string;
-    username: string;
-    type: string;
-    email: string;
-    email_verified_at: string;
-    password: string;
+export interface IObjectWithId {
+    id: number;
+}
+
+export interface ITimeStamps {
+    created_at: string;
+    updated_at: string;
+}
+
+export interface IPasswordConfirmation {
     password_confirmation: string
 }
 
-export interface PaginationLink {
+export interface IUserTable {
+    name: string;
+    username: string;
+    type: EUserType;
+    email: string;
+    email_verified_at: string;
+    password: string;
+}
+
+export interface IMuridTable {
+    user_id: number,
+    kelas_id: number,
+    kelas_kategori_id: number
+}
+
+export interface IThreeUserTypeData {
+    admin: {} | null,
+    guru: {} | null,
+    murid: IMuridTable | null,
+}
+
+export interface IUserTableWithIdThreeUserTypeDataAndTimeStamp extends IUserTable, IObjectWithId, IThreeUserTypeData, ITimeStamps {}
+
+export interface IUserForm extends IUserTable, IPasswordConfirmation {
+    murid_kelas_id: number | null,
+    murid_kelas_kategori_id: number | null
+}
+
+export interface IMuridTableWithId extends IObjectWithId, IMuridTable {}
+
+export interface IAdminForm {}
+
+export interface IGuruForm {}
+
+export interface IUserMuridForm extends IMuridTable {}
+
+export interface IPaginationLink {
     url: string | null;
     label: string;
     active: boolean;
 }
 
-export interface UserListResponse {
+export interface IUserListResponse {
     current_page: number;
-    data: User[];
+    data: IUserTableWithIdThreeUserTypeDataAndTimeStamp[];
     first_page_url: string;
     from: number;
     last_page: number;
     last_page_url: string;
-    links: PaginationLink[];
+    links: IPaginationLink[];
     next_page_url: string | null;
     path: string;
     per_page: number;
@@ -42,7 +77,7 @@ export interface UserListResponse {
     total: number;
 }
 
-export interface Config {
+export interface IConfig {
     logo: string;
     school_name: string;
     activity_type: string;
@@ -59,36 +94,42 @@ export interface Config {
     slider_images: string;
 }
 
-export interface Kelas {
-    id: number;
+export interface IKepanjanganAndKependekan {
+    kepanjangan: string;
+    kependekan: string;
+}
+
+export interface IKelasTable {
     bilangan: number;
     romawi: string;
     pengucapan: string;
 }
 
-export interface KelasKategori {
-    id: number;
-    kepanjangan: string;
-    kependekan: string;
+export interface IKelasKategoriTable extends IKepanjanganAndKependekan {}
+
+export interface IMapelTable extends IKepanjanganAndKependekan {}
+
+export interface IKelasTableWithId extends IObjectWithId, IKelasTable {}
+
+export interface IKelasKategoriTableWithId extends IObjectWithId, IKelasKategoriTable {}
+
+export interface IMapelTableWithId extends IObjectWithId, IMapelTable {}
+
+export interface IGuruMapelKelasKategoriKelasTable extends IObjectWithId {
+    mapel: IMapelTable;
+    kelas_kategori: IKelasKategoriTable;
+    kelas: IKelasTable;
 }
 
-export interface Mapel {
-    id: number;
-    kepanjangan: string;
-    kependekan: string;
-    tags: string;
-}
-
-export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
-    config: Config;
-    auth: {
-        user: User;
-        userTypes: string[];
-    };
-};
-
-export enum AnswerType {
+export enum EAnswerType {
     objektif = 'objektif',
     objektifKompleks = 'objektif_kompleks',
     isian = 'isian',
 }
+
+export type PageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
+    config: IConfig;
+    auth: {
+        user: IUserTableWithIdThreeUserTypeDataAndTimeStamp;
+    };
+};

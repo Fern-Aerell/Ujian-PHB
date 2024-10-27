@@ -2,26 +2,30 @@
 import { router, usePage } from '@inertiajs/vue3';
 import Button from '@/Components/Buttons/Button.vue';
 
+const type = defineModel<string>();
+
 // Dapatkan URL dari context halaman
 const { url } = usePage()
 
-// Definisikan tipe untuk event
 const handleInput = (event: Event) => {
     const target = event.target as HTMLInputElement | null;
     const value = target?.value;
     if (value !== undefined) {
-        router.get(url, { search: value }, { preserveState: true, replace: true });
+        const currentQuery = new URLSearchParams(window.location.search);
+        currentQuery.set('search', value); // Mengganti nilai 'search' jika sudah ada, atau menambahkannya jika belum
+        router.get(url, Object.fromEntries(currentQuery), { preserveState: true, replace: true });
     }
-}
+};
 
-// Definisikan tipe untuk parameter event dan type
 const handleSelectChange = (event: Event, query: 'type' | 'max') => {
     const target = event.target as HTMLSelectElement | null;
     const value = target?.value;
     if (value !== undefined) {
-        router.get(url, { [query]: value }, { preserveState: true, replace: true });
+        const currentQuery = new URLSearchParams(window.location.search);
+        currentQuery.set(query, value); // Mengganti nilai query yang diberikan, atau menambahkannya jika belum ada
+        router.get(url, Object.fromEntries(currentQuery), { preserveState: true, replace: true });
     }
-}
+};
 
 </script>
 
@@ -38,7 +42,7 @@ const handleSelectChange = (event: Event, query: 'type' | 'max') => {
         <div class="flex flex-col md:flex-row w-full md:w-auto gap-2">
             <input type="text" placeholder="Cari user..." class="w-full md:w-48 lg:w-64 px-3 py-2 border"
                 @input="handleInput">
-            <select class="w-full md:w-32 px-3 py-2 border"
+            <select class="w-full md:w-32 px-3 py-2 border" v-model="type"
                 @change="handleSelectChange($event, 'type')">
                 <option value="semua">Semua</option>
                 <option value="murid">Murid</option>

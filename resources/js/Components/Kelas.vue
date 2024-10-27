@@ -7,10 +7,10 @@ import InputError from './InputError.vue';
 import Button from './Buttons/Button.vue';
 import Swal from 'sweetalert2';
 import { failedAlert, successAlert } from '@/alert';
-import { Kelas } from '@/types';
+import { IKelasTableWithId } from '@/types';
 
 const props = defineProps<{
-    kelas?: Kelas;
+    kelas?: IKelasTableWithId;
     editable?: boolean;
     add?: boolean;
     callbackEditMode?: () => void;

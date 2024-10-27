@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('murids', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
+            $table->foreignId('kelas_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('kelas_kategori_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

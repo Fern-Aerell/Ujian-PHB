@@ -44,8 +44,7 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                     'email_verified_at' => $request->user()->email_verified_at,
                     'password' => Crypt::decryptString($request->user()->password),
-                ] : null,
-                'userTypes' => array_map(fn($case) => $case->value, UserType::cases()),
+                ] : null
             ],
         ];
     }

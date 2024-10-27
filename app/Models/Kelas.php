@@ -14,4 +14,9 @@ class Kelas extends Model
         'romawi',
         'pengucapan'
     ];
+
+    public function murid()
+    {
+        return $this->hasMany(Murid::class, 'kelas_id', 'id');
+    }
 }
