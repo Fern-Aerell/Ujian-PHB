@@ -55,7 +55,35 @@ class UserController extends Controller
                     ->orWhere('username', 'like', "%{$search}%")
                     ->orWhere('id', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('email_verified_at', 'like', "%{$search}%");
+                    ->orWhere('email_verified_at', 'like', "%{$search}%")
+                    ->orWhereHas('murid.kelas', function($q) use ($search) {
+                        $q->where('bilangan', 'like', "%{$search}%")
+                        ->orWhere('romawi', 'like', "%{$search}%")
+                        ->orWhere('pengucapan', 'like', "%{$search}%")
+                        ;
+                    })
+                    ->orWhereHas('guru.guruMapelKelasKategoriKelas.kelas', function($q) use ($search) {
+                        $q->where('bilangan', 'like', "%{$search}%")
+                        ->orWhere('romawi', 'like', "%{$search}%")
+                        ->orWhere('pengucapan', 'like', "%{$search}%")
+                        ;
+                    })
+                    ->orWhereHas('murid.kelasKategori', function($q) use ($search) {
+                        $q->where('kepanjangan', 'like', "%{$search}%")
+                        ->orWhere('kependekan', 'like', "%{$search}%")
+                        ;
+                    })
+                    ->orWhereHas('guru.guruMapelKelasKategoriKelas.kelasKategori', function($q) use ($search) {
+                        $q->where('kepanjangan', 'like', "%{$search}%")
+                        ->orWhere('kependekan', 'like', "%{$search}%")
+                        ;
+                    })
+                    ->orWhereHas('guru.guruMapelKelasKategoriKelas.mapel', function($q) use ($search) {
+                        $q->where('kepanjangan', 'like', "%{$search}%")
+                        ->orWhere('kependekan', 'like', "%{$search}%")
+                        ;
+                    })
+                    ;
             });
         }
 
