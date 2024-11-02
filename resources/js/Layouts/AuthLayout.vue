@@ -45,7 +45,7 @@ enquire.register("screen and (min-width: 1024px)", {
             <div class="flex flex-row justify-between items-center">
                 <div class="flex flex-row items-center gap-[10px] max-w-full">
                     <button @click="mobileSidebarToggle()" class="static lg:hidden flex-shrink-0"><img class="w-[32px] h-[32px]" :src="more_png" alt="Hamburger menu"></button>
-                    <h1 class="font-bold text-[25px] truncate">{{ props.title }}</h1>
+                    <h1 class="font-extrabold text-[25px] truncate">{{ props.title }}</h1>
                 </div>
             </div>
             <!-- CONTENT -->

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AccountController;
+use App\Http\Controllers\Auth\Admin\JadwalController;
 use App\Http\Middleware\VerifyEmailMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,8 @@ Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
     Route::get('/dev', function () {
         return Inertia::render('Auth/Dev');
     })->name('dev');
+
+    Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal');
 
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::patch('/account', [AccountController::class, 'update'])->name('account.update');

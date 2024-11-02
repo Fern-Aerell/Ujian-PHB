@@ -47,5 +47,19 @@ export function getDatesExcludingHolidays(startDate: string, endDate: string, ho
 }
 
 export function formatDateForDatabase(date: Date): string {
-    return date.toISOString().split('T')[0]; // Mengambil hanya bagian tanggal
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Bulan ditambahkan 1 karena di JavaScript bulan dimulai dari 0
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+export function formatDateToIndonesianLongDateString(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+    };
+
+    return new Intl.DateTimeFormat('id-ID', options).format(date);
 }

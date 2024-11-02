@@ -8,7 +8,7 @@ import Button from './Buttons/Button.vue';
 import Swal from 'sweetalert2';
 import { failedAlert, successAlert } from '@/alert';
 import { IKelas, IKelasKategori, IMapel } from '@/types';
-import { formatDateForDatabase, getDatesExcludingHolidays} from '@/utils';
+import { formatDateForDatabase, formatDateToIndonesianLongDateString, getDatesExcludingHolidays} from '@/utils';
 
 const props = defineProps<{
     jadwal?: {
@@ -133,7 +133,7 @@ defineExpose({ isHide });
         <template v-if="!isEdit && !props.add">
             <div class="flex flex-row w-full justify-between items-center">
                 <div class="flex flex-col truncate">
-                    <span class="truncate"><strong>Date :</strong> {{ props.jadwal?.date }}</span>
+                    <span class="truncate" v-if="props.jadwal"><strong>Date :</strong> {{ formatDateToIndonesianLongDateString(new Date(props.jadwal.date)) }}</span>
                     <span class="truncate"><strong>Mapel :</strong> {{ props.jadwal?.mapel.kependekan }} ({{ props.jadwal?.mapel.kepanjangan }})</span>
                     <span class="truncate"><strong>Kelas:</strong> {{ props.jadwal?.kelas.bilangan }}/{{ props.jadwal?.kelas.romawi }} ({{ props.jadwal?.kelas.pengucapan }})</span>
                     <span class="truncate"><strong>Kelas Kategori:</strong> {{ props.jadwal?.kelas_kategori.kependekan }} ({{ props.jadwal?.kelas_kategori.kepanjangan }})</span>
@@ -151,7 +151,7 @@ defineExpose({ isHide });
                 <div class="flex flex-col gap-1">
                     <InputLabel for="date" class="required" value="Date" />
                     <select name="date" id="date" v-model="form.date" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                        <option v-for="(date, index) in getDatesExcludingHolidays($page.props.config.exam_date_start, $page.props.config.exam_date_end, $page.props.config.holiday_date)" :key="index" :value="formatDateForDatabase(date)">{{ date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) }}</option>
+                        <option v-for="(date, index) in getDatesExcludingHolidays($page.props.config.exam_date_start, $page.props.config.exam_date_end, $page.props.config.holiday_date)" :key="index" :value="formatDateForDatabase(date)">{{ formatDateToIndonesianLongDateString(date) }}</option>
                     </select>
                     <InputError class="mt-2" :message="form.errors.date" />
                 </div>
