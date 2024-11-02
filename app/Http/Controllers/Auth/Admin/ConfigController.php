@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth\Admin;
 use App\Events\UpdateExamTimeCard;
 use App\Http\Controllers\Controller;
 use App\Models\Config;
+use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\KelasKategori;
 use App\Models\Mapel;
@@ -22,6 +23,7 @@ class ConfigController extends Controller
             "kelas" => Kelas::all(),
             "kelas_kategoris" => KelasKategori::all(),
             "mapels" => Mapel::all(),
+            "jadwals" => Jadwal::with(['mapel', 'kelas', 'kelasKategori'])->get(),
         ]);
     }
 

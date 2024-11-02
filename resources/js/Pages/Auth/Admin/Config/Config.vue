@@ -2,7 +2,7 @@
 import CustomHead from '@/Components/CustomHead.vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import Button from '@/Components/Buttons/Button.vue';
-import ConfigExamScheduleData from './components/ConfigExamScheduleData.vue';
+import ConfigExamDateData from './components/ConfigExamDateData.vue';
 import ConfigExamTimeData from './components/ConfigExamTimeData.vue';
 import ConfigSchoolData from './components/ConfigSchoolData.vue';
 import ConfigActivityData from './components/ConfigActivityData.vue';
@@ -11,13 +11,16 @@ import ConfigKelasData from './components/ConfigKelasData.vue';
 import ConfigKelasKategoriData from './components/ConfigKelasKategoriData.vue';
 import ConfigMapelData from './components/ConfigMapelData.vue';
 import { onMounted, onUnmounted, ref } from 'vue';
+import ConfigJadwalData from './components/ConfigJadwalData.vue';
+import { IKelas, IKelasKategori, IMapel } from '@/types';
 
 enum Menus {
-    JADWAL = 'jadwal',
-    WAKTU = 'waktu',
     KELAS = 'kelas',
     KELAS_KATEGORI = 'kelas_kategori',
     MAPEL = 'mapel',
+    TANGGAL = 'tanggal',
+    WAKTU = 'waktu',
+    JADWAL = 'jadwal',
     AKTIFITAS = 'aktifitas',
     SLIDER = 'slider',
     DATA_SEKOLAH = 'data_sekolah',
@@ -40,9 +43,16 @@ const props = defineProps<{
         kepanjangan: string;
         kependekan: string;
     }[],
+    jadwals: {
+        id: number;
+        date: Date;
+        mapel: IMapel;
+        kelas: IKelas;
+        kelas_kategori: IKelasKategori;
+    }[]
 }>();
 
-const menuSelected = ref<Menus>(getMenuFromHash() ?? Menus.JADWAL);
+const menuSelected = ref<Menus>(getMenuFromHash() ?? Menus.KELAS);
 
 function getHashFromMenu(menu: Menus): string {
     return `#${menu}`;
@@ -53,7 +63,7 @@ function getMenuFromHash(): Menus | undefined {
 }
 
 function updateHash() {
-    menuSelected.value = getMenuFromHash() ?? Menus.JADWAL;
+    menuSelected.value = getMenuFromHash() ?? Menus.KELAS;
 }
 
 function menuClick(menu: Menus) {
@@ -79,45 +89,31 @@ const getButtonText = (menu: Menus) => {
 <template>
     <CustomHead title="Config" />
     <AuthLayout title="Config" class="flex flex-col gap-3">
-        <swiper-container
-            :slides-per-view="'auto'"
-            :space-between="10"
-            :mousewheel="true"
-            :free-mode="false"
-            class="w-full"
-        >
-            <swiper-slide
-                v-for="(menu, index) in Object.values(Menus)"
-                :key="index"
-                class="!w-fit"
-            >
-                <Button
-                    @click="menuClick(menu)"
-                    :text="getButtonText(menu)"
+        <swiper-container :slides-per-view="'auto'" :space-between="10" :mousewheel="true" :free-mode="false"
+            class="w-full">
+            <swiper-slide v-for="(menu, index) in Object.values(Menus)" :key="index" class="!w-fit">
+                <Button @click="menuClick(menu)" :text="getButtonText(menu)"
                     :text-color="menuSelected === menu ? 'white' : 'black'"
-                    :bg-color="menuSelected === menu ? 'primary' : 'grey'"
-                    class="!h-fit flex-shrink-0 px-5"
-                />
+                    :bg-color="menuSelected === menu ? 'primary' : 'grey'" class="!h-fit flex-shrink-0 px-5" />
             </swiper-slide>
         </swiper-container>
         <div class="flex flex-row gap-3 overflow-auto h-full">
-            <component
-                :is="{
-                    [Menus.JADWAL]: ConfigExamScheduleData,
-                    [Menus.WAKTU]: ConfigExamTimeData,
-                    [Menus.KELAS]: ConfigKelasData,
-                    [Menus.KELAS_KATEGORI]: ConfigKelasKategoriData,
-                    [Menus.MAPEL]: ConfigMapelData,
-                    [Menus.AKTIFITAS]: ConfigActivityData,
-                    [Menus.SLIDER]: ConfigSliderData,
-                    [Menus.DATA_SEKOLAH]: ConfigSchoolData
-                }[menuSelected]"
-                v-bind="{
+            <component :is="{
+                [Menus.KELAS]: ConfigKelasData,
+                [Menus.KELAS_KATEGORI]: ConfigKelasKategoriData,
+                [Menus.MAPEL]: ConfigMapelData,
+                [Menus.TANGGAL]: ConfigExamDateData,
+                [Menus.WAKTU]: ConfigExamTimeData,
+                [Menus.JADWAL]: ConfigJadwalData,
+                [Menus.AKTIFITAS]: ConfigActivityData,
+                [Menus.SLIDER]: ConfigSliderData,
+                [Menus.DATA_SEKOLAH]: ConfigSchoolData
+            }[menuSelected]" v-bind="{
                     kelas: props.kelas,
                     kelas_kategoris: props.kelas_kategoris,
-                    mapels: props.mapels
-                }"
-            />
+                    mapels: props.mapels,
+                    jadwals: props.jadwals
+                }" />
         </div>
     </AuthLayout>
 </template>

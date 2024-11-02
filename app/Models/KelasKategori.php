@@ -24,4 +24,9 @@ class KelasKategori extends Model
     {
         return $this->hasMany(GuruMapelKelasKategoriKelas::class, 'kelas_kategori_id', 'id');
     }
+
+    public function jadwals()
+    {
+        return $this->hasMany(Jadwal::class, 'kelas_kategori_id', 'id');
+    }
 }

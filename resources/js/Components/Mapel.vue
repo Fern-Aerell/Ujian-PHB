@@ -48,7 +48,7 @@ function hapus(id: number) {
             failedAlert(error.message);
           },
           onSuccess: () => {
-            successAlert(`Mapel ${form.kependekan} berhasil dihapus, halaman akan direfresh untuk melihat perubahan.`, () => window.location.reload());
+            successAlert(`Mapel ${form.kependekan} berhasil dihapus, halaman akan direfresh untuk melihat perubahan.`, reload);
           },
         });
       }
@@ -63,7 +63,7 @@ function tambah() {
     },
     onSuccess: () => {
       form.reset();
-      successAlert('Mapel berhasil ditambahkan, halaman akan direfresh untuk melihat perubahan.', () => window.location.reload());
+      successAlert('Mapel berhasil ditambahkan, halaman akan direfresh untuk melihat perubahan.', reload);
     },
   });
 }
@@ -100,9 +100,15 @@ function simpan(id: number) {
             failedAlert(error.message);
         },
         onSuccess: () => {
-            successAlert('Perubahan mapel berhasil disimpan, halaman akan direfresh untuk melihat perubahan.', () => window.location.reload());
+            successAlert('Perubahan mapel berhasil disimpan, halaman akan direfresh untuk melihat perubahan.', reload);
         },
     });
+}
+
+function reload() {
+    window.location.href = `${route('config')}#mapel`;
+    if (props.callbackKembali) props.callbackKembali();
+    isEdit.value = false;
 }
 
 defineExpose({isHide});

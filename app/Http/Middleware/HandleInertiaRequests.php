@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
                     'email_verified_at' => $request->user()->email_verified_at,
                     'password' => Crypt::decryptString($request->user()->password),
                     'admin' => $request->user()->admin,
-                    'guru' => $request->user()->guru,
+                    'guru' => $request->user()->guru ? $request->user()->guru->load('guruMapelKelasKategoriKelas.mapel', 'guruMapelKelasKategoriKelas.kelasKategori', 'guruMapelKelasKategoriKelas.kelas') : null,
                     'murid' => $request->user()->murid,
                 ] : null
             ],

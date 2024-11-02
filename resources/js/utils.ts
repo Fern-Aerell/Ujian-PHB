@@ -19,3 +19,33 @@ export function getCurrentDateTimeString(): string {
 
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
+
+export function getDatesExcludingHolidays(startDate: string, endDate: string, holidayDate: string): Date[] {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    end.setDate(end.getDate() - 1); // Mencegah tanggal akhir masuk
+
+    const holidays = holidayDate.split(",").map(day => parseInt(day, 10));
+    const dates: Date[] = [];
+    
+    while (start <= end) {
+        const day = start.getDate();
+
+        // Cek apakah hari ini ada di holiday list
+        if (!holidays.includes(day)) {
+            // Set jam, menit, dan detik ke 0
+            const dateWithTime = new Date(start);
+            dateWithTime.setHours(0, 0, 0, 0);
+            dates.push(dateWithTime); // Tambahkan salinan objek Date dengan waktu 00:00:00
+        }
+
+        // Tambah satu hari
+        start.setDate(start.getDate() + 1);
+    }
+
+    return dates;
+}
+
+export function formatDateForDatabase(date: Date): string {
+    return date.toISOString().split('T')[0]; // Mengambil hanya bagian tanggal
+}

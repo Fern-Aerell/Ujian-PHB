@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\Admin\ConfigController;
+use App\Http\Controllers\Auth\Admin\JadwalController;
 use App\Http\Controllers\Auth\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\VerifyEmailMiddleware;
@@ -36,4 +37,7 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminMiddleware::class]
     Route::delete('/config/mapel_data/{id}/delete', [ConfigController::class, 'delete_mapel_data'])->name('config.mapel_data.delete');
     Route::post('/config/mapel_data/{id}/update', [ConfigController::class, 'update_mapel_data'])->name('config.mapel_data.update');
 
+    Route::post('/config/jadwal/tambah', [JadwalController::class, 'tambah'])->name('config.jadwal.tambah');
+    Route::post('/config/jadwal/{id}/edit', [JadwalController::class, 'edit'])->name('config.jadwal.edit');
+    Route::delete('/config/jadwal/{id}/hapus', [JadwalController::class, 'hapus'])->name('config.jadwal.hapus');
 });

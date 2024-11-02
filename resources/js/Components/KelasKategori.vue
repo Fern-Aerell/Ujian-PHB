@@ -48,7 +48,7 @@ function hapus(id: number) {
             failedAlert(error.message);
           },
           onSuccess: () => {
-            successAlert(`Kategori kelas ${form.kependekan} berhasil dihapus, halaman akan direfresh untuk melihat perubahan.`, () => window.location.reload());
+            successAlert(`Kategori kelas ${form.kependekan} berhasil dihapus, halaman akan direfresh untuk melihat perubahan.`, reload);
           },
         });
       }
@@ -63,7 +63,7 @@ function tambah() {
     },
     onSuccess: () => {
       form.reset();
-      successAlert('Kategori kelas berhasil ditambahkan, halaman akan direfresh untuk melihat perubahan.', () => window.location.reload());
+      successAlert('Kategori kelas berhasil ditambahkan, halaman akan direfresh untuk melihat perubahan.', reload);
     },
   });
 }
@@ -100,9 +100,15 @@ function simpan(id: number) {
             failedAlert(error.message);
         },
         onSuccess: () => {
-            successAlert('Perubahan kategori kelas berhasil disimpan, halaman akan direfresh untuk melihat perubahan.', () => window.location.reload());
+            successAlert('Perubahan kategori kelas berhasil disimpan, halaman akan direfresh untuk melihat perubahan.', reload);
         },
     });
+}
+
+function reload() {
+    window.location.href = `${route('config')}#kelas_kategori`;
+    if (props.callbackKembali) props.callbackKembali();
+    isEdit.value = false;
 }
 
 defineExpose({isHide});

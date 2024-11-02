@@ -30,9 +30,7 @@ const submit = () => {
     form.post(route('config.slider_data.update'), {
         onError: ({ message }) => failedAlert(message),
         onSuccess: () => {
-            successAlert('Gambar slider berhasil diubah, halaman akan di refresh untuk melihat hasilnya.', (result) => {
-                if(result) window.location.reload();
-            });
+            successAlert('Gambar slider berhasil diubah, halaman akan di refresh untuk melihat hasilnya.', reload);
         }
     });
 }
@@ -91,6 +89,10 @@ function removeImage(index: number) {
             }
         }
     );
+}
+
+function reload() {
+    window.location.href = `${route('config')}#slider`;
 }
 
 </script>
