@@ -50,7 +50,7 @@ const filteredData = computed(() => {
     <AuthLayout title="Jadwal" class="flex flex-col">
 
         <!-- Kolom pencarian dan filter -->
-        <div class="mb-6 flex flex-row flex-wrap gap-4 bg-white p-3 rounded-lg w-fit">
+        <div class="mb-6 flex flex-row flex-wrap gap-4 bg-white p-5 rounded-lg w-fit">
             <input
                 type="text"
                 v-model="searchQuery"
@@ -86,7 +86,7 @@ const filteredData = computed(() => {
                 <h1 class="font-semibold text-lg">{{ data.date }}</h1>
                 <hr class="mt-1 mb-4">
                 <div class="flex flex-row gap-3 flex-wrap">
-                    <div v-for="(jadwal, index) in data.jadwals" :key="index" class="bg-white p-3 w-fit flex flex-col gap-1">
+                    <div v-for="(jadwal, index) in data.jadwals" :key="index" class="bg-white p-5 w-fit flex flex-col gap-2">
                         <p><strong>Kelas :</strong> {{ jadwal.kelas }}</p>
                         <p><strong>Kelas Kategori :</strong> {{ jadwal.kelas_kategori }}</p>
                         <p><strong>Mapel :</strong> {{ jadwal.mapel }}</p>

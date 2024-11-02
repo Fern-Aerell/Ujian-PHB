@@ -30,12 +30,15 @@ class JadwalController extends Controller
                 ->where('kelas_kategori_id', $user->murid->kelas_kategori_id);
         } elseif ($user->isGuru()) {
             // Ambil semua kelas dan kategori yang diajar oleh guru ini
-            $guruKelasKategoriKelas = $user->guru->guruMapelKelasKategoriKelas->pluck('kelas_id', 'kelas_kategori_id')->toArray();
-
-            // Filter jadwal berdasarkan kelas dan kategori yang diajar
-            $jadwalsQuery->whereIn('kelas_id', array_values($guruKelasKategoriKelas))
-                ->whereIn('kelas_kategori_id', array_keys($guruKelasKategoriKelas));
-
+            $guruKelasKategoriKelas = $user->guru->guruMapelKelasKategoriKelas;
+        
+            // Ambil mapel yang diajar oleh guru ini
+            $mapelIds = $guruKelasKategoriKelas->pluck('mapel_id')->toArray();
+        
+            // Filter jadwal berdasarkan kelas, kategori, dan mapel yang diajar
+            $jadwalsQuery->whereIn('kelas_id', $guruKelasKategoriKelas->pluck('kelas_id')->toArray())
+                         ->whereIn('kelas_kategori_id', $guruKelasKategoriKelas->pluck('kelas_kategori_id')->toArray())
+                         ->whereIn('mapel_id', $mapelIds); // Filter berdasarkan mapel yang diajar
         }
 
         // Eksekusi query dan group by date
