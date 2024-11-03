@@ -16,10 +16,39 @@ class SoalController extends Controller
     public function index()
     {
         $auth_user = User::find(Auth::user()->id);
-        if($auth_user->isAdmin()) {
+        if ($auth_user->isAdmin()) {
             $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori'])->get();
-        }else{
-            $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori'])->where('user_id', Auth::user()->id)->get();
+        } else {
+            // Ambil data guruMapelKelasKategoriKelas untuk user guru
+            $guruData = $auth_user->guru->guruMapelKelasKategoriKelas;
+
+            // Buat array dari ID mapel, kelas, dan kelas kategori yang diampu guru
+            $mapelIds = $guruData->pluck('mapel_id')->toArray();
+            $kelasIds = $guruData->pluck('kelas_id')->toArray();
+            $kelasKategoriIds = $guruData->pluck('kelas_kategori_id')->toArray();
+
+            // Query soal sesuai filter
+            $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori'])
+                ->where(function ($query) use ($auth_user, $mapelIds, $kelasIds, $kelasKategoriIds) {
+                    // Filter soal yang dibuat oleh guru
+                    $query->where('user_id', $auth_user->id);
+                })
+                ->orWhere(function ($query) use ($mapelIds, $kelasIds, $kelasKategoriIds) {
+                    // Kelompokkan semua kondisi berdasarkan mapel_id, kelas_id, dan kelas_kategori_id
+                    $query->where(function ($q) use ($mapelIds) {
+                        $q->whereIn('mapel_id', $mapelIds)
+                            ->orWhereNull('mapel_id');
+                    })
+                        ->where(function ($q) use ($kelasIds) {
+                            $q->whereIn('kelas_id', $kelasIds)
+                                ->orWhereNull('kelas_id');
+                        })
+                        ->where(function ($q) use ($kelasKategoriIds) {
+                            $q->whereIn('kelas_kategori_id', $kelasKategoriIds)
+                                ->orWhereNull('kelas_kategori_id');
+                        });
+                })
+                ->get();
         }
 
         $soals = [];
@@ -111,8 +140,6 @@ class SoalController extends Controller
 
     public function tambahIndex()
     {
-        $auth_user = User::find(Auth::user()->id);
-        if($auth_user->isAdmin()) return abort(403, 'Admin tidak dapat membuat soal.');
         return inertia(
             'Auth/Soal/SoalEditor',
             $this->compactMapelsKelasKelasKategoris(Auth::user()->id)
@@ -125,19 +152,18 @@ class SoalController extends Controller
         $soal = Soal::with('user')->find($id);
         if (!$soal) return abort(404, 'Soal tidak ada.');
         $auth_user = User::find(Auth::user()->id);
-        if(!$auth_user->isAdmin() && $soal->user_id != $auth_user->id) return abort(403, 'Tidak dapat mengedit soal yang dibuat oleh user lain.');
+        if (!$auth_user->isAdmin() && $soal->user_id != $auth_user->id) return abort(403, 'Tidak dapat mengedit soal yang dibuat oleh user lain.');
         $soal->author = $soal->user->name;
-        return inertia('Auth/Soal/SoalEditor', 
-            compact('soal') + 
-            $this->compactMapelsKelasKelasKategoris($soal->user_id)
+        return inertia(
+            'Auth/Soal/SoalEditor',
+            compact('soal') +
+                $this->compactMapelsKelasKelasKategoris($soal->user_id)
         );
     }
 
     // Tambah
     public function tambah(Request $request)
     {
-        $auth_user = User::find(Auth::user()->id);
-        if($auth_user->isAdmin()) return abort(403, 'Admin tidak dapat menambahkan soal.');
         $request->validate([
             'mapel_id' => 'nullable|exists:mapels,id',
             'kelas_id' => 'nullable|exists:kelas,id',
@@ -154,7 +180,7 @@ class SoalController extends Controller
         $soal = Soal::find($id);
         if (!$soal) return abort(404, 'Soal tidak ada.');
         $auth_user = User::find(Auth::user()->id);
-        if(!$auth_user->isAdmin() && $soal->user_id != $auth_user->id) return abort(403, 'Tidak dapat mengedit soal yang dibuat oleh user lain.');
+        if (!$auth_user->isAdmin() && $soal->user_id != $auth_user->id) return abort(403, 'Tidak dapat mengedit soal yang dibuat oleh user lain.');
         $request->validate([
             'mapel_id' => 'nullable|exists:mapels,id',
             'kelas_id' => 'nullable|exists:kelas,id',
@@ -170,7 +196,8 @@ class SoalController extends Controller
     {
         $soal = Soal::find($id);
         if (!$soal) return abort(404, 'Soal tidak ada.');
-        if($soal->user_id != Auth::user()->id) return abort(403, 'Tidak dapat menghapus soal yang dibuat oleh user lain.');
+        $auth_user = User::find(Auth::user()->id);
+        if (!$auth_user->isAdmin() && $soal->user_id != $auth_user->id) return abort(403, 'Tidak dapat menghapus soal yang dibuat oleh user lain.');
         $soal->delete();
         return redirect(route('soal'));
     }

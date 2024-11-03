@@ -3,6 +3,8 @@ import { ref, computed } from 'vue';
 import AuthLayout from '@/Layouts/AuthLayout.vue';
 import CustomHead from '@/Components/CustomHead.vue';
 import Button from '@/Components/Buttons/Button.vue';
+import { router, usePage } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 import { EUserType } from '@/types/enum.d';
 
 const props = defineProps<{
@@ -30,6 +32,18 @@ const filteredSoals = computed(() => {
     );
 });
 
+function editIndex(id: number, author: string) {
+    if(usePage().props.auth.user.name !== author && usePage().props.auth.user.type !== EUserType.ADMIN) {
+        Swal.fire({
+            icon: "warning",
+            title: "Pemberitahuan",
+            text: "Kamu tidak dapat mengedit soal user lain, tapi kamu dapat menggunakan soal ini di ujian yang kamu buat."
+        });
+        return;
+    }
+    router.get(route('soal.edit.index', id));
+}
+
 </script>
 
 <template>
@@ -37,7 +51,7 @@ const filteredSoals = computed(() => {
     <AuthLayout title="Soal" class="flex flex-col gap-3">
         <div class="bg-white p-5 rounded-lg flex items-center gap-3 flex-row flex-wrap w-fit">
             <!-- Button untuk tambah soal -->
-            <Button v-if="$page.props.auth.user.type != EUserType.ADMIN" @click="$inertia.get(route('soal.tambah.index'))" text="Tambah Soal" bg-color="primary" text-color="white" class="!w-fit px-5" />
+            <Button @click="$inertia.get(route('soal.tambah.index'))" text="Tambah Soal" bg-color="primary" text-color="white" class="!w-fit px-5" />
             
             <!-- Kolom input pencarian -->
             <input
@@ -54,9 +68,9 @@ const filteredSoals = computed(() => {
                 v-for="(soal, index) in filteredSoals"
                 :key="index"
                 class="bg-white p-5 rounded-lg flex flex-col gap-3 hover:cursor-pointer hover:border-black hover:border transition-all duration-300"
-                @click="$inertia.get(route('soal.edit.index', soal.id))"
+                @click="editIndex(soal.id, soal.author)"
             >
-                <p v-if="$page.props.auth.user.type === EUserType.ADMIN" class="opacity-70"><i>Soal dibuat oleh {{ soal.author }}.</i></p>
+                <p class="opacity-70"><i>{{ soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${soal.author}.` }}</i></p>
                 <div v-if="soal.tags.length > 0" class="flex flex-row flex-wrap gap-3">
                     <span v-for="(tag, index) in soal.tags" :key="index" class="bg-green-200 px-2 py-1 rounded-lg">{{ tag }}</span>
                 </div>

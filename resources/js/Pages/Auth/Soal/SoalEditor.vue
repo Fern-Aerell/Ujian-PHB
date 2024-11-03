@@ -128,7 +128,7 @@ function hapus(id: number) {
             <Button v-if="props.soal" @click="hapus(props.soal.id)" text="Hapus" text-color="white" bg-color="danger" class="!w-fit px-5" />
         </div>
         <div class="bg-white p-5 max-w-2xl">
-            <p v-if="$page.props.auth.user.type === EUserType.ADMIN && props.soal" class="opacity-70 mb-4"><i>Soal dibuat oleh {{ props.soal.author }}.</i></p>
+            <p v-if="props.soal" class="opacity-70 mb-4"><i>{{ props.soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${props.soal.author}.` }}</i></p>
             
             <div class="flex flex-col gap-1">
                 <InputLabel value="Mapel" class="required" />
