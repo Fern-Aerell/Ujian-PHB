@@ -1,0 +1,167 @@
+<script setup lang="ts">
+import AuthLayout from '@/Layouts/AuthLayout.vue';
+import CustomHead from '@/Components/CustomHead.vue';
+import Button from '@/Components/Buttons/Button.vue';
+import Swal from 'sweetalert2';
+import InputLabel from '@/Components/InputLabel.vue';
+import InputError from '@/Components/InputError.vue';
+import {router, useForm} from '@inertiajs/vue3';
+import { failedAlert, successAlert } from '@/alert';
+import { ref } from 'vue';
+import { EUserType } from '@/types/enum.d';
+
+const props = defineProps<{
+    soal?: {
+        id: number;
+        author: string;
+        mapel_id: number;
+        kelas_id: number;
+        kelas_kategori_id: number;
+        content: string;
+    },
+    mapels: {
+        id: number;
+        text: string;
+    }[],
+    kelas: {
+        id: number;
+        text: string;
+    }[],
+    kelas_kategoris: {
+        id: number;
+        text: string;
+    }[],
+}>();
+
+const form = useForm(
+    {
+        mapel_id: props.soal ? props.soal.mapel_id : null,
+        kelas_id: props.soal ? props.soal.kelas_id : null,
+        kelas_kategori_id: props.soal ? props.soal.kelas_kategori_id : null,
+        content: props.soal ? props.soal.content : ''
+    }
+);
+
+const isPreview = ref(false);
+
+function tambah() {
+    form.post(route('soal.tambah'), {
+        onError: (error) => {
+            failedAlert(error.message);
+        },
+        onSuccess: () => {
+            form.reset();
+            successAlert('Soal berhasil ditambahkan', () => router.get(route('soal')));
+        },
+    });
+}
+
+function edit(id: number) {
+    form.post(route('soal.edit', id), {
+        onError: (error) => {
+            failedAlert(error.message);
+        },
+        onSuccess: () => {
+            form.reset();
+            successAlert('Soal berhasil disimpan', () => router.get(route('soal')));
+        },
+    });
+}
+
+function kembali() {
+    Swal.fire(
+        {
+            title: "Pemberitahuan",
+            text: `Yakin ingin kembali? input atau perubahan yang kamu masukkan dan lakukan akan hilang.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#5BD063",
+            cancelButtonColor: "#818181",
+            cancelButtonText: 'Tidak',
+            confirmButtonText: "Ya"
+        }
+    ).then(
+        (result) => {
+            if (result.isConfirmed) {
+                router.get(route('soal'));
+            }
+        }
+    );
+}
+
+function hapus(id: number) {
+    Swal.fire(
+        {
+            title: "Pemberitahuan",
+            text: `Yakin ingin menghapus soal?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#5BD063",
+            cancelButtonColor: "#818181",
+            cancelButtonText: 'Tidak',
+            confirmButtonText: "Ya"
+        }
+    ).then(
+        (result) => {
+            if (result.isConfirmed) {
+                router.delete(route('soal.hapus', id), {
+                    onError: (error) => {
+                        failedAlert(error.message);
+                    },
+                    onSuccess: () => {
+                        successAlert(`Soal berhasil dihapus, halaman akan direfresh untuk melihat perubahan.`, () => router.get(route('soal')));
+                    },
+                });
+            }
+        }
+    );
+}
+
+</script>
+
+<template>
+    <CustomHead :title="props.soal ? 'Edit Soal' : 'Tambah Soal'" />
+    <AuthLayout :title="props.soal ? 'Edit Soal' : 'Tambah Soal'" class="flex flex-col gap-3">
+        <div class="flex flex-row flex-wrap gap-3 bg-white p-5 rounded-lg">
+            <Button @click="props.soal ? edit(props.soal.id) : tambah()" :text="props.soal ? 'Simpan' : 'Tambah'" text-color="white" bg-color="primary" class="!w-fit px-5" />
+            <Button @click="kembali" text="Kembali" text-color="black" bg-color="grey" class="!w-fit px-5" />
+            <Button v-if="props.soal" @click="hapus(props.soal.id)" text="Hapus" text-color="white" bg-color="danger" class="!w-fit px-5" />
+        </div>
+        <div class="bg-white p-5 max-w-2xl">
+            <p v-if="$page.props.auth.user.type === EUserType.ADMIN && props.soal" class="opacity-70 mb-4"><i>Soal dibuat oleh {{ props.soal.author }}.</i></p>
+            
+            <div class="flex flex-col gap-1">
+                <InputLabel value="Mapel" class="required" />
+                <select required v-model="form.mapel_id" name="mapel" id="mapel" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option :value="null">Tidak Spesifik</option>
+                    <option v-for="(mapel, index) in props.mapels" :key="index" :value="mapel.id">{{ mapel.text }}</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.mapel_id" />
+            </div>
+
+            <div class="flex flex-col mt-4 gap-1">
+                <InputLabel value="Kelas" class="required" />
+                <select required v-model="form.kelas_id" name="kelas" id="kelas" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option :value="null">Tidak Spesifik</option>
+                    <option v-for="(kelas, index) in props.kelas" :key="index" :value="kelas.id">{{ kelas.text }}</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.kelas_id" />
+            </div>
+
+            <div class="flex flex-col mt-4 gap-1">
+                <InputLabel value="Kelas Kategori" class="required" />
+                <select required v-model="form.kelas_kategori_id" name="kelas_kategori" id="kelas_kategori" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option :value="null">Tidak Spesifik</option>
+                    <option v-for="(kelas_kategori, index) in props.kelas_kategoris" :key="index" :value="kelas_kategori.id">{{ kelas_kategori.text }}</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.kelas_kategori_id" />
+            </div>
+
+            <div class="flex flex-col mt-4 gap-1">
+                <InputLabel value="Content" class="required" />
+                <VuetifyTiptap v-if="!isPreview" v-model="form.content" class="border border-gray-300 rounded-lg" />
+                <InputError class="mt-2" :message="form.errors.content" />
+            </div>
+        </div>
+    </AuthLayout>
+</template>

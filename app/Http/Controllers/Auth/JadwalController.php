@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth\Admin;
+namespace App\Http\Controllers\Auth;
 
 use App\Models\Jadwal;
 use Illuminate\Http\Request;

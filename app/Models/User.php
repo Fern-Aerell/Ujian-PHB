@@ -63,6 +63,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Murid::class, 'user_id', 'id');
     }
 
+    public function soals() {
+        return $this->hasMany(Soal::class);
+    }
+
     public function isAdmin()
     {
         return $this->type == UserType::ADMIN;

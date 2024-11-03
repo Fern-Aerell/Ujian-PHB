@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\Admin\ConfigController;
-use App\Http\Controllers\Auth\Admin\JadwalController;
+use App\Http\Controllers\Auth\JadwalController;
 use App\Http\Controllers\Auth\Admin\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\VerifyEmailMiddleware;
