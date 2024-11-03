@@ -31,7 +31,7 @@ const props = defineProps<{
                             <template v-if="user.guru">
                                 <p class="text-sm"><strong>Informasi Guru:</strong></p>
                                 <ul>
-                                    <li class="list-disc ml-6" v-for="(data, index) in user.guru.guru_mapel_kelas_kategori_kelas" :key="index" :title="`${data.mapel.kepanjangan} ${data.kelas.romawi} (${data.kelas.pengucapan}) (${data.kelas_kategori.kepanjangan})`">{{ data.mapel.kependekan }} ({{data.kelas.bilangan}} {{ data.kelas_kategori.kependekan }})</li>
+                                    <li class="list-disc" v-for="(data, index) in user.guru.guru_mapel_kelas_kategori_kelas" :key="index" :title="`${data.mapel.kepanjangan} ${data.kelas.romawi} (${data.kelas.pengucapan}) (${data.kelas_kategori.kepanjangan})`">{{ data.mapel.kependekan }} ({{data.kelas.bilangan}} {{ data.kelas_kategori.kependekan }})</li>
                                 </ul>
                             </template>
                             <template v-if="user.murid">

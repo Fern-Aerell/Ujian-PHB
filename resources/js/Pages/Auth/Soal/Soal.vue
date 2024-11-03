@@ -37,7 +37,7 @@ const filteredSoals = computed(() => {
     <AuthLayout title="Soal" class="flex flex-col gap-3">
         <div class="bg-white p-5 rounded-lg flex items-center gap-3 flex-row flex-wrap w-fit">
             <!-- Button untuk tambah soal -->
-            <Button @click="$inertia.get(route('soal.tambah.index'))" text="Tambah Soal" bg-color="primary" text-color="white" class="!w-fit px-5" />
+            <Button v-if="$page.props.auth.user.type != EUserType.ADMIN" @click="$inertia.get(route('soal.tambah.index'))" text="Tambah Soal" bg-color="primary" text-color="white" class="!w-fit px-5" />
             
             <!-- Kolom input pencarian -->
             <input

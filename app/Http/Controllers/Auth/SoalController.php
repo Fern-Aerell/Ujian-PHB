@@ -111,6 +111,8 @@ class SoalController extends Controller
 
     public function tambahIndex()
     {
+        $auth_user = User::find(Auth::user()->id);
+        if($auth_user->isAdmin()) return abort(403, 'Admin tidak dapat membuat soal.');
         return inertia(
             'Auth/Soal/SoalEditor',
             $this->compactMapelsKelasKelasKategoris(Auth::user()->id)
@@ -134,6 +136,8 @@ class SoalController extends Controller
     // Tambah
     public function tambah(Request $request)
     {
+        $auth_user = User::find(Auth::user()->id);
+        if($auth_user->isAdmin()) return abort(403, 'Admin tidak dapat menambahkan soal.');
         $request->validate([
             'mapel_id' => 'nullable|exists:mapels,id',
             'kelas_id' => 'nullable|exists:kelas,id',
