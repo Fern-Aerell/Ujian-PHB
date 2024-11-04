@@ -6,7 +6,7 @@ import PhotoProfile from './PhotoProfile.vue';
 
 <template>
     <!-- SIDEBAR -->
-    <div class="flex flex-col p-[30px] bg-[#FFFFFF] w-[350px] justify-between min-h-screen">
+    <div class="flex flex-col p-[30px] bg-[#FFFFFF] w-[350px] justify-between overflow-y-auto">
         <!-- TOP -->
         <div class="flex flex-col gap-[10px]">
             <!-- PHOTO PROFILE AND USER TYPE -->
@@ -20,7 +20,7 @@ import PhotoProfile from './PhotoProfile.vue';
             <slot name="top"/>
         </div>
         <!-- MID -->
-        <div class="flex flex-col gap-[10px] items-start">
+        <div class="flex flex-col gap-[10px] items-start my-10">
             <slot name="mid"/>
         </div>
         <!-- END -->
