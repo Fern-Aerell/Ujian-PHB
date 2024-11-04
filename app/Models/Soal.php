@@ -36,4 +36,10 @@ class Soal extends Model
     {
         return $this->belongsTo(KelasKategori::class, 'kelas_kategori_id');
     }
+
+    // Relasi ke model Jawaban
+    public function jawabans()
+    {
+        return $this->hasMany(Jawaban::class);
+    }
 }
