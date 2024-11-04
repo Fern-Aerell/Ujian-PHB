@@ -29,3 +29,12 @@ div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-confirm) {
     color: #fff !important;
     font-size: 1em;
 }
+
+div:where(.swal2-container) button:where(.swal2-styled):where(.swal2-cancel) {
+    border: 0;
+    border-radius: .25em;
+    background: initial;
+    background-color: #6e7881;
+    color: #fff !important;
+    font-size: 1em;
+}
