@@ -8,7 +8,7 @@ import InputError from '@/Components/InputError.vue';
 import {router, useForm} from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { ref } from 'vue';
-import { EUserType } from '@/types/enum.d';
+import { ESoalType, EUserType } from '@/types/enum.d';
 
 const props = defineProps<{
     soal?: {
@@ -17,6 +17,7 @@ const props = defineProps<{
         mapel_id: number;
         kelas_id: number;
         kelas_kategori_id: number;
+        type: ESoalType;
         content: string;
     },
     mapels: {
@@ -38,7 +39,8 @@ const form = useForm(
         mapel_id: props.soal ? props.soal.mapel_id : null,
         kelas_id: props.soal ? props.soal.kelas_id : null,
         kelas_kategori_id: props.soal ? props.soal.kelas_kategori_id : null,
-        content: props.soal ? props.soal.content : ''
+        type: props.soal ? props.soal.type : null,
+        content: props.soal ? props.soal.content : '',
     }
 );
 
@@ -155,6 +157,14 @@ function hapus(id: number) {
                     <option v-for="(kelas_kategori, index) in props.kelas_kategoris" :key="index" :value="kelas_kategori.id">{{ kelas_kategori.text }}</option>
                 </select>
                 <InputError class="mt-2" :message="form.errors.kelas_kategori_id" />
+            </div>
+
+            <div class="flex flex-col mt-4 gap-1">
+                <InputLabel value="Tipe Soal" class="required" />
+                <select required v-model="form.type" name="type" id="type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option v-for="(type, index) in Object.values(ESoalType)" :key="index" :value="type">{{ type.split('_').map((value) => `${value[0].toUpperCase()}${value.substring(1, value.length)}`).join(' ') }}</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.type" />
             </div>
 
             <div class="flex flex-col mt-4 gap-1">

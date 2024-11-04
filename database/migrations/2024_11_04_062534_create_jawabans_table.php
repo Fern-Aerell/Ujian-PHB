@@ -1,6 +1,4 @@
 <?php
-
-use App\Enums\JawabanType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +13,6 @@ return new class extends Migration
         Schema::create('jawabans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('soal_id')->constrained()->cascadeOnDelete();
-            $table->enum('type', array_map(fn($case) => $case->value, JawabanType::cases()));
             $table->text('content');
             $table->boolean('correct')->default(false);
             $table->timestamps();

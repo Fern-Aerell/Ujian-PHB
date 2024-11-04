@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum JawabanType: string
+enum SoalType: string
 {
     case OBJEKTIF = "objektif";
     case OBJEKTIF_KOMPLEKS = "objektif_kompleks";

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\SoalType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,8 +15,16 @@ class Soal extends Model
         'mapel_id',
         'kelas_id',
         'kelas_kategori_id',
+        'type',
         'content',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'type' => SoalType::class
+        ];
+    }
 
     public function user()
     {

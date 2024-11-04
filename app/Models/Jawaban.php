@@ -11,7 +11,6 @@ class Jawaban extends Model
 
     protected $fillable = [
         'soal_id',
-        'type',
         'content',
         'correct',
     ];

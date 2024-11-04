@@ -1,7 +1,7 @@
-export enum EAnswerType {
-    objektif = 'objektif',
-    objektifKompleks = 'objektif_kompleks',
-    isian = 'isian',
+export enum ESoalType {
+    OBJEKTIF = 'objektif',
+    OBJEKTIF_KOMPLEKS = 'objektif_kompleks',
+    ISIAN_SINGKAT = 'isian_singkat',
 }
 
 export enum EUserType {

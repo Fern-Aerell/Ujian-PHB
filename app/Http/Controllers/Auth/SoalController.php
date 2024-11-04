@@ -8,6 +8,7 @@ use App\Models\KelasKategori;
 use App\Models\Mapel;
 use App\Models\Soal;
 use App\Models\User;
+use App\Rules\SoalType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -77,6 +78,7 @@ class SoalController extends Controller
                 'id' => $soal_raw->id,
                 'author' => $soal_raw->user->name,
                 'tags' => $tags,
+                'type' => $soal_raw->type,
                 'content' => $soal_raw->content,
             ];
         }
@@ -168,6 +170,7 @@ class SoalController extends Controller
             'mapel_id' => 'nullable|exists:mapels,id',
             'kelas_id' => 'nullable|exists:kelas,id',
             'kelas_kategori_id' => 'nullable|exists:kelas_kategoris,id',
+            'type' => ['required', 'string', new SoalType],
             'content' => 'required|string',
         ]);
         Soal::create($request->all() + ['user_id' => Auth::user()->id]);
@@ -185,6 +188,7 @@ class SoalController extends Controller
             'mapel_id' => 'nullable|exists:mapels,id',
             'kelas_id' => 'nullable|exists:kelas,id',
             'kelas_kategori_id' => 'nullable|exists:kelas_kategoris,id',
+            'type' => ['required', 'string', new SoalType],
             'content' => 'required|string',
         ]);
         $soal->update($request->all());

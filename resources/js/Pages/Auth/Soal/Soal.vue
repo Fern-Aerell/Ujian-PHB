@@ -5,13 +5,14 @@ import CustomHead from '@/Components/CustomHead.vue';
 import Button from '@/Components/Buttons/Button.vue';
 import { router, usePage } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
-import { EUserType } from '@/types/enum.d';
+import { ESoalType, EUserType } from '@/types/enum.d';
 
 const props = defineProps<{
     soals: {
         id: number;
         author: string;
         tags: string[];
+        type: ESoalType;
         content: string;
     }[]
 }>();
@@ -28,7 +29,8 @@ const filteredSoals = computed(() => {
     return props.soals.filter(soal => 
         soal.tags.some(tag => tag.toLowerCase().includes(query)) ||
         soal.content.toLowerCase().includes(query) ||
-        soal.author.toLowerCase().includes(query)
+        soal.author.toLowerCase().includes(query) ||
+        soal.type.toLowerCase().includes(query)
     );
 });
 
@@ -71,7 +73,8 @@ function editIndex(id: number, author: string) {
                 @click="editIndex(soal.id, soal.author)"
             >
                 <p class="opacity-70"><i>{{ soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${soal.author}.` }}</i></p>
-                <div v-if="soal.tags.length > 0" class="flex flex-row flex-wrap gap-3">
+                <div class="flex flex-row flex-wrap gap-3">
+                    <span class="bg-yellow-200 px-2 py-1 rounded-lg w-fit">{{ soal.type.split('_').map((value) => `${value[0].toUpperCase()}${value.substring(1, value.length)}`).join(' ') }}</span>
                     <span v-for="(tag, index) in soal.tags" :key="index" class="bg-green-200 px-2 py-1 rounded-lg">{{ tag }}</span>
                 </div>
                 <VuetifyViewer :value="soal.content" class="border border-gray-300 p-3 h-full" />

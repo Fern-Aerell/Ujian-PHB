@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\SoalType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,6 +19,7 @@ return new class extends Migration
             $table->foreignId('kelas_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('kelas_kategori_id')->nullable()->constrained()->nullOnDelete();
             $table->text('content');
+            $table->enum('type', array_map(fn($case) => $case->value, SoalType::cases()));
             $table->timestamps();
         });
     }
