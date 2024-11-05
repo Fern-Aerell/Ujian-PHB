@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Jawaban;
 use App\Models\Kelas;
 use App\Models\KelasKategori;
 use App\Models\Mapel;
 use App\Models\Soal;
 use App\Models\User;
+use App\Rules\JawabansAtLeastOneTrue;
 use App\Rules\SoalType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +20,7 @@ class SoalController extends Controller
     {
         $auth_user = User::find(Auth::user()->id);
         if ($auth_user->isAdmin()) {
-            $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori'])->get();
+            $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori', 'jawabans'])->get();
         } else {
             // Ambil data guruMapelKelasKategoriKelas untuk user guru
             $guruData = $auth_user->guru->guruMapelKelasKategoriKelas;
@@ -29,7 +31,7 @@ class SoalController extends Controller
             $kelasKategoriIds = $guruData->pluck('kelas_kategori_id')->toArray();
 
             // Query soal sesuai filter
-            $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori'])
+            $soals_raw = Soal::with(['user', 'mapel', 'kelas', 'kelasKategori', 'jawabans'])
                 ->where(function ($query) use ($auth_user, $mapelIds, $kelasIds, $kelasKategoriIds) {
                     // Filter soal yang dibuat oleh guru
                     $query->where('user_id', $auth_user->id);
@@ -57,6 +59,7 @@ class SoalController extends Controller
         // Proses data soal untuk menambahkan tags
         foreach ($soals_raw as $soal_raw) {
             $tags = [];
+            $jawabans = [];
 
             if ($soal_raw->mapel != null) {
                 $tags[] = $soal_raw->mapel->kependekan;
@@ -74,12 +77,20 @@ class SoalController extends Controller
                 $tags[] = $soal_raw->kelasKategori->kepanjangan;
             }
 
+            foreach($soal_raw->jawabans as $jawaban) {
+                $jawabans[] = [
+                    'content' => $jawaban['content'],
+                    'correct' => (bool)$jawaban['correct'],
+                ];
+            }
+
             $soals[] = [
                 'id' => $soal_raw->id,
                 'author' => $soal_raw->user->name,
                 'tags' => $tags,
                 'type' => $soal_raw->type,
                 'content' => $soal_raw->content,
+                'jawabans' => $jawabans,
             ];
         }
 
@@ -156,6 +167,18 @@ class SoalController extends Controller
         $auth_user = User::find(Auth::user()->id);
         if (!$auth_user->isAdmin() && $soal->user_id != $auth_user->id) return abort(403, 'Tidak dapat mengedit soal yang dibuat oleh user lain.');
         $soal->author = $soal->user->name;
+        
+        $jawabansModelData = Jawaban::where('soal_id', $id)->get();
+        $jawabans = [];
+        foreach($jawabansModelData as $jawaban) {
+            $jawabans[] = [
+                'content' => $jawaban->content,
+                'correct' => (bool)$jawaban->correct,
+            ];
+        }
+
+        $soal->jawabans = $jawabans;
+
         return inertia(
             'Auth/Soal/SoalEditor',
             compact('soal') +
@@ -172,8 +195,24 @@ class SoalController extends Controller
             'kelas_kategori_id' => 'nullable|exists:kelas_kategoris,id',
             'type' => ['required', 'string', new SoalType],
             'content' => 'required|string',
+            'jawabans' => ['required',' array', new JawabansAtLeastOneTrue()],
+            'jawabans.*.content' => 'required|string',
+            'jawabans.*.correct' => 'required|boolean',
         ]);
-        Soal::create($request->all() + ['user_id' => Auth::user()->id]);
+
+        $soal = Soal::create($request->only(['mapel_id', 'kelas_id', 'kelas_kategori_id', 'type', 'content']) + ['user_id' => Auth::user()->id]);
+
+        $jawabans = Jawaban::where('soal_id', $soal->id);
+        $jawabans->delete();
+        
+        foreach($request->jawabans as $jawaban) {
+            Jawaban::create([
+                'soal_id' => $soal->id,
+                'content' => $jawaban['content'],
+                'correct' => $jawaban['correct'],
+            ]);
+        }
+
         return redirect()->back();
     }
 
@@ -190,8 +229,23 @@ class SoalController extends Controller
             'kelas_kategori_id' => 'nullable|exists:kelas_kategoris,id',
             'type' => ['required', 'string', new SoalType],
             'content' => 'required|string',
+            'jawabans' => ['required',' array', new JawabansAtLeastOneTrue()],
+            'jawabans.*.content' => 'required|string',
+            'jawabans.*.correct' => 'required|boolean',
         ]);
-        $soal->update($request->all());
+        $soal->update($request->only(['mapel_id', 'kelas_id', 'kelas_kategori_id', 'type', 'content']));
+
+        $jawabans = Jawaban::where('soal_id', $soal->id);
+        $jawabans->delete();
+        
+        foreach($request->jawabans as $jawaban) {
+            Jawaban::create([
+                'soal_id' => $soal->id,
+                'content' => $jawaban['content'],
+                'correct' => $jawaban['correct'],
+            ]);
+        }
+
         return redirect()->back();
     }
 

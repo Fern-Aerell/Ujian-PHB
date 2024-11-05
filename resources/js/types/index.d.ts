@@ -100,3 +100,8 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
         user: IUser;
     };
 };
+
+export interface IJawaban {
+    content: string;
+    correct: boolean;
+}

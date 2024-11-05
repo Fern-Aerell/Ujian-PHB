@@ -7,8 +7,11 @@ import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import {router, useForm} from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { ESoalType, EUserType } from '@/types/enum.d';
+import Checkbox from '@/Components/Checkbox.vue';
+import { IJawaban } from '@/types';
+import TextInput from '@/Components/TextInput.vue';
 
 const props = defineProps<{
     soal?: {
@@ -19,6 +22,7 @@ const props = defineProps<{
         kelas_kategori_id: number;
         type: ESoalType;
         content: string;
+        jawabans: IJawaban[];
     },
     mapels: {
         id: number;
@@ -41,10 +45,15 @@ const form = useForm(
         kelas_kategori_id: props.soal ? props.soal.kelas_kategori_id : null,
         type: props.soal ? props.soal.type : null,
         content: props.soal ? props.soal.content : '',
+        jawabans: props.soal ? props.soal.jawabans : [] as IJawaban[],
     }
 );
 
 const isPreview = ref(false);
+
+
+// Tambahin ini: `correctAnswerIndex` untuk nge-track jawaban yang benar
+const correctAnswerIndex = ref<number | null>(props.soal ? props.soal.jawabans.findIndex((value) => value.correct) : null);
 
 function tambah() {
     form.post(route('soal.tambah'), {
@@ -119,6 +128,36 @@ function hapus(id: number) {
     );
 }
 
+function tambahJawaban() {
+    const jawaban = {
+        content: '',
+        correct: (form.type === ESoalType.ISIAN_SINGKAT) ? true : false,
+    };
+    form.jawabans.push(jawaban);
+}
+
+function hapusJawaban(index: number) {
+    form.jawabans.splice(index, 1)
+}
+
+watch(() => form.type, (value) => {
+    if(value == ESoalType.ISIAN_SINGKAT) {
+        form.jawabans.forEach((value) => {
+            value.correct = true;
+            value.content = '';
+        });
+    }else{
+        form.jawabans.forEach((value) => value.correct = false);
+    }
+});
+
+// Watch correctAnswerIndex buat update `jawaban.correct`
+watch(correctAnswerIndex, (newIndex) => {
+  form.jawabans.forEach((jawaban, i) => {
+    jawaban.correct = i === newIndex;
+  });
+});
+
 </script>
 
 <template>
@@ -129,8 +168,9 @@ function hapus(id: number) {
             <Button @click="kembali" text="Kembali" text-color="black" bg-color="grey" class="!w-fit px-5" />
             <Button v-if="props.soal" @click="hapus(props.soal.id)" text="Hapus" text-color="white" bg-color="danger" class="!w-fit px-5" />
         </div>
-        <div class="overflow-y-auto w-full">
-            <div class="bg-white p-5 max-w-2xl rounded-lg">
+        <div class="overflow-y-auto flex flex-row gap-3 flex-wrap">
+
+            <div class="bg-white p-5 max-w-2xl rounded-lg h-fit">
                 <p v-if="props.soal" class="opacity-70 mb-4"><i>{{ props.soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${props.soal.author}.` }}</i></p>
                 
                 <div class="flex flex-col gap-1">
@@ -174,6 +214,39 @@ function hapus(id: number) {
                     <InputError class="mt-2" :message="form.errors.content" />
                 </div>
             </div>
+
+            <!-- JAWABAN EDITOR -->
+            <div class="bg-white p-5 h-fit rounded-lg w-full max-w-2xl flex flex-col gap-3">
+                <Button @click="tambahJawaban" text="Tambah Jawaban" text-color="white" bg-color="primary" class="!w-fit px-5" />
+                <InputError :message="form.errors.jawabans" class="mt-2" />
+                <div v-for="(jawaban, index) in form.jawabans" :key="index" class="border border-gray-300 p-5 flex flex-col gap-3">
+                    <div class="flex flex-row items-center justify-between">
+                        <p>Jawaban {{ index + 1 }}</p>
+                        <Button @click="hapusJawaban(index)" text="Hapus" text-color="white" bg-color="danger" class="!w-fit px-5" />
+                    </div>
+                    <template v-if="form.type === ESoalType.ISIAN_SINGKAT">
+                        <TextInput 
+                            v-model="jawaban.content"
+                            required
+                        />
+                    </template>
+                    <template v-else>
+                        <VuetifyTiptap :name="`content-${index}`" v-model="jawaban.content" class="border border-gray-300 rounded-lg" />
+                        <InputError :message="(form.errors as any)[`jawabans.${index}.content`]" class="mt-2" />
+                    </template>
+                    <div class="flex flex-row gap-2 items-center">
+                        <template v-if="form.type === ESoalType.OBJEKTIF">
+                            <input required type="radio" name="correct" :id="`correct-${index}`" v-model="correctAnswerIndex" :value="index">
+                        </template>
+                        <template v-if="form.type === ESoalType.OBJEKTIF_KOMPLEKS">
+                            <input type="checkbox" required :name="`correct-${index}`" :id="`correct-${index}`" v-model="jawaban.correct" />
+                        </template>
+                        <InputLabel :for="`correct-${index}`" value="Ini adalah jawaban yang benar." />
+                    </div>
+                    <InputError :message="(form.errors as any)[`jawabans.${index}.correct`]" class="mt-2" />
+                </div>
+            </div>
+
         </div>
     </AuthLayout>
 </template>
