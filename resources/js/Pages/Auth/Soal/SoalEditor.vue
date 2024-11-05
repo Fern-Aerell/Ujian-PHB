@@ -49,8 +49,6 @@ const form = useForm(
     }
 );
 
-const isPreview = ref(false);
-
 
 // Tambahin ini: `correctAnswerIndex` untuk nge-track jawaban yang benar
 const correctAnswerIndex = ref<number | null>(props.soal ? props.soal.jawabans.findIndex((value) => value.correct) : null);
@@ -210,15 +208,13 @@ watch(correctAnswerIndex, (newIndex) => {
 
                 <div class="flex flex-col mt-4 gap-1">
                     <InputLabel value="Content" class="required" />
-                    <VuetifyTiptap v-if="!isPreview" v-model="form.content" class="border border-gray-300 rounded-lg" />
+                    <VuetifyTiptap v-model="form.content" class="border border-gray-300 rounded-lg" />
                     <InputError class="mt-2" :message="form.errors.content" />
                 </div>
             </div>
 
             <!-- JAWABAN EDITOR -->
             <div class="bg-white p-5 h-fit rounded-lg w-full max-w-2xl flex flex-col gap-3">
-                <Button @click="tambahJawaban" text="Tambah Jawaban" text-color="white" bg-color="primary" class="!w-fit px-5" />
-                <InputError :message="form.errors.jawabans" class="mt-2" />
                 <div v-for="(jawaban, index) in form.jawabans" :key="index" class="border border-gray-300 p-5 flex flex-col gap-3">
                     <div class="flex flex-row items-center justify-between">
                         <p>Jawaban {{ index + 1 }}</p>
@@ -245,6 +241,8 @@ watch(correctAnswerIndex, (newIndex) => {
                     </div>
                     <InputError :message="(form.errors as any)[`jawabans.${index}.correct`]" class="mt-2" />
                 </div>
+                <Button @click="tambahJawaban" text="Tambah Jawaban" text-color="white" bg-color="primary" class="!w-fit px-5" />
+                <InputError :message="form.errors.jawabans" class="mt-2" />
             </div>
 
         </div>
