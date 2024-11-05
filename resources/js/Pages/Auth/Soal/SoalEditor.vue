@@ -129,48 +129,50 @@ function hapus(id: number) {
             <Button @click="kembali" text="Kembali" text-color="black" bg-color="grey" class="!w-fit px-5" />
             <Button v-if="props.soal" @click="hapus(props.soal.id)" text="Hapus" text-color="white" bg-color="danger" class="!w-fit px-5" />
         </div>
-        <div class="bg-white p-5 max-w-2xl rounded-lg">
-            <p v-if="props.soal" class="opacity-70 mb-4"><i>{{ props.soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${props.soal.author}.` }}</i></p>
-            
-            <div class="flex flex-col gap-1">
-                <InputLabel value="Mapel" class="required" />
-                <select required v-model="form.mapel_id" name="mapel" id="mapel" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <option :value="null">Tidak Spesifik</option>
-                    <option v-for="(mapel, index) in props.mapels" :key="index" :value="mapel.id">{{ mapel.text }}</option>
-                </select>
-                <InputError class="mt-2" :message="form.errors.mapel_id" />
-            </div>
+        <div class="overflow-y-auto w-full">
+            <div class="bg-white p-5 max-w-2xl rounded-lg">
+                <p v-if="props.soal" class="opacity-70 mb-4"><i>{{ props.soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${props.soal.author}.` }}</i></p>
+                
+                <div class="flex flex-col gap-1">
+                    <InputLabel value="Mapel" class="required" />
+                    <select required v-model="form.mapel_id" name="mapel" id="mapel" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option :value="null">Tidak Spesifik</option>
+                        <option v-for="(mapel, index) in props.mapels" :key="index" :value="mapel.id">{{ mapel.text }}</option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.mapel_id" />
+                </div>
 
-            <div class="flex flex-col mt-4 gap-1">
-                <InputLabel value="Kelas" class="required" />
-                <select required v-model="form.kelas_id" name="kelas" id="kelas" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <option :value="null">Tidak Spesifik</option>
-                    <option v-for="(kelas, index) in props.kelas" :key="index" :value="kelas.id">{{ kelas.text }}</option>
-                </select>
-                <InputError class="mt-2" :message="form.errors.kelas_id" />
-            </div>
+                <div class="flex flex-col mt-4 gap-1">
+                    <InputLabel value="Kelas" class="required" />
+                    <select required v-model="form.kelas_id" name="kelas" id="kelas" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option :value="null">Tidak Spesifik</option>
+                        <option v-for="(kelas, index) in props.kelas" :key="index" :value="kelas.id">{{ kelas.text }}</option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.kelas_id" />
+                </div>
 
-            <div class="flex flex-col mt-4 gap-1">
-                <InputLabel value="Kelas Kategori" class="required" />
-                <select required v-model="form.kelas_kategori_id" name="kelas_kategori" id="kelas_kategori" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <option :value="null">Tidak Spesifik</option>
-                    <option v-for="(kelas_kategori, index) in props.kelas_kategoris" :key="index" :value="kelas_kategori.id">{{ kelas_kategori.text }}</option>
-                </select>
-                <InputError class="mt-2" :message="form.errors.kelas_kategori_id" />
-            </div>
+                <div class="flex flex-col mt-4 gap-1">
+                    <InputLabel value="Kelas Kategori" class="required" />
+                    <select required v-model="form.kelas_kategori_id" name="kelas_kategori" id="kelas_kategori" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option :value="null">Tidak Spesifik</option>
+                        <option v-for="(kelas_kategori, index) in props.kelas_kategoris" :key="index" :value="kelas_kategori.id">{{ kelas_kategori.text }}</option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.kelas_kategori_id" />
+                </div>
 
-            <div class="flex flex-col mt-4 gap-1">
-                <InputLabel value="Tipe Soal" class="required" />
-                <select required v-model="form.type" name="type" id="type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                    <option v-for="(type, index) in Object.values(ESoalType)" :key="index" :value="type">{{ type.split('_').map((value) => `${value[0].toUpperCase()}${value.substring(1, value.length)}`).join(' ') }}</option>
-                </select>
-                <InputError class="mt-2" :message="form.errors.type" />
-            </div>
+                <div class="flex flex-col mt-4 gap-1">
+                    <InputLabel value="Tipe Soal" class="required" />
+                    <select required v-model="form.type" name="type" id="type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                        <option v-for="(type, index) in Object.values(ESoalType)" :key="index" :value="type">{{ type.split('_').map((value) => `${value[0].toUpperCase()}${value.substring(1, value.length)}`).join(' ') }}</option>
+                    </select>
+                    <InputError class="mt-2" :message="form.errors.type" />
+                </div>
 
-            <div class="flex flex-col mt-4 gap-1">
-                <InputLabel value="Content" class="required" />
-                <VuetifyTiptap v-if="!isPreview" v-model="form.content" class="border border-gray-300 rounded-lg" />
-                <InputError class="mt-2" :message="form.errors.content" />
+                <div class="flex flex-col mt-4 gap-1">
+                    <InputLabel value="Content" class="required" />
+                    <VuetifyTiptap v-if="!isPreview" v-model="form.content" class="border border-gray-300 rounded-lg" />
+                    <InputError class="mt-2" :message="form.errors.content" />
+                </div>
             </div>
         </div>
     </AuthLayout>
