@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AccountController;
 use App\Http\Controllers\Auth\JadwalController;
+use App\Http\Controllers\Auth\RaporController;
 use App\Http\Middleware\VerifyEmailMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -44,6 +45,7 @@ Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
     })->name('activity');
 
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal');
+    Route::get('/rapor', [RaporController::class, 'index'])->name('rapor');
 
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::patch('/account', [AccountController::class, 'update'])->name('account.update');
