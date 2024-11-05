@@ -69,7 +69,7 @@ function editIndex(id: number, author: string) {
         <!-- Daftar soal yang sudah difilter -->
         <div class="flex flex-row flex-wrap gap-5 overflow-y-auto w-full">
             <div v-for="(soal, index) in filteredSoals" :key="index"
-                class="bg-white p-5 max-w-2xl rounded-lg flex flex-col gap-3 hover:cursor-pointer hover:border-black hover:border transition-all duration-300 max-h-[400px]"
+                class="bg-white p-5 max-w-2xl rounded-lg flex flex-col gap-3 hover:cursor-pointer hover:border-black hover:border transition-all duration-300 h-fit"
                 @click="editIndex(soal.id, soal.author)">
                 <p class="opacity-70"><i>{{ soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' :
                     `Soal dibuat oleh ${soal.author}.` }}</i></p>
@@ -79,7 +79,7 @@ function editIndex(id: number, author: string) {
                     <span v-for="(tag, index) in soal.tags" :key="index" class="bg-green-200 px-2 py-1 rounded-lg">{{
                         tag }}</span>
                 </div>
-                <VuetifyViewer :value="soal.content" class="p-3 border border-gray-300 h-full overflow-auto" />
+                <VuetifyViewer :value="soal.content" class="p-3 border border-gray-300 h-fit overflow-auto max-h-[400px]" />
                 <strong>Jawaban :</strong>
                 <div v-for="(jawaban, index) in soal.jawabans" class="flex flex-row gap-3 mt-1 items-center"
                     :key="index">
