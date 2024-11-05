@@ -6,6 +6,7 @@ import Button from '@/Components/Buttons/Button.vue';
 import { router, usePage } from '@inertiajs/vue3';
 import Swal from 'sweetalert2';
 import { ESoalType, EUserType } from '@/types/enum.d';
+import { IJawaban } from '@/types';
 
 const props = defineProps<{
     soals: {
@@ -14,6 +15,7 @@ const props = defineProps<{
         tags: string[];
         type: ESoalType;
         content: string;
+        jawabans: IJawaban[];
     }[]
 }>();
 
@@ -69,7 +71,7 @@ function editIndex(id: number, author: string) {
             <div
                 v-for="(soal, index) in filteredSoals"
                 :key="index"
-                class="bg-white p-5 max-w-2xl rounded-lg flex flex-col gap-3 hover:cursor-pointer hover:border-black hover:border transition-all duration-300 h-[400px]"
+                class="bg-white p-5 max-w-2xl rounded-lg flex flex-col gap-3 hover:cursor-pointer hover:border-black hover:border transition-all duration-300 max-h-[400px]"
                 @click="editIndex(soal.id, soal.author)"
             >
                 <p class="opacity-70"><i>{{ soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${soal.author}.` }}</i></p>
@@ -77,7 +79,17 @@ function editIndex(id: number, author: string) {
                     <span class="bg-yellow-200 px-2 py-1 rounded-lg w-fit">{{ soal.type.split('_').map((value) => `${value[0].toUpperCase()}${value.substring(1, value.length)}`).join(' ') }}</span>
                     <span v-for="(tag, index) in soal.tags" :key="index" class="bg-green-200 px-2 py-1 rounded-lg">{{ tag }}</span>
                 </div>
-                <VuetifyViewer :value="soal.content" class="p-3 border border-gray-300 overflow-auto" />
+                <VuetifyViewer :value="soal.content" class="p-3 border border-gray-300 h-full overflow-auto" />
+                <strong>Jawaban :</strong>
+                <div v-for="(jawaban, index) in soal.jawabans" class="flex flex-row gap-3 mt-1 items-center" :key="index">
+                    <template v-if="soal.type === ESoalType.OBJEKTIF">
+                        <input type="radio" disabled :checked="jawaban.correct">
+                    </template>
+                    <template v-else-if="soal.type === ESoalType.OBJEKTIF_KOMPLEKS">
+                        <input type="checkbox" disabled :checked="jawaban.correct">
+                    </template>
+                    <VuetifyViewer :value="jawaban.content" />
+                </div>
             </div>
             
             <!-- Pesan ketika hasil pencarian tidak ditemukan -->

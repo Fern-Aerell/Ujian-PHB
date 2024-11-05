@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 ul {
     @apply list-disc ml-6;
 }
