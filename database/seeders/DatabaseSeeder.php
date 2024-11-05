@@ -24,6 +24,10 @@ class DatabaseSeeder extends Seeder
             GuruMapelKelasKategoriKelasSeeder::class,
             JadwalSeeder::class,
             SoalSeeder::class,
+            JawabanSeeder::class,
+            ActivitySeeder::class,
+            ActivityMapelKelasKategoriKelasSeeder::class,
+            ActivitySoalSeeder::class,
         ]);
     }
 }

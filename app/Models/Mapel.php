@@ -20,6 +20,11 @@ class Mapel extends Model
         return $this->hasMany(GuruMapelKelasKategoriKelas::class, 'mapel_id', 'id');
     }
 
+    public function activityMapelKelasKategoriKelas()
+    {
+        return $this->hasMany(ActivityMapelKelasKategoriKelas::class, 'mapel_id', 'id');
+    }
+
     public function jadwals()
     {
         return $this->hasMany(Jadwal::class);

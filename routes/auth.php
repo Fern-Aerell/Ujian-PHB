@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\AccountController;
+use App\Http\Controllers\Auth\ActivityController;
 use App\Http\Controllers\Auth\JadwalController;
 use App\Http\Controllers\Auth\RaporController;
 use App\Http\Middleware\VerifyEmailMiddleware;
@@ -39,13 +40,12 @@ Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('Auth/Dashboard');
     })->name('dashboard');
-
-    Route::get('/activity', function () {
-        return Inertia::render('Auth/Activity');
-    })->name('activity');
+    
+    Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
 
     Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal');
     Route::get('/rapor', [RaporController::class, 'index'])->name('rapor');
+
 
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::patch('/account', [AccountController::class, 'update'])->name('account.update');

@@ -42,9 +42,9 @@ const props = defineProps<{
                     </div>
                     <div class="flex flex-col sm:flex-row gap-2">
                         <Button @click="$inertia.get(route('user.edit', user.id))" text="Edit"
-                            text-color="white" bg-color="primary" class="w-full sm:w-fit px-3 py-1 text-sm" />
+                            text-color="white" bg-color="primary" class="w-full sm:w-fit px-3 py-2 text-sm" />
                         <Button @click="deleteUser(user.username, user.id)" text="Hapus" text-color="white"
-                            bg-color="danger" class="w-full sm:w-fit px-3 py-1 text-sm" />
+                            bg-color="danger" class="w-full sm:w-fit px-3 py-2 text-sm" />
                     </div>
                 </div>
             </template>

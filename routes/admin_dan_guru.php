@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\ActivityController;
 use App\Http\Controllers\Auth\SoalController;
 use App\Http\Controllers\ImageController;
 use App\Http\Middleware\AdminDanGuruMiddleware;
@@ -17,5 +18,12 @@ Route::middleware(['auth', VerifyEmailMiddleware::class, AdminDanGuruMiddleware:
     Route::delete('/soal/{id}/hapus', [SoalController::class, 'hapus'])->name('soal.hapus');
 
     Route::post('/image/upload', [ImageController::class, 'upload'])->name('image.upload');
+
+    Route::get('/activity/tambah', [ActivityController::class, 'tambahIndex'])->name('activity.tambah.index');
+    Route::get('/activity/{id}/edit', [ActivityController::class, 'editIndex'])->name('activity.edit.index');
+    
+    Route::post('/activity/tambah', [ActivityController::class, 'tambah'])->name('activity.tambah');
+    Route::post('/activity/{id}/edit', [ActivityController::class, 'edit'])->name('activity.edit');
+    Route::delete('/activity/{id}/hapus', [ActivityController::class, 'hapus'])->name('activity.hapus');
     
 });
