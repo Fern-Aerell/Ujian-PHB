@@ -73,8 +73,9 @@ class ActivityController extends Controller
             ];
         });
 
-        $soals = Soal::with(['mapel', 'kelas', 'kelasKategori', 'jawabans'])->get()->map(function($item) {
+        $soals = Soal::with(['mapel', 'kelas', 'kelasKategori', 'jawabans', 'user'])->get()->map(function($item) {
             
+            $tags = [];
             $jawabans = [];
 
             foreach($item->jawabans as $jawaban) {
@@ -85,10 +86,28 @@ class ActivityController extends Controller
                 ];
             }
 
+            if ($item->mapel != null) {
+                $tags[] = $item->mapel->kependekan;
+                $tags[] = $item->mapel->kepanjangan;
+            }
+
+            if ($item->kelas != null) {
+                $tags[] = $item->kelas->bilangan;
+                $tags[] = $item->kelas->romawi;
+                $tags[] = $item->kelas->pengucapan;
+            }
+
+            if ($item->kelasKategori != null) {
+                $tags[] = $item->kelasKategori->kependekan;
+                $tags[] = $item->kelasKategori->kepanjangan;
+            }
+
             return [
                 'id' => $item->id,
                 'content' => $item->content,
                 'type' => $item->type,
+                'tags' => $tags,
+                'author' => $item->user->name,
                 'jawabans' => $jawabans,
             ];
         });

@@ -7,6 +7,7 @@ import { router, useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import ActivityEditorMapelKelasKategoriKelasForm from './components/ActivityEditorMapelKelasKategoriKelasForm.vue';
 import { ESoalType } from '@/types/enum.d';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
     activity?: {
@@ -30,6 +31,9 @@ const props = defineProps<{
         soals: {
             id: number;
             content: string;
+            type: ESoalType;
+            author: string;
+            tags: string[];
             jawabans: {
                 id: number;
                 content: string;
@@ -52,6 +56,9 @@ const props = defineProps<{
     soals: {
         id: number;
         content: string;
+        type: ESoalType;
+        author: string;
+        tags: string[];
         jawabans: {
             id: number;
             content: string;
@@ -79,12 +86,36 @@ const form = useForm({
         id: number;
         content: string;
         type: ESoalType;
+        author: string;
+        tags: string[];
         jawabans: {
             id: number;
             content: string;
             correct: boolean;
         }[]
     }[]
+});
+
+const showSoalSelectorElement = ref(false);
+
+// State untuk kolom pencarian
+const searchQuery = ref('');
+
+// Computed untuk menyaring soals berdasarkan searchQuery
+const filteredSoals = computed(() => {
+    if (!searchQuery.value) {
+        return props.soals;
+    }
+    const query = searchQuery.value.toLowerCase();
+    return props.soals.filter(soal =>
+        soal.tags.some(tag =>
+            (typeof tag === 'string' && tag.toLowerCase().includes(query))
+        ) ||
+        soal.content.toLowerCase().includes(query) ||
+        soal.author.toLowerCase().includes(query) ||
+        soal.type.toLowerCase().includes(query) ||
+        soal.jawabans.some(value => value.content.toLowerCase().includes(query))
+    );
 });
 
 function tambah() {
@@ -182,10 +213,52 @@ function hapus(id: number) {
                 <h1 class="font-bold">Soal</h1>
                 <div class="flex flex-row flex-wrap gap-3">
                     <div v-for="(_, index) in form.soals" :key="index" class="text-center p-5 border border-black rounded-md hover:bg-slate-100 hover:cursor-pointer">{{ index + 1 }}</div>
-                    <div class="text-center p-5 border border-black rounded-md hover:bg-slate-100 hover:cursor-pointer">+</div>
+                    <div @click="showSoalSelectorElement = true" class="text-center p-5 border border-black rounded-md hover:bg-slate-100 hover:cursor-pointer">+</div>
                 </div>
             </div>
 
+        </div>
+
+        <div v-if="showSoalSelectorElement" class="bg-black bg-opacity-60 absolute p-10 w-screen h-screen top-0 left-0 flex justify-center items-center">
+            <div class="flex flex-col bg-white p-5 gap-3 rounded-lg w-full h-full">
+                <div class="bg-white rounded-lg flex items-center gap-3 flex-row flex-wrap w-fit">
+                    <Button @click="showSoalSelectorElement = false" text="Kembali" bg-color="grey" text-color="black" class="!w-fit px-5" />
+                    <!-- Kolom input pencarian -->
+                    <input type="text" v-model="searchQuery" placeholder="Cari soal..." class="border border-gray-300 rounded-lg p-2 max-w-xl focus:outline-none focus:ring focus:border-blue-300" />
+                </div>
+
+                <!-- Daftar soal yang sudah difilter -->
+                <div class="flex flex-row flex-wrap gap-5 overflow-y-auto w-full">
+                    <div v-for="(soal, index) in filteredSoals" :key="index"
+                        class="bg-white p-5 max-w-2xl rounded-lg flex flex-col gap-3 border border-gray-300 hover:cursor-pointer hover:!border-black transition-all duration-300 h-fit">
+                        <p class="opacity-70"><i>{{ soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' :
+                            `Soal dibuat oleh ${soal.author}.` }}</i></p>
+                        <div class="flex flex-row flex-wrap gap-3">
+                            <span class="bg-yellow-200 px-2 py-1 rounded-lg w-fit">{{ soal.type.split('_').map((value) =>
+                                `${value[0].toUpperCase()}${value.substring(1, value.length)}`).join(' ') }}</span>
+                            <span v-for="(tag, index) in soal.tags" :key="index" class="bg-green-200 px-2 py-1 rounded-lg">{{
+                                tag }}</span>
+                        </div>
+                        <div v-html="soal.content" class="tiptap p-3 border border-gray-300 h-fit overflow-auto max-h-[400px]"></div>
+                        <strong>Jawaban :</strong>
+                        <div v-for="(jawaban, index) in soal.jawabans" class="flex flex-row gap-3 mt-1 items-center"
+                            :key="index">
+                            <template v-if="soal.type === ESoalType.OBJEKTIF">
+                                <input type="radio" disabled :checked="jawaban.correct">
+                            </template>
+                            <template v-else-if="soal.type === ESoalType.OBJEKTIF_KOMPLEKS">
+                                <input type="checkbox" disabled :checked="jawaban.correct">
+                            </template>
+                            <VuetifyViewer class="tiptap" :value="jawaban.content" />
+                        </div>
+                    </div>
+
+                    <!-- Pesan ketika hasil pencarian tidak ditemukan -->
+                    <div v-if="filteredSoals.length === 0" class="text-gray-500 text-center w-full p-5">
+                        Tidak ada soal.
+                    </div>
+                </div>
+            </div>
         </div>
 
     </AuthLayout>

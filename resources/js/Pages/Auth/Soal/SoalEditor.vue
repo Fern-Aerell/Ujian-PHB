@@ -244,7 +244,6 @@ watch(correctAnswerIndex, (newIndex) => {
                 <Button @click="tambahJawaban" text="Tambah Jawaban" text-color="white" bg-color="primary" class="!w-fit px-5" />
                 <InputError :message="form.errors.jawabans" class="mt-2" />
             </div>
-
         </div>
     </AuthLayout>
 </template>
