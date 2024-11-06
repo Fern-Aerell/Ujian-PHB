@@ -172,7 +172,7 @@ watch(correctAnswerIndex, (newIndex) => {
                 <p v-if="props.soal" class="opacity-70 mb-4"><i>{{ props.soal.author === $page.props.auth.user.name ? 'Kamu yang membuat soal ini.' : `Soal dibuat oleh ${props.soal.author}.` }}</i></p>
                 
                 <div class="flex flex-col gap-1">
-                    <InputLabel value="Mapel" class="required" />
+                    <InputLabel value="Mapel" />
                     <select required v-model="form.mapel_id" name="mapel" id="mapel" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         <option :value="null">Tidak Spesifik</option>
                         <option v-for="(mapel, index) in props.mapels" :key="index" :value="mapel.id">{{ mapel.text }}</option>
@@ -181,7 +181,7 @@ watch(correctAnswerIndex, (newIndex) => {
                 </div>
 
                 <div class="flex flex-col mt-4 gap-1">
-                    <InputLabel value="Kelas" class="required" />
+                    <InputLabel value="Kelas" />
                     <select required v-model="form.kelas_id" name="kelas" id="kelas" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         <option :value="null">Tidak Spesifik</option>
                         <option v-for="(kelas, index) in props.kelas" :key="index" :value="kelas.id">{{ kelas.text }}</option>
@@ -190,7 +190,7 @@ watch(correctAnswerIndex, (newIndex) => {
                 </div>
 
                 <div class="flex flex-col mt-4 gap-1">
-                    <InputLabel value="Kelas Kategori" class="required" />
+                    <InputLabel value="Kelas Kategori" />
                     <select required v-model="form.kelas_kategori_id" name="kelas_kategori" id="kelas_kategori" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                         <option :value="null">Tidak Spesifik</option>
                         <option v-for="(kelas_kategori, index) in props.kelas_kategoris" :key="index" :value="kelas_kategori.id">{{ kelas_kategori.text }}</option>

@@ -67,6 +67,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Soal::class);
     }
 
+    public function activitys() {
+        return $this->hasMany(Activity::class);
+    }
+
     public function isAdmin()
     {
         return $this->type == UserType::ADMIN;

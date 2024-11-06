@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\Jadwal;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Activity;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -31,14 +32,14 @@ class JadwalController extends Controller
         } elseif ($user->isGuru()) {
             // Ambil semua kelas dan kategori yang diajar oleh guru ini
             $guruKelasKategoriKelas = $user->guru->guruMapelKelasKategoriKelas;
-        
+
             // Ambil mapel yang diajar oleh guru ini
             $mapelIds = $guruKelasKategoriKelas->pluck('mapel_id')->toArray();
-        
+
             // Filter jadwal berdasarkan kelas, kategori, dan mapel yang diajar
             $jadwalsQuery->whereIn('kelas_id', $guruKelasKategoriKelas->pluck('kelas_id')->toArray())
-                         ->whereIn('kelas_kategori_id', $guruKelasKategoriKelas->pluck('kelas_kategori_id')->toArray())
-                         ->whereIn('mapel_id', $mapelIds); // Filter berdasarkan mapel yang diajar
+                ->whereIn('kelas_kategori_id', $guruKelasKategoriKelas->pluck('kelas_kategori_id')->toArray())
+                ->whereIn('mapel_id', $mapelIds); // Filter berdasarkan mapel yang diajar
         }
 
         // Eksekusi query dan group by date
@@ -111,6 +112,17 @@ class JadwalController extends Controller
             if ($exists) {
                 return redirect()->back()->withErrors(['kelas_kategori_id' => 'Jadwal dengan kombinasi ini sudah ada'])->withInput();
             }
+
+            // Jika ada perubahan, nonaktifkan activity yang sesuai
+            $activity = Activity::with(['activityMapelKelasKategoriKelas'])
+                ->whereRelation('activityMapelKelasKategoriKelas', 'mapel_id', $jadwal->mapel_id)
+                ->whereRelation('activityMapelKelasKategoriKelas', 'kelas_id', $jadwal->kelas_id)
+                ->whereRelation('activityMapelKelasKategoriKelas', 'kelas_kategori_id', $jadwal->kelas_kategori_id)
+                ->first();
+
+            if ($activity) {
+                $activity->update(['active' => false]);
+            }
         }
 
         $jadwal->update($validatedData);
@@ -122,6 +134,20 @@ class JadwalController extends Controller
     public function hapus(int $id)
     {
         $jadwal = Jadwal::findOrFail($id);
+
+        // Cari activity yang terkait dengan jadwal yang akan dihapus
+        $activity = Activity::with(['activityMapelKelasKategoriKelas'])
+                ->whereRelation('activityMapelKelasKategoriKelas', 'mapel_id', $jadwal->mapel_id)
+                ->whereRelation('activityMapelKelasKategoriKelas', 'kelas_id', $jadwal->kelas_id)
+                ->whereRelation('activityMapelKelasKategoriKelas', 'kelas_kategori_id', $jadwal->kelas_kategori_id)
+                ->first();
+
+        // Jika activity ditemukan, nonaktifkan
+        if ($activity) {
+            $activity->update(['active' => false]);
+        }
+
+        // Hapus jadwal
         $jadwal->delete();
 
         return redirect()->back();
