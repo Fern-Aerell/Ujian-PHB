@@ -35,4 +35,9 @@ class Activity extends Model
     {
         return $this->hasMany(ActivitySoal::class, 'activity_id', 'id');
     }
+
+    public function doActivitys()
+    {
+        return $this->hasMany(DoActivity::class, 'do_activity_id', 'id');
+    }
 }

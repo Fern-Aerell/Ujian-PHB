@@ -83,5 +83,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isMurid() {
         return $this->type == UserType::MURID;
     }
+
+    public function doActivitys() {
+        return $this->hasMany(DoActivity::class);
+    }
     
 }
