@@ -5,8 +5,9 @@ import Button from '@/Components/Buttons/Button.vue';
 import { router, useForm, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { ESoalType, EUserType } from '@/types/enum.d';
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useStore } from '@/store';
 
 interface IMapelKelasKategoriKelas {
     mapel: string;
@@ -22,6 +23,7 @@ interface IJawaban {
 
 interface ISoal {
     id: number;
+    do_activity_soal_id: number;
     content: string;
     type: ESoalType;
     jawaban?: string;
@@ -31,6 +33,7 @@ interface ISoal {
 const props = defineProps<{
     activity: {
         id: number;
+        do_activity_id: number;
         author: string;
         mapel_kelas_kategori_kelas: IMapelKelasKategoriKelas[];
         soals: ISoal[];
@@ -41,10 +44,12 @@ const form = useForm({
     soals: props.activity.soals
 });
 
+const store = useStore();
 const soalSelected = ref(0);
 
 function setSoal(index: number) {
     soalSelected.value = index;
+    window.location.hash = `#${index + 1}`;
 }
 
 function kembali() {
@@ -56,9 +61,25 @@ function selanjutnya() {
 }
 
 function selesai() {
-    // form.post(route('do.activity.finish', props.activity.id));
-    successAlert(`${usePage().props.config.activity_type} anda sudah di kirim.`, () => router.get(route('activity')));
+    successAlert(`${usePage().props.config.activity_type} anda sudah di kirim.`, () => router.post(route('do.activity.finish', props.activity.do_activity_id)));
 }
+
+function saveAnswer() {
+    form.post(route('do.activity.saveanswer', props.activity.id));
+}
+
+onMounted(() => {
+    if(!store.getIsExamTime) router.get(route('activity'));
+    if(window.location.hash.length <= 0 || (parseInt(window.location.hash.substring(1)) > form.soals.length || parseInt(window.location.hash.substring(1)) <= 0) || isNaN(parseInt(window.location.hash.substring(1)))) {
+        window.location.hash = `#${1}`;
+    }else{
+        soalSelected.value = parseInt(window.location.hash.substring(1)) - 1;
+    }
+});
+
+watch(() => store.getIsExamTime, (value) => {
+    if(!store.getIsExamTime) router.get(route('activity'));
+});
 
 </script>
 
@@ -98,13 +119,15 @@ function selesai() {
             <template v-if="form.soals[soalSelected].jawabans != undefined">
                 <div v-for="(jawaban, index) in form.soals[soalSelected].jawabans" class="flex flex-row gap-3 mt-1 items-center" :key="index">
                     <template v-if="form.soals[soalSelected].type === ESoalType.OBJEKTIF">
-                        <input name="correct" :id="`correct-${index}`" type="radio" @change="() => {
+                        <input name="correct" :id="`correct-${index}`" :checked="jawaban.correct" type="radio" @change="() => {
                             form.soals[soalSelected].jawabans!.forEach((value, index_value) => value.correct = index == index_value);
+                            saveAnswer();
                         }" >
                     </template>
                     <template v-else-if="form.soals[soalSelected].type === ESoalType.OBJEKTIF_KOMPLEKS">
                         <input :name="`correct-${index}`" :id="`correct-${index}`" type="checkbox" v-model="jawaban.correct" @click="() => {
                             jawaban.correct = !jawaban.correct;
+                            saveAnswer();
                         }">
                     </template>
                     <label :for="`correct-${index}`">
@@ -113,7 +136,9 @@ function selesai() {
                 </div>
             </template>
             <template v-else-if="form.soals[soalSelected].jawaban != undefined">
-                <input v-model="form.soals[soalSelected].jawaban" type="text" class="w-full"/>
+                <input v-model="form.soals[soalSelected].jawaban" type="text" class="w-full" @change="() => {
+                    saveAnswer();
+                }"/>
             </template>
          </div>
     </AuthLayout>

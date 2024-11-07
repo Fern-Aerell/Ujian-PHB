@@ -11,7 +11,6 @@ class DoActivitySoal extends Model
     protected $fillable = [
         'do_activity_id',
         'soal_id',
-        'jawaban_id',
     ];
     
     public function doActivity()
@@ -24,8 +23,8 @@ class DoActivitySoal extends Model
         return $this->belongsTo(Soal::class);
     }
 
-    public function jawaban()
+    public function doActivityJawabans()
     {
-        return $this->belongsTo(Jawaban::class);
+        return $this->hasMany(DoActivityJawaban::class, 'do_activity_soal_id', 'id');
     }
 }

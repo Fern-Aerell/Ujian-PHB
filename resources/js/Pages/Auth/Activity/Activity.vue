@@ -5,6 +5,7 @@ import Button from '@/Components/Buttons/Button.vue';
 import { router, usePage } from '@inertiajs/vue3';
 import { failedAlert, successAlert } from '@/alert';
 import { EUserType } from '@/types/enum.d';
+import { useStore } from '@/store';
 
 const props = defineProps<{
     activitys: {
@@ -20,12 +21,14 @@ const props = defineProps<{
     }[],    
 }>();
 
+const store = useStore();
+
 </script>
 
 <template>
     <CustomHead :title="$page.props.config.activity_type" />
-    <AuthLayout :title="$page.props.config.activity_type" class="flex flex-col gap-3">
-
+    <AuthLayout v-if="$page.props.auth.user.type === EUserType.MURID && props.activitys.length <= 0 || $page.props.auth.user.type === EUserType.MURID && !store.getIsExamTime" :title="$page.props.config.activity_type"></AuthLayout>
+    <AuthLayout v-else :title="$page.props.config.activity_type" class="flex flex-col gap-3">
         <div v-if="$page.props.auth.user.type === EUserType.ADMIN || $page.props.auth.user.type === EUserType.GURU" class="flex flex-row flex-wrap gap-3 p-5 bg-white w-fit rounded-lg">
             <Button @click="$inertia.get(route('activity.tambah.index'))" text="Tambah Ujian" text-color="white" bg-color="primary" class="!w-fit px-5" />
         </div>
@@ -43,6 +46,5 @@ const props = defineProps<{
                 </div>
             </div>
         </div>
-
     </AuthLayout>
 </template>

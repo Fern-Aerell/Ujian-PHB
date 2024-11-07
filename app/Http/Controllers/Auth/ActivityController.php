@@ -7,6 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\ActivityMapelKelasKategoriKelas;
 use App\Models\ActivitySoal;
+use App\Models\Config;
+use App\Models\DoActivity;
+use App\Models\DoActivityJawaban;
+use App\Models\DoActivitySoal;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\KelasKategori;
@@ -55,6 +59,23 @@ class ActivityController extends Controller
             $kelasId = $muridData->kelas_id;
             $kelasKategoriId = $muridData->kelas_kategori_id;
 
+            $config = Config::first();
+            $jadwal = Jadwal::with([
+                'mapel',
+                'kelas',
+                'kelasKategori'
+            ]);
+
+            $currentDate = now(); // Mendapatkan tanggal saat ini
+            $examDateStart = $config->exam_date_start;
+            $examDateEnd = $config->exam_date_end;
+            $examTimeStart = $config->exam_time_start;
+            $examTimeEnd = $config->exam_time_end;
+
+            // Mengambil jadwal yang sesuai dengan tanggal dan waktu ujian
+            $jadwalFiltered = $jadwal->whereBetween('date', [$examDateStart, $examDateEnd])->get();
+
+            // Mengambil activity yang sesuai dengan kelas dan kategori
             $activitys_raw = Activity::with([
                 'activityMapelKelasKategoriKelas.mapel',
                 'activityMapelKelasKategoriKelas.kelasKategori',
@@ -65,7 +86,32 @@ class ActivityController extends Controller
                         ->where('kelas_kategori_id', $kelasKategoriId);
                 })
                 ->where('active', true)
-                ->get();
+                ->get()
+                ->filter(function ($activity) use ($jadwalFiltered, $currentDate, $examTimeStart, $examTimeEnd) {
+
+                    $doActivity = DoActivity::where([
+                        'user_id' => Auth::user()->id,
+                        'activity_id' => $activity->id,
+                    ])->first();
+
+                    if($doActivity && $doActivity->finished) return false;
+
+                    // Cek setiap item di dalam array activityMapelKelasKategoriKelas
+                    foreach ($activity->activityMapelKelasKategoriKelas as $item) {
+                        foreach ($jadwalFiltered as $jadwal) {
+                            if (
+                                $item->mapel_id == $jadwal->mapel_id &&
+                                $item->kelas_kategori_id == $jadwal->kelas_kategori_id &&
+                                $item->kelas_id == $jadwal->kelas_id
+                            ) {
+                                if ($currentDate->between($examTimeStart, $examTimeEnd)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    return false;
+                });
         }
 
         $activitys = [];
@@ -667,46 +713,97 @@ class ActivityController extends Controller
         return redirect(route('activity'));
     }
 
-    public function doIndex(Request $request, int $id) 
+    public function doIndex(Request $request, int $id)
     {
-        $activity = Activity::with([
-            'user',
-            'activityMapelKelasKategoriKelas.mapel',
-            'activityMapelKelasKategoriKelas.kelasKategori',
-            'activityMapelKelasKategoriKelas.kelas',
-            'activitySoals.soal.mapel',
-            'activitySoals.soal.kelas',
-            'activitySoals.soal.kelasKategori',
-            'activitySoals.soal.jawabans',
-        ])->find($id);
+        $activity = Activity::find($id);
 
-        if(!$activity) return abort(404, 'Activity tidak ada');
+        if (!$activity) return abort(404, 'Activity tidak ada');
 
-        $transformedActivity = [
-            'id' => $activity->id,
-            'author' => $activity->user->name,
-            'mapel_kelas_kategori_kelas' => $activity->activityMapelKelasKategoriKelas->map(function ($item) {
+        $doActivity = DoActivity::where([
+            'user_id' => Auth::user()->id,
+            'activity_id' => $activity->id
+        ])->first();
+
+        if(!$doActivity) {
+            $doActivity = DoActivity::create([
+                'user_id' => Auth::user()->id,
+                'activity_id' => $activity->id
+            ]);
+        }
+
+        if($doActivity->finished) return abort(403, 'Anda sudah menyelesaikan kegiatan ini.');
+
+        foreach($doActivity->activity->activitySoals as $activitySoal) {
+            $doActivitySoal = DoActivitySoal::where([
+                'do_activity_id' => $doActivity->id,
+                'soal_id' => $activitySoal->soal->id,
+            ])->first();
+
+            if(!$doActivitySoal) {
+                $doActivitySoal = DoActivitySoal::create([
+                    'do_activity_id' => $doActivity->id,
+                    'soal_id' => $activitySoal->soal->id,
+                    'jawaban' => '',
+                ]);
+            }
+        }
+
+        $doActivity->load([
+            'activity.user',
+            'activity.activityMapelKelasKategoriKelas.mapel',
+            'activity.activityMapelKelasKategoriKelas.kelasKategori',
+            'activity.activityMapelKelasKategoriKelas.kelas',
+            'activity.activitySoals.soal.mapel',
+            'activity.activitySoals.soal.kelas',
+            'activity.activitySoals.soal.kelasKategori',
+            'activity.activitySoals.soal.jawabans',
+            'doActivitySoals.soal',
+            'doActivitySoals.doActivityJawabans',
+        ]);
+
+        $activityResult = [
+            'id' => $doActivity->activity->id,
+            'do_activity_id' => $doActivity->id,
+            'author' => $doActivity->activity->user->name,
+            'mapel_kelas_kategori_kelas' => $doActivity->activity->activityMapelKelasKategoriKelas->map(function ($item) {
                 return [
                     'mapel' => $item->mapel->kependekan,
                     'kelas' => $item->kelas->bilangan,
                     'kelas_kategori' => $item->kelasKategori->kependekan,
                 ];
             }),
-            'soals' => $activity->activitySoals->map(function ($activitySoal) {
+            'soals' => $doActivity->doActivitySoals->map(function ($doActivitySoal) {
                 $soals = [
-                    'id' => $activitySoal->soal->id,
-                    'content' => $activitySoal->soal->content,
-                    'type' => $activitySoal->soal->type
+                    'id' => $doActivitySoal->soal->id,
+                    'do_activity_soal_id' => $doActivitySoal->id,
+                    'content' => $doActivitySoal->soal->content,
+                    'type' => $doActivitySoal->soal->type
                 ];
 
-                if($activitySoal->soal->type == SoalType::ISIAN_SINGKAT) {
-                    $soals['jawaban'] = '';
-                }else{
-                    $soals['jawabans'] = $activitySoal->soal->jawabans->map(function ($jawaban) use($activitySoal) {
+                if ($doActivitySoal->soal->type == SoalType::ISIAN_SINGKAT) {
+                    $jawaban = '';
+                    if(count($doActivitySoal->doActivityJawabans) > 0) {
+                        $jawaban = $doActivitySoal->doActivityJawabans->first()->jawaban;
+                    }
+                    $soals['jawaban'] = $jawaban;
+                } else {
+                    $soals['jawabans'] = $doActivitySoal->soal->jawabans->map(function ($jawaban) use ($doActivitySoal) {
+
+                        $jawabanContent = strtolower(trim($jawaban->content));
+                        $jawabanContent = str_replace(' ', '', $jawabanContent);
+                        $correct = false;
+                        foreach($doActivitySoal->doActivityJawabans as $doActivityJawaban) {
+                            $doActivitySoalJawaban = strtolower(trim($doActivityJawaban->jawaban));
+                            $doActivitySoalJawaban = str_replace(' ', '', $doActivitySoalJawaban);
+                            if($doActivitySoalJawaban == $jawabanContent) {
+                                $correct = true;
+                            }
+                        }
+
                         return [
                             'id' => $jawaban->id,
                             'content' => $jawaban->content,
-                            'correct' => false,
+                            'correct' => $correct,
                         ];
                     });
                 }
@@ -716,12 +813,31 @@ class ActivityController extends Controller
         ];
 
         return inertia("Auth/Activity/DoActivity", [
-            'activity' => $transformedActivity
+            'activity' => $activityResult
         ]);
     }
 
-    public function doFinish(Request $request, int $id)
-    {
+    public function saveAnswer(Request $request, int $do_activity_id) {
+        $doActivity = DoActivity::with([
+            'activity.user',
+            'activity.activityMapelKelasKategoriKelas.mapel',
+            'activity.activityMapelKelasKategoriKelas.kelasKategori',
+            'activity.activityMapelKelasKategoriKelas.kelas',
+            'activity.activitySoals.soal.mapel',
+            'activity.activitySoals.soal.kelas',
+            'activity.activitySoals.soal.kelasKategori',
+            'activity.activitySoals.soal.jawabans',
+            'doActivitySoals.soal',
+            'doActivitySoals.doActivityJawabans',
+        ])->find($do_activity_id);
+        if(!$doActivity) return abort(404, 'Do Activity tidak ditemukan');
+
+        foreach($doActivity->doActivitySoals as $doActivitySoal) {
+            $doActivitySoal->doActivityJawabans->each(function($jawaban) {
+                $jawaban->delete();
+            });
+        }
+
         $request->validate([
             'soals' => [
                 'required',
@@ -729,8 +845,37 @@ class ActivityController extends Controller
             ]
         ]);
 
-        var_dump($request->all());
-        die;
+        foreach($request->soals as $soal) {
+            if (isset($soal['jawabans']) && is_array($soal['jawabans']) && !empty($soal['jawabans'])) {
+                foreach ($soal['jawabans'] as $jawaban) {
+                    if($jawaban['correct']) {
+                        DoActivityJawaban::create([
+                            'do_activity_soal_id' => $soal['do_activity_soal_id'],
+                            'jawaban' => $jawaban['content'],
+                        ]);
+                    }
+                }
+            } 
+            elseif (isset($soal['jawaban'])) {
+                if(strlen($soal['jawaban']) > 0) {
+                    DoActivityJawaban::create([
+                        'do_activity_soal_id' => $soal['do_activity_soal_id'],
+                        'jawaban' => $soal['jawaban'],
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    public function doFinish(Request $request, int $do_activity_id)
+    {
+        $doActivity = DoActivity::find($do_activity_id);
+        if(!$doActivity) return abort(404, 'Do Activity tidak ditemukan');
+        $doActivity->update([
+            'finished' => true,
+        ]);
+        return redirect(route('activity'));
     }
 }
- 

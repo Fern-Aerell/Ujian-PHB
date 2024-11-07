@@ -13,8 +13,10 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import { createVuetify } from 'vuetify';
 import { vuetifyProTipTap } from './tiptap';
+import { createPinia } from 'pinia';
 
 const vuetify = createVuetify();
+const pinia = createPinia();
 
 createInertiaApp({
     title: (title) => title,
@@ -25,6 +27,7 @@ createInertiaApp({
             .use(vuetifyProTipTap)
             .use(plugin)
             .use(ZiggyVue)
+            .use(pinia)
             .mount(el);
     },
     progress: {

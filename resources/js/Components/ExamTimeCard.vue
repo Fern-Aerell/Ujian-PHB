@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useStore } from '@/store';
 import { usePage } from '@inertiajs/vue3';
 import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 
@@ -16,6 +17,7 @@ enum Status {
 const examStatus = ref<Status>(Status.None);
 const examDate = ref<string | null>(null);
 const examTimeRemaining = ref<string | null>(null);
+const store = useStore();
 
 let intervalId: NodeJS.Timeout | null = null;
 
@@ -50,16 +52,19 @@ function set(
         const [startHour, startMinute] = exam_time_start.split(':').map(Number);
         startDate.setHours(startHour, startMinute, 0);
         examDate.value = formatDate(startDate);
+        store.setIsExamTime(false);
         return;
     }
 
     if (currentDate < startDate || currentDate > endDate) {
         examStatus.value = Status.None;
+        store.setIsExamTime(false);
         return;
     }
 
     if (isHoliday(currentDate)) {
         examStatus.value = Status.Holiday;
+        store.setIsExamTime(false);
         return;
     }
 
@@ -91,12 +96,15 @@ function set(
         examStatus.value = Status.StartingSoon;
         examDate.value = formatDate(examStartTime);
         examTimeRemaining.value = calculateTimeRemaining(examStartTime);
+        store.setIsExamTime(false);
     } else if (now >= examStartTime && now < examEndTime) {
         examStatus.value = Status.OnGoing;
         examDate.value = formatDate(examEndTime);
         examTimeRemaining.value = calculateTimeRemaining(examEndTime);
+        store.setIsExamTime(true);
     } else {
         examStatus.value = Status.Finished;
+        store.setIsExamTime(false);
     }
 }
 
