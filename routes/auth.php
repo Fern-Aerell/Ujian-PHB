@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\AccountController;
 use App\Http\Controllers\Auth\ActivityController;
 use App\Http\Controllers\Auth\JadwalController;
 use App\Http\Controllers\Auth\RaporController;
+use App\Http\Controllers\Auth\TempActivityMuridController;
 use App\Http\Middleware\VerifyEmailMiddleware;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -50,4 +51,6 @@ Route::middleware(['auth', VerifyEmailMiddleware::class])->group(function () {
     Route::get('/account', [AccountController::class, 'edit'])->name('account.edit');
     Route::patch('/account', [AccountController::class, 'update'])->name('account.update');
     Route::delete('/account', [AccountController::class, 'destroy'])->name('account.destroy');
+
+    Route::get('/temp_activity_murid/{id}', [TempActivityMuridController::class, 'index'])->name('temp_activity_murid.index');
 });

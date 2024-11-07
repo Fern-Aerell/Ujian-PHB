@@ -31,7 +31,7 @@ const props = defineProps<{
         </div>
 
         <div class="flex flex-row flex-wrap gap-3">
-            <div v-for="(activity, index) in props.activitys" :key="index" @click="$page.props.auth.user.type == EUserType.MURID ? undefined : $inertia.get(route('activity.edit.index', activity.id))" class="flex flex-col gap-1 p-5 w-fit bg-white h-fit rounded-lg hover:cursor-pointer hover:border hover:border-black">
+            <div v-for="(activity, index) in props.activitys" :key="index" @click="$page.props.auth.user.type == EUserType.MURID ? $inertia.get(route('temp_activity_murid.index', activity.id)) : $inertia.get(route('activity.edit.index', activity.id))" class="flex flex-col gap-1 p-5 w-fit bg-white h-fit rounded-lg hover:cursor-pointer hover:border hover:border-black">
                 <div class="mb-2 justify-between items-center flex flex-row flex-wrap gap-10">
                     <p v-if="$page.props.auth.user.type === EUserType.ADMIN || $page.props.auth.user.type === EUserType.GURU" class="opacity-70 flex-shrink-0"><i>{{ activity.author === $page.props.auth.user.name ? `Kamu yang membuat ${$page.props.config.activity_type} ini pada ${activity.created_at}.` : `${$page.props.config.activity_type} dibuat oleh ${activity.author} pada ${activity.created_at}.` }}</i></p>
                     <span v-if="$page.props.auth.user.type === EUserType.ADMIN || $page.props.auth.user.type === EUserType.GURU" class="px-2 py-1 w-fit rounded-lg" :class="activity.active ? 'bg-green-300' : 'bg-gray-300'">{{ activity.active ? 'Aktif' : 'Nonaktif' }}</span>
