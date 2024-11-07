@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\SoalType;
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\ActivityMapelKelasKategoriKelas;
@@ -665,4 +666,71 @@ class ActivityController extends Controller
         $activity->delete();
         return redirect(route('activity'));
     }
+
+    public function doIndex(Request $request, int $id) 
+    {
+        $activity = Activity::with([
+            'user',
+            'activityMapelKelasKategoriKelas.mapel',
+            'activityMapelKelasKategoriKelas.kelasKategori',
+            'activityMapelKelasKategoriKelas.kelas',
+            'activitySoals.soal.mapel',
+            'activitySoals.soal.kelas',
+            'activitySoals.soal.kelasKategori',
+            'activitySoals.soal.jawabans',
+        ])->find($id);
+
+        if(!$activity) return abort(404, 'Activity tidak ada');
+
+        $transformedActivity = [
+            'id' => $activity->id,
+            'author' => $activity->user->name,
+            'mapel_kelas_kategori_kelas' => $activity->activityMapelKelasKategoriKelas->map(function ($item) {
+                return [
+                    'mapel' => $item->mapel->kependekan,
+                    'kelas' => $item->kelas->bilangan,
+                    'kelas_kategori' => $item->kelasKategori->kependekan,
+                ];
+            }),
+            'soals' => $activity->activitySoals->map(function ($activitySoal) {
+                $soals = [
+                    'id' => $activitySoal->soal->id,
+                    'content' => $activitySoal->soal->content,
+                    'type' => $activitySoal->soal->type
+                ];
+
+                if($activitySoal->soal->type == SoalType::ISIAN_SINGKAT) {
+                    $soals['jawaban'] = '';
+                }else{
+                    $soals['jawabans'] = $activitySoal->soal->jawabans->map(function ($jawaban) use($activitySoal) {
+                        return [
+                            'id' => $jawaban->id,
+                            'content' => $jawaban->content,
+                            'correct' => false,
+                        ];
+                    });
+                }
+
+                return $soals;
+            }),
+        ];
+
+        return inertia("Auth/Activity/DoActivity", [
+            'activity' => $transformedActivity
+        ]);
+    }
+
+    public function doFinish(Request $request, int $id)
+    {
+        $request->validate([
+            'soals' => [
+                'required',
+                'array'
+            ]
+        ]);
+
+        var_dump($request->all());
+        die;
+    }
 }
+ 
